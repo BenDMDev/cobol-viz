@@ -39,13 +39,17 @@ public class Source {
 	 * @throws IOException
 	 */
 	public void nextChar() throws IOException {
-		currentChar = (char) input.read();
+		currentChar = (char) input.read();					
+		
+	}
+	
+	public void skipWhiteSpace() throws IOException {
 		while(Character.isWhitespace(currentChar)) {
 			if(currentChar == EOL)
-				numLines++;			
-			currentChar = (char) input.read();
-		}
+				numLines++;
 		
+		currentChar = (char) input.read();
+		}
 	}
 	
 	

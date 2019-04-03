@@ -40,9 +40,11 @@ public class SourceTest {
 		try {
 			s.nextChar();	
 			s.nextChar();
-			assertEquals(1, s.getNumberOfLines());		
+			s.skipWhiteSpace();
+			assertEquals(1, s.getNumberOfLines());				
 			assertEquals('E',s.getCurrentChar());
 			s.nextChar();
+			s.skipWhiteSpace();
 			assertEquals(2, s.getNumberOfLines());
 			in.close();
 		} catch (IOException e) {			
@@ -50,6 +52,22 @@ public class SourceTest {
 		}
 	}
 	
+	
+	@Test
+	public void testSkipWhiteSpace() {
+		BufferedReader in = new BufferedReader(new StringReader("H\n\nE"));
+		Source s = new Source(in);
+		try {
+			s.nextChar();
+			s.nextChar();
+			s.skipWhiteSpace();			
+			assertEquals('E',s.getCurrentChar());	
+			assertEquals(2, s.getNumberOfLines());
+			in.close();
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+	}
 
 	
 	@Test
