@@ -22,7 +22,7 @@ public class ParseTreeNodeTest {
 		t1.addChild(c1);
 		t1.addChild(c2);
 		
-		t1.traverse();
+		
 	}
 	
 	@Test

@@ -24,7 +24,7 @@ public class Parser {
 	}
 	
 	private void parseProgram() throws IOException {
-		parseTree = new ParseTreeNode("PROGRAM");
+		parseTree = new ParseTreeNode("RULE: PROGRAM");
 		parseIdentificationDivision(parseTree);
 		parseProcedureDivision(parseTree);
 	}
@@ -100,7 +100,7 @@ public class Parser {
 	}
 	
 	private void parseStatementList(ParseTreeNode p) throws IOException {
-		ParseTreeNode p1 = new ParseTreeNode("RULE: Statement List");
+		ParseTreeNode p1 = new ParseTreeNode("RULE: STATEMENT-List");
 		p.addChild(p1);
 		lexer.scan();		
 		while(!lexer.getCurrentToken().getTokenValue().equals("END")) {
@@ -111,6 +111,15 @@ public class Parser {
 	private void parseStatement(ParseTreeNode p) throws IOException { 
 		ParseTreeNode p1 = new ParseTreeNode("RULE: Statement");
 		p.addChild(p1);
+		Token t = lexer.getCurrentToken();
+		if(t.getTokenValue().equals("MOVE")) 
+			parseMoveStatement(p1);
+	}
+	
+	public void parseMoveStatement(ParseTreeNode p) throws IOException {
+		ParseTreeNode p1 = new ParseTreeNode("RULE: Move Statement");
+		p.addChild(p1);
+		
 		Token t = lexer.getCurrentToken();
 		if(t.getTokenValue().equals("MOVE")) {
 			p1.addChild(new ParseTreeNode(t.getTokenValue()));
@@ -135,6 +144,7 @@ public class Parser {
 			p1.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 		}
+		
 	}
 	
 	
