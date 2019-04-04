@@ -12,20 +12,23 @@ public class LexerTest {
 
 	@Test
 	public void testScan() {
-		BufferedReader in = new BufferedReader(new StringReader("HELLO-WORLD\n 95645\n\n65v56"));
+		BufferedReader in = new BufferedReader(new StringReader("IDENTIFICATION DIVISION\n PROGAM-ID HELLO"));
 		Source s = new Source(in);
 		Lexer l = new Lexer(s);
 		
 		try {
 			l.scan();
 			assertEquals("WORD", l.getCurrentToken().getType());	
-			assertEquals("HELLO-WORLD", l.getCurrentToken().getTokenValue());
+			assertEquals("IDENTIFICATION", l.getCurrentToken().getTokenValue());
 			l.scan();							
-			assertEquals("DIGIT", l.getCurrentToken().getType());
-			assertEquals("95645", l.getCurrentToken().getTokenValue());
+			assertEquals("WORD", l.getCurrentToken().getType());
+			assertEquals("DIVISION", l.getCurrentToken().getTokenValue());
 			l.scan();						
-			assertEquals("DIGIT", l.getCurrentToken().getType());
-			assertEquals("65v56", l.getCurrentToken().getTokenValue());
+			assertEquals("WORD", l.getCurrentToken().getType());
+			assertEquals("PROGAM-ID", l.getCurrentToken().getTokenValue());
+			l.scan();	
+			assertEquals("WORD", l.getCurrentToken().getType());
+			assertEquals("HELLO", l.getCurrentToken().getTokenValue());
 		} catch (IOException e) {
 			
 			e.printStackTrace();

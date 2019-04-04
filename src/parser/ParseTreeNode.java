@@ -22,9 +22,14 @@ public class ParseTreeNode {
 	}
 	
 	public void traverse() {
-		System.out.println(type);
+				
 		for(ParseTreeNode c : children) {
-			c.traverse();
+			if(c.type.contains("RULE"))
+				System.out.println("\n" + c.type + " ");
+			else
+				System.out.print(c.type + " ");
+			c.traverse();			
+			
 		}
 	}
 	
