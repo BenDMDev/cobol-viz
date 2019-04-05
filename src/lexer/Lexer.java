@@ -8,6 +8,7 @@ public class Lexer {
 	static final char EOL = '\n';
 	private Token currentToken;
 	
+	
 	public Lexer (Source s) {
 		source = s;
 		currentToken = null;
@@ -51,7 +52,10 @@ public class Lexer {
 			
 		t = new Token("DIGIT", s.toString());
 		
-		} 
+		} else if(c == '.') {
+			t = new Token("TERMINATE", ".");
+			source.nextChar();
+		}
 		
 		
 		if(t !=null) {

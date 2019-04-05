@@ -11,142 +11,186 @@ public class Parser {
 	private Lexer lexer;
 	private GraphWriter gPrinter;
 	private ParseTreeNode parseTree;
-	
+
 	public Parser(Lexer l) {
 		lexer = l;
 		parseTree = null;
 	}
-	
-	
+
 	public ParseTreeNode parse() throws IOException {
 		parseProgram();
 		return parseTree;
 	}
-	
+
 	private void parseProgram() throws IOException {
 		parseTree = new ParseTreeNode("RULE: PROGRAM");
 		parseIdentificationDivision(parseTree);
 		parseProcedureDivision(parseTree);
 	}
-	
+
 	private void parseIdentificationDivision(ParseTreeNode p) throws IOException {
 		ParseTreeNode p1 = new ParseTreeNode("RULE: IDENTIFICATION DIVISION");
 		p.addChild(p1);
 		Token t;
 		lexer.scan();
 		t = lexer.getCurrentToken();
-		if(t.getTokenValue().equals("IDENTIFICATION") || t.getTokenValue().equals("ID")) {
+		if (t.getTokenValue().equals("IDENTIFICATION") || t.getTokenValue().equals("ID")) {
 			p1.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
-			if(t.getTokenValue().equals("DIVISION"))
-				p1.addChild(new ParseTreeNode(t.getTokenValue()));			
-			parseProgramID(p1);
+		}
 			
-		} else {
-			System.out.println("Invalid Token");
+		
+		if (t.getTokenValue().equals("DIVISION")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));	
+			lexer.scan();
+			t = lexer.getCurrentToken();
 		}
 		
+				
+		if (t.getType().equals("TERMINATE")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			
+		} 
+		
+		parseProgramID(p1);
+		
+
 	}
-	
+
 	private void parseProgramID(ParseTreeNode p) throws IOException {
 		Token t;
 		lexer.scan();
 		t = lexer.getCurrentToken();
 		ParseTreeNode p1 = new ParseTreeNode("RULE: PROGRAM-ID");
 		p.addChild(p1);
-		if(t.getTokenValue().equals("PROGRAM-ID"))
+		if (t.getTokenValue().equals("PROGRAM-ID"))
 			p1.addChild(new ParseTreeNode("PROGRAM-ID"));
 		lexer.scan();
 		t = lexer.getCurrentToken();
-		if(t.getType().equals("WORD"))
-			p1.addChild(new ParseTreeNode(t.getTokenValue()));			
+		if (t.getType().equals("WORD"))
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
 
 	}
-	
-	
+
 	private void parseProcedureDivision(ParseTreeNode p) throws IOException {
 		lexer.scan();
-		Token t;
-		t = lexer.getCurrentToken();
+		Token t = lexer.getCurrentToken();
+
 		ParseTreeNode p1 = new ParseTreeNode("RULE: Procedure Division");
 		p.addChild(p1);
-		if(t.getTokenValue().equals("PROCEDURE")) {
+		if (t.getTokenValue().equals("PROCEDURE")) {
 			p1.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan();
-			t = lexer.getCurrentToken();
-			if(t.getTokenValue().equals("DIVISION")) {
-				p1.addChild(new ParseTreeNode(t.getTokenValue()));
-				parseParagraph(p1);
-			}
-		} else {
-			System.out.println("PROCEDURE DIVISION ERROR");
-		
 		}
-		
-		
+
+		lexer.scan();
+		t = lexer.getCurrentToken();
+
+		if (t.getTokenValue().equals("DIVISION")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			parseParagraph(p1);
+
+		} else {
+
+		}
+
 	}
-	
+
 	private void parseParagraph(ParseTreeNode p) throws IOException {
 		ParseTreeNode p1 = new ParseTreeNode("RULE: Paragraph");
 		p.addChild(p1);
 		parseSentence(p1);
 	}
-	
+
 	private void parseSentence(ParseTreeNode p) throws IOException {
 		ParseTreeNode p1 = new ParseTreeNode("RULE: Sentence");
 		p.addChild(p1);
 		parseStatementList(p1);
 	}
-	
+
 	private void parseStatementList(ParseTreeNode p) throws IOException {
 		ParseTreeNode p1 = new ParseTreeNode("RULE: STATEMENT-List");
 		p.addChild(p1);
-		lexer.scan();		
-		while(!lexer.getCurrentToken().getTokenValue().equals("END")) {
+		lexer.scan();
+		while (!lexer.getCurrentToken().getTokenValue().equals(".")) {
 			parseStatement(p1);
 		}
-		}
 		
-	private void parseStatement(ParseTreeNode p) throws IOException { 
+		
+	}
+
+	private void parseStatement(ParseTreeNode p) throws IOException {
 		ParseTreeNode p1 = new ParseTreeNode("RULE: Statement");
 		p.addChild(p1);
 		Token t = lexer.getCurrentToken();
-		if(t.getTokenValue().equals("MOVE")) 
+		if (t.getTokenValue().equals("MOVE"))
 			parseMoveStatement(p1);
+		else if(t.getTokenValue().equals("ADD")) {
+			parseAddStatement(p1);
+		}
 	}
-	
+
 	public void parseMoveStatement(ParseTreeNode p) throws IOException {
 		ParseTreeNode p1 = new ParseTreeNode("RULE: Move Statement");
 		p.addChild(p1);
-		
+
 		Token t = lexer.getCurrentToken();
-		if(t.getTokenValue().equals("MOVE")) {
-			p1.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan();			
-		}
-		
-		t = lexer.getCurrentToken();
-		
-		if(t.getType().equals("WORD") || t.getType().equals("DIGIT")) {
-			p1.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan();
-		} 
-		
-		t = lexer.getCurrentToken();
-		if(t.getTokenValue().equals("TO")) {
+		if (t.getTokenValue().equals("MOVE")) {
 			p1.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 		}
-		
+
 		t = lexer.getCurrentToken();
-		if(t.getType().equals("WORD")){
+
+		if (t.getType().equals("WORD") || t.getType().equals("DIGIT")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan();
+		}
+
+		t = lexer.getCurrentToken();
+		if (t.getTokenValue().equals("TO")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan();
+		}
+
+		t = lexer.getCurrentToken();
+		if (t.getType().equals("WORD")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan();
+		}
+
+	}
+
+	
+	private void parseAddStatement(ParseTreeNode p) throws IOException {
+		ParseTreeNode p1 = new ParseTreeNode("RULE: Add Statement");
+		p.addChild(p1);
+
+		Token t = lexer.getCurrentToken();
+		if (t.getTokenValue().equals("ADD")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan();
+		}
+
+		t = lexer.getCurrentToken();
+
+		if (t.getType().equals("WORD") || t.getType().equals("DIGIT")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan();
+		}
+
+		t = lexer.getCurrentToken();
+		if (t.getTokenValue().equals("TO")) {
+			p1.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan();
+		}
+
+		t = lexer.getCurrentToken();
+		if (t.getType().equals("WORD")) {
 			p1.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 		}
 		
 	}
-	
-	
 	
 }

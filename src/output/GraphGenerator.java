@@ -16,7 +16,7 @@ public class GraphGenerator {
 	public void process(ParseTreeNode t) { 			
 		
 		System.out.println(t.getType());
-		if(t.getType().contains("RULE: Move")) {
+		if(t.getType().contains("RULE: Move") || t.getType().contains("RULE: Add")) {
 			String label = "";
 			labelIncrementer++;
 			for(ParseTreeNode p1  : t.getChildren()) {
@@ -35,7 +35,7 @@ public class GraphGenerator {
 	}
 	
 	public String getOutputString() {
-		return outputString += " }";
+		return outputString + " }";
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 public class ParseTreeNode {
 
 	private String type;
+	private String value;
 	private List<ParseTreeNode> children; 
 	
 	public ParseTreeNode(String type) {

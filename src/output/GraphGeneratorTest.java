@@ -35,7 +35,7 @@ public class GraphGeneratorTest {
 		pN = p.parse();	
 		
 		gp.process(pN);
-		System.out.println(gp.getOutputString());
+		
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

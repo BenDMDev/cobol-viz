@@ -12,7 +12,7 @@ public class LexerTest {
 
 	@Test
 	public void testScan() {
-		BufferedReader in = new BufferedReader(new StringReader("IDENTIFICATION DIVISION\n PROGAM-ID HELLO"));
+		BufferedReader in = new BufferedReader(new StringReader("IDENTIFICATION DIVISION.\n PROGAM-ID HELLO"));
 		Source s = new Source(in);
 		Lexer l = new Lexer(s);
 		
@@ -23,6 +23,9 @@ public class LexerTest {
 			l.scan();							
 			assertEquals("WORD", l.getCurrentToken().getType());
 			assertEquals("DIVISION", l.getCurrentToken().getTokenValue());
+			l.scan();						
+			assertEquals("TERMINATE", l.getCurrentToken().getType());
+			assertEquals(".", l.getCurrentToken().getTokenValue());
 			l.scan();						
 			assertEquals("WORD", l.getCurrentToken().getType());
 			assertEquals("PROGAM-ID", l.getCurrentToken().getTokenValue());

@@ -16,12 +16,12 @@ public class ParserTest {
 
 	@Test
 	public void testParse() {
-		String input = "ID DIVISION\n" 
+		String input = "ID DIVISION.\n" 
 					   + "PROGRAM-ID HELLO-WORLD\n"
 					   + "PROCEDURE DIVISION\n"
 					   + "MOVE one TO two\n"
 					   + "MOVE 5126 TO three\n"
-					   + "MOVE four TO five\n"
+					   + "ADD four TO five.\n"
 					   + "END PROGRAM";
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		Source s = new Source(in);

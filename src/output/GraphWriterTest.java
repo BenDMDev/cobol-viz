@@ -17,12 +17,12 @@ public class GraphWriterTest {
 
 	@Test
 	public void testWriteToFile() {
-	String input = "IDENTIFICATION DIVISION\n" 
+	String input = "IDENTIFICATION DIVISION.\n" 
 				   + "PROGRAM-ID HELLO-WORLD\n"
 				   + "PROCEDURE DIVISION\n"
 				   + "MOVE one TO two\n"
 				   + "MOVE 5126 TO three\n"
-				   + "MOVE four TO five\n"
+				   + "ADD four TO five.\n"
 				   + "END PROGRAM";
 	BufferedReader in = new BufferedReader(new StringReader(input));
 	Source s = new Source(in);
