@@ -13,11 +13,11 @@ import lexer.Source;
 import parser.ParseTreeNode;
 import parser.Parser;
 
-public class GraphGeneratorTest {
+public class GraphWriterTest {
 
 	@Test
-	public void testProcess() {
-		String input = "IDENTIFICATION DIVISION\n" 
+	public void testWriteToFile() {
+	String input = "IDENTIFICATION DIVISION\n" 
 				   + "PROGRAM-ID HELLO-WORLD\n"
 				   + "PROCEDURE DIVISION\n"
 				   + "MOVE one TO two\n"
@@ -29,20 +29,19 @@ public class GraphGeneratorTest {
 	Lexer l = new Lexer(s);
 	Parser p = new Parser(l);
 	GraphGenerator gp = new GraphGenerator();
+	GraphWriter gW = new GraphWriter(gp);
 	
 	ParseTreeNode pN;
 	try {
 		pN = p.parse();	
 		
-		gp.process(pN);
+		gW.generate(pN);
+		gW.writeToFile();
 		System.out.println(gp.getOutputString());
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	
-	
-	
 	}
 
 }
