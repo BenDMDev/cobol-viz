@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import lexer.Lexer;
 import lexer.Token;
-import output.GraphPrinter;
+import output.GraphWriter;
 
 public class Parser {
 
 	private Lexer lexer;
-	private GraphPrinter gPrinter;
+	private GraphWriter gPrinter;
 	private ParseTreeNode parseTree;
 	
 	public Parser(Lexer l) {

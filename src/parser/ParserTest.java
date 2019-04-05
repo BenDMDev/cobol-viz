@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import lexer.Lexer;
 import lexer.Source;
-import output.GraphPrinter;
+import output.GraphGenerator;
 
 public class ParserTest {
 

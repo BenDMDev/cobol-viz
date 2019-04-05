@@ -13,7 +13,7 @@ import lexer.Source;
 import parser.ParseTreeNode;
 import parser.Parser;
 
-public class GraphPrinterTest {
+public class GraphGeneratorTest {
 
 	@Test
 	public void testProcess() {
@@ -28,13 +28,13 @@ public class GraphPrinterTest {
 	Source s = new Source(in);
 	Lexer l = new Lexer(s);
 	Parser p = new Parser(l);
-	GraphPrinter gp = new GraphPrinter();
+	GraphGenerator gp = new GraphGenerator();
 	
 	ParseTreeNode pN;
 	try {
 		pN = p.parse();	
 		
-		pN.traverse(gp);
+		gp.process(pN);
 		System.out.println(gp.getOutputString());
 	} catch (IOException e) {
 		// TODO Auto-generated catch block

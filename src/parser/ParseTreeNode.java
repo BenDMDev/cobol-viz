@@ -3,8 +3,6 @@ package parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import output.GraphPrinter;
-
 public class ParseTreeNode {
 
 	private String type;
@@ -38,14 +36,7 @@ public class ParseTreeNode {
 			
 		}
 	}
-	
-	public void traverse(GraphPrinter g) {
-		g.process(this);
-		for(ParseTreeNode c : children) { 			
-			c.traverse(g);
-		}
 		
-	}
 	
 	public List<ParseTreeNode> getChildren() {
 		return children;
