@@ -1,28 +1,31 @@
 package lexer.tokens;
 
-import lexer.tokens.ExtractToken;
+import java.io.IOException;
 
-public class Token implements ExtractToken {
+import lexer.SourceFile;
+import lexer.tokens.TokenType;
 
-	protected String text;
+public class Token implements TokenType {
+
+	
 	protected String value;
-	public TokenType type;
+	protected SourceFile source;
+	public COBOLTokenType type;
 	
-	public Token(String type, String value) {
-		this.text = type;
-		this.value = value;
-	}
+	public Token(SourceFile source) {
+		this.source = source;
+	}	
 	
 	
-	public String getType() {
-		return text;		
+	public TokenType getType() {
+		return type;		
 	}
 	
 	public String getTokenValue() {
 		return value;
 	}
 	
-	public void extract() {
+	public void extract() throws IOException {
 		
 	}
 }

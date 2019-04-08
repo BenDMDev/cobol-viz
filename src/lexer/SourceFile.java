@@ -38,8 +38,9 @@ public class SourceFile {
 	 * @return
 	 * @throws IOException
 	 */
-	public void nextChar() throws IOException {
-		currentChar = (char) input.read();					
+	public char nextChar() throws IOException {
+		currentChar = (char) input.read();	
+		return currentChar;
 		
 	}
 	

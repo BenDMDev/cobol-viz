@@ -2,6 +2,9 @@ package lexer;
 
 import java.io.IOException;
 
+import lexer.tokens.COBOLTokenType;
+import lexer.tokens.NumberToken;
+import lexer.tokens.SymbolToken;
 import lexer.tokens.Token;
 import lexer.tokens.WordToken;
 
@@ -30,35 +33,25 @@ public class Lexer {
 		
 		// First time scanning, set first character
 		if(source.getCurrentChar() == 0)
-			source.nextChar();
+		source.nextChar();
 		
 		source.skipWhiteSpace(); // Skips to next valid Character or does nothing if already valid
-		
-		StringBuilder s = new StringBuilder();	
+				
 		char c = source.getCurrentChar();
 		Token t = null;
 		if(Character.isLetter(c)) {
-			while(Character.isLetter(c) || c == '-') {
-				s.append(c);				
-				source.nextChar();
-				c = source.getCurrentChar();
-			}
 			
-		t = new WordToken("WORD", s.toString());
-		
-		
+			t = new WordToken(source);
+			t.extract();		
+			
 		} else if (Character.isDigit(c)) {
-			while(Character.isDigit(c) || c == 'v' || c == 'V') {
-				s.append(c);				
-				source.nextChar();
-				c = source.getCurrentChar();
-			}
-			
-		t = new WordToken("DIGIT", s.toString());
+						
+			t = new NumberToken(source);
+			t.extract();
 		
-		} else if(c == '.') {
-			t = new WordToken("TERMINATE", ".");
-			source.nextChar();
+		} else if(COBOLTokenType.SPECIAL_SYMBOLS.containsKey(String.valueOf(c))) {
+			t = new SymbolToken(source);
+			t.extract();
 		}
 		
 		
