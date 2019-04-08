@@ -2,14 +2,17 @@ package lexer;
 
 import java.io.IOException;
 
+import lexer.tokens.Token;
+import lexer.tokens.WordToken;
+
 public class Lexer {
 
-	private Source source;
+	private SourceFile source;
 	static final char EOL = '\n';
 	private Token currentToken;
 	
 	
-	public Lexer (Source s) {
+	public Lexer (SourceFile s) {
 		source = s;
 		currentToken = null;
 	}
@@ -41,7 +44,8 @@ public class Lexer {
 				c = source.getCurrentChar();
 			}
 			
-		t = new Token("WORD", s.toString());
+		t = new WordToken("WORD", s.toString());
+		
 		
 		} else if (Character.isDigit(c)) {
 			while(Character.isDigit(c) || c == 'v' || c == 'V') {
@@ -50,10 +54,10 @@ public class Lexer {
 				c = source.getCurrentChar();
 			}
 			
-		t = new Token("DIGIT", s.toString());
+		t = new WordToken("DIGIT", s.toString());
 		
 		} else if(c == '.') {
-			t = new Token("TERMINATE", ".");
+			t = new WordToken("TERMINATE", ".");
 			source.nextChar();
 		}
 		

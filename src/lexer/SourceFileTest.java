@@ -8,12 +8,12 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
-public class SourceTest {
+public class SourceFileTest {
 
 	@Test
 	public void testNextChar() {
 		BufferedReader in = new BufferedReader(new StringReader("Hello"));
-		Source s = new Source(in);
+		SourceFile s = new SourceFile(in);
 		try {
 			s.nextChar();
 			assertEquals('H', s.getCurrentChar());
@@ -36,7 +36,7 @@ public class SourceTest {
 	@Test
 	public void testNextCharNumLine() {
 		BufferedReader in = new BufferedReader(new StringReader("H\nE\n"));
-		Source s = new Source(in);
+		SourceFile s = new SourceFile(in);
 		try {
 			s.nextChar();	
 			s.nextChar();
@@ -56,7 +56,7 @@ public class SourceTest {
 	@Test
 	public void testSkipWhiteSpace() {
 		BufferedReader in = new BufferedReader(new StringReader("H\n\nE"));
-		Source s = new Source(in);
+		SourceFile s = new SourceFile(in);
 		try {
 			s.nextChar();
 			s.nextChar();
@@ -73,7 +73,7 @@ public class SourceTest {
 	@Test
 	public void testPeak() {
 		BufferedReader in = new BufferedReader(new StringReader("Hello"));
-		Source s = new Source(in);
+		SourceFile s = new SourceFile(in);
 		try {
 			s.nextChar();			
 			assertEquals('e', s.peek());

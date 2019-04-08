@@ -3,7 +3,7 @@ package lexer;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class Source {
+public class SourceFile {
 
 	private BufferedReader input;
 	private char currentChar;
@@ -14,7 +14,7 @@ public class Source {
 	 * 
 	 * @param in
 	 */
-	public Source(BufferedReader in) {
+	public SourceFile(BufferedReader in) {
 		input = in;
 		currentChar = 0;
 		numLines = 0;

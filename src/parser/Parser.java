@@ -3,7 +3,7 @@ package parser;
 import java.io.IOException;
 
 import lexer.Lexer;
-import lexer.Token;
+import lexer.tokens.Token;
 import output.GraphWriter;
 
 public class Parser {

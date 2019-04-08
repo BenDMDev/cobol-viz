@@ -9,7 +9,7 @@ import java.io.StringReader;
 import org.junit.Test;
 
 import lexer.Lexer;
-import lexer.Source;
+import lexer.SourceFile;
 import parser.ParseTreeNode;
 import parser.Parser;
 
@@ -25,7 +25,7 @@ public class GraphWriterTest {
 				   + "ADD four TO five.\n"
 				   + "END PROGRAM";
 	BufferedReader in = new BufferedReader(new StringReader(input));
-	Source s = new Source(in);
+	SourceFile s = new SourceFile(in);
 	Lexer l = new Lexer(s);
 	Parser p = new Parser(l);
 	GraphGenerator gp = new GraphGenerator();
