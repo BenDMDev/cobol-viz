@@ -8,7 +8,7 @@ import output.GraphWriter;
 
 public class Parser {
 
-	private Lexer lexer;
+	protected Lexer lexer;
 	private GraphWriter gPrinter;
 	private ParseTreeNode parseTree;
 

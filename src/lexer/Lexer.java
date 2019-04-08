@@ -10,8 +10,7 @@ import lexer.tokens.WordToken;
 
 public class Lexer {
 
-	private SourceFile source;
-	static final char EOL = '\n';
+	private SourceFile source;	
 	private Token currentToken;
 	
 	
