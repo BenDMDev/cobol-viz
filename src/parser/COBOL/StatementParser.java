@@ -16,49 +16,47 @@ public class StatementParser extends Parser {
 	}
 
 	@Override
-	public ParseTreeNode parse() throws IOException {
-		ParseTreeNode p = null;
+	public ParseTreeNode parse(Token t) throws IOException {
 		
-		if (lexer.getCurrentToken().getType() == COBOLTokenType.MOVE) {
-			p = new ParseTreeNode("MOVE STATEMENT");
-			parseMoveStatement(p);
+		ParseTreeNode p = new ParseTreeNode("STATEMENT");
+		
+		if (t.getType() == COBOLTokenType.MOVE) {			
+			p.addChild(parseMoveStatement(t));
 		} else
 
-		if (lexer.getCurrentToken().getType() == COBOLTokenType.ADD) {
-			p = new ParseTreeNode("ADD STATEMENT");
-			parseAddStatement(p);
+		if (t.getType() == COBOLTokenType.ADD) {			
+			p.addChild(parseAddStatement(t));
 		} else
 
-		if (lexer.getCurrentToken().getType() == COBOLTokenType.IF) {
-			p = new ParseTreeNode("CONDITIONAL STATEMENT");
-			parseConditionalStatement(p);
+		if (t.getType() == COBOLTokenType.IF) {			
+			p.addChild(parseConditionalStatement(t));
 		}
 		return p;
 	}
 
-	public ParseTreeNode parseMoveStatement(ParseTreeNode parentNode) throws IOException {
+	public ParseTreeNode parseMoveStatement(Token t) throws IOException {
 
-		Token t = lexer.getCurrentToken();
-		parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+		ParseTreeNode p = new ParseTreeNode("MOVE STATEMENT");
+		p.addChild(new ParseTreeNode(t.getTokenValue()));
 
 		lexer.scan();
 		t = lexer.getCurrentToken();
 
 		if (t.getType() == COBOLTokenType.CORRESPONDING || t.getType() == COBOLTokenType.CORR) {
-			parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
 
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-			parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
 		
 
 		if (t.getType() == COBOLTokenType.TO) {
-			parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
@@ -67,35 +65,35 @@ public class StatementParser extends Parser {
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
 			
 			while (t.getType() == COBOLTokenType.IDENTIFIER) {
-				parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+				p.addChild(new ParseTreeNode(t.getTokenValue()));
 				lexer.scan();
 				t = lexer.getCurrentToken();
 			}
 
 		}
 
-		return parentNode;
+		return p;
 
 	}
 
-	public ParseTreeNode parseAddStatement(ParseTreeNode parentNode) throws IOException {
+	public ParseTreeNode parseAddStatement(Token t) throws IOException {
 
-		Token t = lexer.getCurrentToken();
-		parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+		ParseTreeNode p = new ParseTreeNode("ADD STATEMENT");
+		p.addChild(new ParseTreeNode(t.getTokenValue()));
 
 		lexer.scan();
 		t = lexer.getCurrentToken();
 
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
 			while (t.getType() == COBOLTokenType.IDENTIFIER) {
-				parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+				p.addChild(new ParseTreeNode(t.getTokenValue()));
 				lexer.scan();
 				t = lexer.getCurrentToken();
 			}
 		}
 
 		if (t.getType() == COBOLTokenType.TO)
-			parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+			p.addChild(new ParseTreeNode(t.getTokenValue()));
 
 		lexer.scan();
 		t = lexer.getCurrentToken();
@@ -103,37 +101,37 @@ public class StatementParser extends Parser {
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
 
 			while (t.getType() == COBOLTokenType.IDENTIFIER) {
-				parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+				p.addChild(new ParseTreeNode(t.getTokenValue()));
 				lexer.scan();
 				t = lexer.getCurrentToken();
 				if (t.getType() == COBOLTokenType.ROUNDED) {
-					parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+					p.addChild(new ParseTreeNode(t.getTokenValue()));
 					lexer.scan();
 					t = lexer.getCurrentToken();
 				}
 			}
 		}
 		
-		return parentNode;
+		return p;
 	}
 
-	public ParseTreeNode parseConditionalStatement(ParseTreeNode parentNode) throws IOException {
+	public ParseTreeNode parseConditionalStatement(Token t) throws IOException {
 
-		Token t = lexer.getCurrentToken();
-		parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+		ParseTreeNode p = new ParseTreeNode("CONDITIONAL STATEMENT");
+		p.addChild(new ParseTreeNode(t.getTokenValue()));
 
 		lexer.scan();
 		t = lexer.getCurrentToken();
 
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-			parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
 
-		COBOLTokenType type = (COBOLTokenType) t.getType();
+		
 		while (t.getType() != COBOLTokenType.IDENTIFIER) {
-			switch (type) {
+			switch ((COBOLTokenType) t.getType()) {
 			case GREATER:
 			case LESS:
 			case THAN:
@@ -146,7 +144,7 @@ public class StatementParser extends Parser {
 			case LESS_THAN_EQUALS:
 			case GREATER_THAN_EQUALS:
 			case EQUALS:
-				parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+				p.addChild(new ParseTreeNode(t.getTokenValue()));
 				break;
 			default:
 				break;
@@ -156,10 +154,10 @@ public class StatementParser extends Parser {
 			t = lexer.getCurrentToken();
 		}
 
-		parentNode.addChild(new ParseTreeNode(t.getTokenValue()));
+		p.addChild(new ParseTreeNode(t.getTokenValue()));
 		lexer.scan();
 
-		return parentNode;
+		return p;
 
 	}
 

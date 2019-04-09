@@ -16,15 +16,14 @@ public class SentenceParser extends Parser {
 	}
 
 	@Override
-	public ParseTreeNode parse() throws IOException {
-		
-		Token t = lexer.getCurrentToken();
+	public ParseTreeNode parse(Token t) throws IOException {
+				
 		parseTree = new ParseTreeNode ("SENTENCE");		
 		while(t.getType() != COBOLTokenType.FULL_STOP) {
 			StatementParser sp = new StatementParser(lexer);
-			ParseTreeNode p = new ParseTreeNode("STATEMENT");
-			p.addChild(sp.parse());
-			parseTree.addChild(p);			
+			//ParseTreeNode p = new ParseTreeNode("STATEMENT");
+			//p.addChild(sp.parse());
+			parseTree.addChild(sp.parse(t));			
 			t = lexer.getCurrentToken();	
 		}
 		

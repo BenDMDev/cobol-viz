@@ -16,7 +16,7 @@ import parser.COBOL.StatementParser;
 
 public class StatementParserTest {
 
-	
+	@Test
 	public void testParseMoveStatement() {
 		String input = "MOVE one TO two three four";
 
@@ -26,7 +26,9 @@ public class StatementParserTest {
 
 		StatementParser sp = new StatementParser(l);
 		try {
-			ParseTreeNode pt = sp.parse();
+			l.scan();
+			
+			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 
 		} catch (IOException e) {
@@ -47,7 +49,7 @@ public class StatementParserTest {
 		StatementParser sp = new StatementParser(l);
 		try {
 			l.scan();
-			ParseTreeNode pt = sp.parse();
+			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 
 		} catch (IOException e) {
@@ -68,7 +70,7 @@ public class StatementParserTest {
 		StatementParser sp = new StatementParser(l);
 		try {
 			l.scan();
-			ParseTreeNode pt = sp.parse();
+			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 			assertEquals(COBOLTokenType.FULL_STOP, l.getCurrentToken().getType());
 
@@ -90,7 +92,7 @@ public class StatementParserTest {
 		StatementParser sp = new StatementParser(l);
 		try {
 			l.scan();
-			ParseTreeNode pt = sp.parse();
+			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 
 		} catch (IOException e) {

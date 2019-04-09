@@ -3,6 +3,7 @@ package parser;
 import java.io.IOException;
 
 import lexer.Lexer;
+import lexer.tokens.Token;
 
 public abstract class Parser {
 
@@ -14,7 +15,7 @@ public abstract class Parser {
 		parseTree = null;
 	}
 	
-	public abstract ParseTreeNode parse() throws IOException;
+	public abstract ParseTreeNode parse(Token t) throws IOException;
 	
 	public void printParseTree(ParseTreeNode p) {
 		

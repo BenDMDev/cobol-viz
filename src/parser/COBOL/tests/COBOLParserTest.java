@@ -15,7 +15,11 @@ public class COBOLParserTest {
 
 	@Test
 	public void testParse() {
-		String input = "PROCEDURE DIVISION.\n" + "MOVE x to Y";
+		String input = "PROCEDURE DIVISION.\n"
+					    + "MOVE x TO Y\n" 
+					    + "ADD x TO z.\n"
+					    + "IF x > y.\n"					    
+					    + "END PROGRAM.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -23,7 +27,9 @@ public class COBOLParserTest {
 		COBOLParser cbp = new COBOLParser(l);
 	
 		try {
-			ParseTreeNode pt = cbp.parse();
+			l.scan();
+			
+			ParseTreeNode pt = cbp.parse(l.getCurrentToken());
 			cbp.printParseTree(pt);
 
 		} catch (IOException e) {

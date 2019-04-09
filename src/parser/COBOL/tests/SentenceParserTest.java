@@ -28,7 +28,7 @@ public class SentenceParserTest {
 		
 		try {
 			l.scan();
-			ParseTreeNode pt = sp.parse();
+			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 
 		} catch (IOException e) {
