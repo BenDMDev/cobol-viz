@@ -7,7 +7,7 @@ import lexer.Lexer;
 public abstract class Parser {
 
 	protected Lexer lexer;
-	private ParseTreeNode parseTree;
+	protected ParseTreeNode parseTree;
 
 	public Parser(Lexer l) {
 		lexer = l;

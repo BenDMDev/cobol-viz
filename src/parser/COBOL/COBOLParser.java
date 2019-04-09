@@ -11,6 +11,7 @@ import parser.Parser;
 
 public class COBOLParser extends Parser {
 
+	
 	public COBOLParser(Lexer l) {
 		super(l);		
 	}
@@ -30,11 +31,28 @@ public class COBOLParser extends Parser {
 		case DATA:
 			break;
 		case PROCEDURE:
+			
+			parseTree = new ParseTreeNode("PROCEDURE DIVISION");
+			
+			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			
+			lexer.scan();
+			t = lexer.getCurrentToken();
+			
+			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			
+			lexer.scan();
+			t = lexer.getCurrentToken();
+			
+			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			
+			StatementParser sp = new StatementParser(lexer);
+			parseTree.addChild(sp.parse());
 			break;
 		default:
 			break;
 		}
-		return null;
+		return parseTree;
 		
 	}
 
