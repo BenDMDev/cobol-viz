@@ -16,6 +16,7 @@ public class NumberToken extends Token {
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
 		this.type = COBOLTokenType.INTEGER;
+		
 		while(Character.isDigit(c)) {
 			s.append(c);
 			if(source.peek() == '.') {

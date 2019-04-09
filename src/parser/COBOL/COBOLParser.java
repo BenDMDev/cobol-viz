@@ -1,9 +1,13 @@
-package parser;
+package parser.COBOL;
 
 import java.io.IOException;
 
 import lexer.Lexer;
+import lexer.tokens.COBOLTokenType;
 import lexer.tokens.Token;
+import parser.ParseTreeNode;
+import parser.Parser;
+
 
 public class COBOLParser extends Parser {
 
@@ -16,8 +20,9 @@ public class COBOLParser extends Parser {
 		
 		lexer.scan();
 		Token t = lexer.getCurrentToken();
+		COBOLTokenType tokenType = (COBOLTokenType) t.getType();
 		
-		switch(t.type) {
+		switch(tokenType) {
 		case IDENTIFICATION :			
 			break;
 		case ENVIRONMENT :
@@ -25,6 +30,8 @@ public class COBOLParser extends Parser {
 		case DATA:
 			break;
 		case PROCEDURE:
+			break;
+		default:
 			break;
 		}
 		return null;

@@ -6,27 +6,55 @@ import java.io.IOException;
 public class SourceFile {
 
 	private BufferedReader input;
-	private char currentChar;
+	private String inputBuffer;	
 	private int numLines;
-	private char EOL = '\n';
+	private int charPos;
+	static char EOL = '\n';
+	static char EOF = 0; 
 
 	/**
 	 * 
 	 * @param in
 	 */
 	public SourceFile(BufferedReader in) {
-		input = in;
-		currentChar = 0;
+		input = in;		
 		numLines = 0;
+		charPos = -2;
 	}
     
 	/**
 	 * 
 	 * @return
+	 * @throws IOException 
 	 */
-	public char getCurrentChar() {
-		return currentChar;
+	public char getCurrentChar() throws IOException {
+		
+		if(charPos == -2) {			
+			return nextChar();
+		}
+		
+		if(charPos == -1) {		
+			charPos++;
+			inputBuffer = input.readLine();				
+		}
+		
+		
+		if(inputBuffer == null) {
+			
+			return EOF;
+			
+		} else if(charPos == inputBuffer.length()) {
+			
+			charPos = -2;
+			numLines++;
+			return EOL;		
+			
+		} else
+			return inputBuffer.charAt(charPos);
+		
+		
 	}
+	
 	
 	public int getNumberOfLines() {
 		return numLines;
@@ -38,28 +66,26 @@ public class SourceFile {
 	 * @return
 	 * @throws IOException
 	 */
-	public char nextChar() throws IOException {
-		currentChar = (char) input.read();	
-		return currentChar;
+	public char nextChar() throws IOException {		
+		charPos++;		
+		return getCurrentChar();
 		
 	}
 	
 	public void skipWhiteSpace() throws IOException {
-		while(Character.isWhitespace(currentChar)) {
-			if(currentChar == EOL)
-				numLines++;
 		
-		currentChar = (char) input.read();
-		}
 	}
 	
 	
 	
-	public char peek() throws IOException {
-		input.mark(1);
-		char c = (char) input.read();
-		input.reset();
-		return c;
+	public char peek() throws IOException {	
+		
+		if(inputBuffer == null) 
+			return EOF;
+		else if(charPos < inputBuffer.length()-1)
+			return inputBuffer.charAt(charPos + 1);
+		else
+			return EOL;
 	}
 
 }

@@ -5,12 +5,12 @@ import java.io.IOException;
 import lexer.SourceFile;
 import lexer.tokens.TokenType;
 
-public class Token implements TokenType {
+public abstract class Token implements TokenType {
 
 	
 	protected String value;
 	protected SourceFile source;
-	public COBOLTokenType type;
+	protected COBOLTokenType type;
 	
 	public Token(SourceFile source) {
 		this.source = source;
@@ -25,7 +25,5 @@ public class Token implements TokenType {
 		return value;
 	}
 	
-	public void extract() throws IOException {
-		
-	}
+	public abstract void extract() throws IOException;
 }

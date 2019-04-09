@@ -1,8 +1,10 @@
-package parser;
+package parser.tests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import parser.ParseTreeNode;
 
 public class ParseTreeNodeTest {
 
