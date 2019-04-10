@@ -2,64 +2,76 @@ package lexer;
 
 import java.io.IOException;
 
+import lexer.tokens.*;
+
+
 public class Lexer {
 
-	private Source source;
-	static final char EOL = '\n';
+	private SourceFile source;	
 	private Token currentToken;
 	
 	
-	public Lexer (Source s) {
+	public Lexer (SourceFile s) {
 		source = s;
 		currentToken = null;
 	}
 	
+	/**
+	 * Returns 
+	 * @return current Token 
+	 */
 	public Token getCurrentToken() {
 		return currentToken;
 	}
 		
 	
 	/**
-	 * 
+	 * Scan through SourceFile
+	 * Determines what Character was read and passes to
+	 * Token Class to handle extraction
+	 * Each Token class encapsulates the extract algorithm for that type
 	 * @throws IOException
 	 */
 	public void scan() throws IOException {
 		
-		// First time scanning, set first character
-		if(source.getCurrentChar() == 0)
-			source.nextChar();
-		
-		source.skipWhiteSpace(); // Skips to next valid Character or does nothing if already valid
-		
-		StringBuilder s = new StringBuilder();	
+				
+		skipWhiteSpace(); // Skips to next valid Character or does nothing if already valid
+				
 		char c = source.getCurrentChar();
 		Token t = null;
 		if(Character.isLetter(c)) {
-			while(Character.isLetter(c) || c == '-') {
-				s.append(c);				
-				source.nextChar();
-				c = source.getCurrentChar();
-			}
 			
-		t = new Token("WORD", s.toString());
-		
+			t = new WordToken(source);
+			t.extract();		
+			
 		} else if (Character.isDigit(c)) {
-			while(Character.isDigit(c) || c == 'v' || c == 'V') {
-				s.append(c);				
-				source.nextChar();
-				c = source.getCurrentChar();
-			}
-			
-		t = new Token("DIGIT", s.toString());
+						
+			t = new NumberToken(source);
+			t.extract();
 		
-		} else if(c == '.') {
-			t = new Token("TERMINATE", ".");
-			source.nextChar();
+		} else if(COBOLTokenType.SPECIAL_SYMBOLS.containsKey(String.valueOf(c))) {
+			t = new SymbolToken(source);
+			t.extract();
+		} else if (c == 0) {
+			t = new EOFToken(source);
+			
 		}
 		
 		
 		if(t !=null) {
 			currentToken = t;
+		}
+		
+	}
+	
+	/**
+	 * Skips spaces and newline 
+	 * @throws IOException
+	 */
+	private void skipWhiteSpace() throws IOException {
+		
+		while(source.getCurrentChar() == ' ' || source.getCurrentChar() == '\n') {
+			source.nextChar();
 		}
 		
 	}
