@@ -5,6 +5,7 @@ import java.io.IOException;
 import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
 import lexer.tokens.NumberToken;
+import lexer.tokens.StringToken;
 import lexer.tokens.Token;
 import lexer.tokens.WordToken;
 import parser.ParseTreeNode;
@@ -14,23 +15,22 @@ public class StatementParser extends Parser {
 
 	public StatementParser(Lexer l) {
 		super(l);
-
 	}
 
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
-		
+
 		ParseTreeNode p = new ParseTreeNode("STATEMENT");
-		
-		if (t.getType() == COBOLTokenType.MOVE) {			
+
+		if (t.getType() == COBOLTokenType.MOVE) {
 			p.addChild(parseMoveStatement(t));
 		} else
 
-		if (t.getType() == COBOLTokenType.ADD) {			
+		if (t.getType() == COBOLTokenType.ADD) {
 			p.addChild(parseAddStatement(t));
 		} else
 
-		if (t.getType() == COBOLTokenType.IF) {			
+		if (t.getType() == COBOLTokenType.IF) {
 			p.addChild(parseConditionalStatement(t));
 		}
 		return p;
@@ -50,23 +50,20 @@ public class StatementParser extends Parser {
 			t = lexer.getCurrentToken();
 		}
 
-		
 		if (t instanceof WordToken || t instanceof NumberToken) {
 			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
-		
 
 		if (t.getType() == COBOLTokenType.TO) {
 			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
-		
 
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-			
+
 			while (t.getType() == COBOLTokenType.IDENTIFIER) {
 				p.addChild(new ParseTreeNode(t.getTokenValue()));
 				lexer.scan();
@@ -114,7 +111,7 @@ public class StatementParser extends Parser {
 				}
 			}
 		}
-		
+
 		return p;
 	}
 
@@ -126,13 +123,40 @@ public class StatementParser extends Parser {
 		lexer.scan();
 		t = lexer.getCurrentToken();
 
-		if (t.getType() == COBOLTokenType.IDENTIFIER || t instanceof NumberToken) {
+		if (t.getType() == COBOLTokenType.IDENTIFIER || t instanceof NumberToken || t.getType() == COBOLTokenType.STRING_LITERAL) {
 			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
 
+		// Parse Condition Body of IF
+		p.addChild(parseCondition(t));
 		
+		// Get next Token - RHS of IF condition
+		t = lexer.getCurrentToken();
+		p.addChild(new ParseTreeNode(t.getTokenValue()));
+		lexer.scan(); // Consume RHS of IF
+		t = lexer.getCurrentToken();
+		
+		// Recursively call Parse Statement for body of IF
+		p.addChild(parse(t));
+		
+		t = lexer.getCurrentToken();
+		if(t.getType() == COBOLTokenType.ELSE) {
+			// Handle ELSE statements
+			p.addChild(new ParseTreeNode("ELSE"));
+			lexer.scan();
+			t = lexer.getCurrentToken();
+			p.addChild(parse(t)); // Recursively call more statements 
+		}
+
+		return p;
+
+	}
+
+	private ParseTreeNode parseCondition(Token t) throws IOException {
+		ParseTreeNode p = new ParseTreeNode("CONDITION");
+
 		while (t.getType() != COBOLTokenType.IDENTIFIER && !(t instanceof NumberToken)) {
 			switch ((COBOLTokenType) t.getType()) {
 			case GREATER:
@@ -158,12 +182,7 @@ public class StatementParser extends Parser {
 			t = lexer.getCurrentToken();
 		}
 
-		p.addChild(new ParseTreeNode(t.getTokenValue()));
-		lexer.scan();
-		
-
 		return p;
-
 	}
 
 }

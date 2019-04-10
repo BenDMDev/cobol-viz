@@ -28,8 +28,9 @@ public class COBOLParserTest {
 				+ "ADD two TO three\n"
 				+ "IF one > five\n"
 				+ "MOVE x TO Y\n"
-				+ "ADD x TO z\n"
-				+ "IF x > y.\n"
+				+ "ELSE\n"
+				+ "IF x > y\n"
+				+ "MOVE y TO x.\n"
 				+ "sec-two SECTION.\n"
 				+ "MOVE five TO six.\n"
 				+ "END PROGRAM.";

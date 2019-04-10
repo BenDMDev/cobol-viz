@@ -83,8 +83,13 @@ public class StatementParserTest {
 	
 	@Test
 	public void testParseConditionalStatement() {
-		String input = "IF LDA-RC NOT = 0\n" 
-					   + "MOVE x TO y";
+		String input = "IF \"LDA-RC\" NOT = 0\n" 
+					   + "IF 'LDA-RB' GREATER THAN OR EQUAL TO 10\n"
+					   + "IF y > z\n" 
+					   + "IF z < x\n"
+					   + "ADD ten TO five\n"
+					   + "ELSE\n"
+					   + " MOVE x TO five.\n";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

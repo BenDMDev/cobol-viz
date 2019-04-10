@@ -16,7 +16,7 @@ public class WordToken extends Token {
 		
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
-		while(Character.isLetter(c) || c == '-') {
+		while(Character.isLetter(c) || c == '-' || Character.isDigit(c)) {
 			s.append(c);				
 			c = source.nextChar();
 			

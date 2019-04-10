@@ -60,7 +60,12 @@ public class Lexer {
 			t = new NumberToken(source);
 			t.extract();
 
-		} else if (COBOLTokenType.SPECIAL_SYMBOLS.containsKey(String.valueOf(c))) {
+		} else if(c == '\"' || c == '\'') {
+			
+			t = new StringToken(source);
+			t.extract();
+		}
+		else if (COBOLTokenType.SPECIAL_SYMBOLS.containsKey(String.valueOf(c))) {
 			t = new SymbolToken(source);
 			t.extract();
 		} else if (c == 0) {
