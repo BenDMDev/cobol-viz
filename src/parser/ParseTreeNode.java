@@ -25,18 +25,6 @@ public class ParseTreeNode {
 	public String getType() {
 		return type;		
 	}
-	
-	public void traverse() {
-				
-		for(ParseTreeNode c : children) {
-			if(c.type.contains("RULE"))
-				System.out.println("\n" + c.type + " ");
-			else
-				System.out.print(c.type + " ");
-			c.traverse();			
-			
-		}
-	}
 		
 	
 	public List<ParseTreeNode> getChildren() {

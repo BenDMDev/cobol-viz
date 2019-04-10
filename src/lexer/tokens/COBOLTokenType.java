@@ -61,6 +61,12 @@ public enum COBOLTokenType implements TokenType {
 	// Literals
 	IDENTIFIER, INTEGER, STRING_LITERAL, REAL, EOF;
 	
+	static final int RESERVED_FIRST = ACCEPT.ordinal();
+	static final int RESERVED_LAST = UPON.ordinal();
+	static final int HYPHENATED_FIRST = ALPHABETIC_LOWER.ordinal();
+	static final int HYPHENATED_LAST = WORKING_STORAGE.ordinal();
+	static final int SYMBOLS_FIRST = ADDITION.ordinal();
+	static final int SYMBOLS_LAST = FULL_STOP.ordinal();
 	String text;
 	
 	/*
@@ -92,7 +98,7 @@ public enum COBOLTokenType implements TokenType {
 	public static HashSet<String> RESERVED = new HashSet<String>();
 	static {
 		COBOLTokenType val[] = COBOLTokenType.values();
-		for(int i = ACCEPT.ordinal(); i <= UPON.ordinal(); i++) {
+		for(int i = RESERVED_FIRST; i <= RESERVED_LAST; i++) {
 			RESERVED.add(val[i].toString());
 		}
 	}
@@ -103,7 +109,7 @@ public enum COBOLTokenType implements TokenType {
 	public static HashMap<String, COBOLTokenType> RESERVED_HYPHENS = new HashMap<String, COBOLTokenType>();
 	static {
 		COBOLTokenType val[] = COBOLTokenType.values();
-		for(int i = ALPHABETIC_LOWER.ordinal(); i <= WORKING_STORAGE.ordinal(); i ++) {
+		for(int i = HYPHENATED_FIRST; i <= HYPHENATED_LAST; i ++) {
 			RESERVED_HYPHENS.put(val[i].getText(), val[i]);
 		}		
 	}
@@ -114,7 +120,7 @@ public enum COBOLTokenType implements TokenType {
 	public static HashMap<String, COBOLTokenType> SPECIAL_SYMBOLS = new HashMap<String, COBOLTokenType>();
 	static {
 		COBOLTokenType val[] = COBOLTokenType.values();
-		for(int i = ADDITION.ordinal(); i <= FULL_STOP.ordinal(); i ++) {
+		for(int i = SYMBOLS_FIRST; i <= SYMBOLS_LAST; i ++) {
 			SPECIAL_SYMBOLS.put(val[i].getText(), val[i]);
 		}
 	}

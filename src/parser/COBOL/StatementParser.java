@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
+import lexer.tokens.NumberToken;
 import lexer.tokens.Token;
+import lexer.tokens.WordToken;
 import parser.ParseTreeNode;
 import parser.Parser;
 
@@ -48,7 +50,8 @@ public class StatementParser extends Parser {
 			t = lexer.getCurrentToken();
 		}
 
-		if (t.getType() == COBOLTokenType.IDENTIFIER) {
+		
+		if (t instanceof WordToken || t instanceof NumberToken) {
 			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
@@ -123,14 +126,14 @@ public class StatementParser extends Parser {
 		lexer.scan();
 		t = lexer.getCurrentToken();
 
-		if (t.getType() == COBOLTokenType.IDENTIFIER) {
+		if (t.getType() == COBOLTokenType.IDENTIFIER || t instanceof NumberToken) {
 			p.addChild(new ParseTreeNode(t.getTokenValue()));
 			lexer.scan();
 			t = lexer.getCurrentToken();
 		}
 
 		
-		while (t.getType() != COBOLTokenType.IDENTIFIER) {
+		while (t.getType() != COBOLTokenType.IDENTIFIER && !(t instanceof NumberToken)) {
 			switch ((COBOLTokenType) t.getType()) {
 			case GREATER:
 			case LESS:
@@ -144,6 +147,7 @@ public class StatementParser extends Parser {
 			case LESS_THAN_EQUALS:
 			case GREATER_THAN_EQUALS:
 			case EQUALS:
+			case NOT:
 				p.addChild(new ParseTreeNode(t.getTokenValue()));
 				break;
 			default:
@@ -156,6 +160,7 @@ public class StatementParser extends Parser {
 
 		p.addChild(new ParseTreeNode(t.getTokenValue()));
 		lexer.scan();
+		
 
 		return p;
 

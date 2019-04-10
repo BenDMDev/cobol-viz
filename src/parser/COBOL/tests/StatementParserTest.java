@@ -40,7 +40,7 @@ public class StatementParserTest {
 
 	@Test
 	public void testParseMoveStatementTwo() {
-		String input = "MOVE CORRESPONDING one TO two three four";
+		String input = "MOVE EMPNO TO EMPNO-D";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -83,7 +83,8 @@ public class StatementParserTest {
 	
 	@Test
 	public void testParseConditionalStatement() {
-		String input = "IF x IS GREATER THAN y.";
+		String input = "IF LDA-RC NOT = 0\n" 
+					   + "MOVE x TO y";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

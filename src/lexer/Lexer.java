@@ -16,13 +16,20 @@ public class Lexer {
 		currentToken = null;
 	}
 	
+	/**
+	 * Returns 
+	 * @return current Token 
+	 */
 	public Token getCurrentToken() {
 		return currentToken;
 	}
 		
 	
 	/**
-	 * 
+	 * Scan through SourceFile
+	 * Determines what Character was read and passes to
+	 * Token Class to handle extraction
+	 * Each Token class encapsulates the extract algorithm for that type
 	 * @throws IOException
 	 */
 	public void scan() throws IOException {
@@ -57,6 +64,10 @@ public class Lexer {
 		
 	}
 	
+	/**
+	 * Skips spaces and newline 
+	 * @throws IOException
+	 */
 	private void skipWhiteSpace() throws IOException {
 		
 		while(source.getCurrentChar() == ' ' || source.getCurrentChar() == '\n') {
