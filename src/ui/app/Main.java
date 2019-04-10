@@ -39,12 +39,8 @@ public class Main extends Application {
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Hello World");
 		SwingNode swing = new SwingNode();
-		script(swing);
-      	Pane root = new Pane();
-      	BorderPane box = new BorderPane();
-      //	box.setMinWidth(500);
-      //	box.setMinHeight(500);
-      	// box.getChildren().add(swing);
+		script(swing);      	
+      	BorderPane box = new BorderPane();  
       	box.setLeft(new TextField("Test"));
       	box.setCenter(swing);
       	FlowPane fp = new FlowPane();
@@ -81,9 +77,9 @@ public class Main extends Application {
         //Preview configuration
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
-        previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);
+        previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);       
         previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR, new DependantOriginalColor(Color.BLACK));
-        previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.TRUE);
         previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 50);
         previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR, Color.WHITE);
 

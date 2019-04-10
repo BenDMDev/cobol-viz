@@ -9,6 +9,7 @@ public class SourceFile {
 	private String inputBuffer;	
 	private int numLines;
 	private int charPos;
+	private int markerPos;
 	static char EOL = '\n';
 	static char EOF = 0; 
 
@@ -76,7 +77,19 @@ public class SourceFile {
 		
 	}
 	
+	/**
+	 * Set a marker to save current position
+	 */
+	public void setMarker() {
+		markerPos = charPos;
+	}
 	
+	/**
+	 * Reset to previous marker
+	 */
+	public void resetMarker() { 
+		charPos = markerPos;
+	}
 	
 	public char peek() throws IOException {	
 		

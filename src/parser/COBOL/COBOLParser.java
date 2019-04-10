@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
+import lexer.tokens.EOFToken;
 import lexer.tokens.Token;
 import parser.ParseTreeNode;
 import parser.Parser;
@@ -37,13 +38,27 @@ public class COBOLParser extends Parser {
 			t = lexer.getCurrentToken();
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
-			SentenceParser sp = new SentenceParser(lexer);
+			SectionParser sp = new SectionParser(lexer);
 			lexer.scan();
 			t = lexer.getCurrentToken();
 			while (t.getType() != COBOLTokenType.END) {
 				parseTree.addChild(sp.parse(t));
 				t = lexer.getCurrentToken();
 			}
+			
+			parseTree.addChild(new ParseTreeNode(t.getTokenValue())); 
+			lexer.scan(); // Consume END token
+			t = lexer.getCurrentToken();
+			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan(); // Consume PROGRAM token
+			t = lexer.getCurrentToken();
+			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			lexer.scan(); // Consume terminator
+			t = lexer.getCurrentToken();
+			
+			if(t instanceof EOFToken)		
+				System.out.println("Parse Success");
+			
 			break;
 		default:
 			break;
