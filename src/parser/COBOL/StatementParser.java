@@ -1,20 +1,28 @@
 package parser.COBOL;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
 import lexer.tokens.NumberToken;
-import lexer.tokens.StringToken;
 import lexer.tokens.Token;
+import lexer.tokens.TokenType;
 import lexer.tokens.WordToken;
 import parser.ParseTreeNode;
 import parser.Parser;
 
 public class StatementParser extends Parser {
 
+	private HashSet<TokenType> userInputAlternatives;
+	
 	public StatementParser(Lexer l) {
 		super(l);
+		userInputAlternatives = new HashSet<TokenType>();
+		userInputAlternatives.add(COBOLTokenType.IDENTIFIER);
+		userInputAlternatives.add(COBOLTokenType.STRING_LITERAL);
+		userInputAlternatives.add(COBOLTokenType.REAL);
+		userInputAlternatives.add(COBOLTokenType.INTEGER);
 	}
 
 	@Override
@@ -36,153 +44,127 @@ public class StatementParser extends Parser {
 		return p;
 	}
 
-	public ParseTreeNode parseMoveStatement(Token t) throws IOException {
+	public ParseTreeNode parseMoveStatement(Token inputToken) throws IOException {
 
 		ParseTreeNode p = new ParseTreeNode("MOVE STATEMENT");
-		p.addChild(new ParseTreeNode(t.getTokenValue()));
 
-		lexer.scan();
-		t = lexer.getCurrentToken();
+		match(inputToken, COBOLTokenType.MOVE, p);
+		inputToken = lexer.getCurrentToken();
 
-		if (t.getType() == COBOLTokenType.CORRESPONDING || t.getType() == COBOLTokenType.CORR) {
-			p.addChild(new ParseTreeNode(t.getTokenValue()));
+		HashSet<TokenType> tokens = new HashSet<TokenType>();
+		tokens.add(COBOLTokenType.CORRESPONDING);
+		tokens.add(COBOLTokenType.CORR);
+
+		matchList(inputToken, tokens, p);
+		inputToken = lexer.getCurrentToken();
+
+		if (inputToken instanceof WordToken || inputToken instanceof NumberToken) {
+			p.addChild(new ParseTreeNode(inputToken.getTokenValue()));
 			lexer.scan();
-			t = lexer.getCurrentToken();
+			inputToken = lexer.getCurrentToken();
 		}
 
-		if (t instanceof WordToken || t instanceof NumberToken) {
-			p.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan();
-			t = lexer.getCurrentToken();
-		}
+		match(inputToken, COBOLTokenType.TO, p);
+		inputToken = lexer.getCurrentToken();
 
-		if (t.getType() == COBOLTokenType.TO) {
-			p.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan();
-			t = lexer.getCurrentToken();
-		}
+		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
 
-		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-
-			while (t.getType() == COBOLTokenType.IDENTIFIER) {
-				p.addChild(new ParseTreeNode(t.getTokenValue()));
-				lexer.scan();
-				t = lexer.getCurrentToken();
-			}
-
+			match(inputToken, COBOLTokenType.IDENTIFIER, p);
+			inputToken = lexer.getCurrentToken();
 		}
 
 		return p;
 
 	}
 
-	public ParseTreeNode parseAddStatement(Token t) throws IOException {
+	public ParseTreeNode parseAddStatement(Token inputToken) throws IOException {
 
-		ParseTreeNode p = new ParseTreeNode("ADD STATEMENT");
-		p.addChild(new ParseTreeNode(t.getTokenValue()));
+		ParseTreeNode root = new ParseTreeNode("ADD STATEMENT");
 
-		lexer.scan();
-		t = lexer.getCurrentToken();
+		// Match and consume ADD
+		match(inputToken, COBOLTokenType.ADD, root);
+		inputToken = lexer.getCurrentToken();
 
-		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-			while (t.getType() == COBOLTokenType.IDENTIFIER) {
-				p.addChild(new ParseTreeNode(t.getTokenValue()));
-				lexer.scan();
-				t = lexer.getCurrentToken();
-			}
+		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
+
+			match(inputToken, COBOLTokenType.IDENTIFIER, root);
+			inputToken = lexer.getCurrentToken();
 		}
 
-		if (t.getType() == COBOLTokenType.TO)
-			p.addChild(new ParseTreeNode(t.getTokenValue()));
+		// Match and consume TO
+		match(inputToken, COBOLTokenType.TO, root);
+		inputToken = lexer.getCurrentToken();
 
-		lexer.scan();
-		t = lexer.getCurrentToken();
+		// Match and Consume Identifiers and Optional ROUNDED clause
+		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
 
-		if (t.getType() == COBOLTokenType.IDENTIFIER) {
+			match(inputToken, COBOLTokenType.IDENTIFIER, root);
+			inputToken = lexer.getCurrentToken();
+			match(inputToken, COBOLTokenType.ROUNDED, root);
+			inputToken = lexer.getCurrentToken();
 
-			while (t.getType() == COBOLTokenType.IDENTIFIER) {
-				p.addChild(new ParseTreeNode(t.getTokenValue()));
-				lexer.scan();
-				t = lexer.getCurrentToken();
-				if (t.getType() == COBOLTokenType.ROUNDED) {
-					p.addChild(new ParseTreeNode(t.getTokenValue()));
-					lexer.scan();
-					t = lexer.getCurrentToken();
-				}
-			}
 		}
 
-		return p;
+		return root;
 	}
 
-	public ParseTreeNode parseConditionalStatement(Token t) throws IOException {
+	public ParseTreeNode parseConditionalStatement(Token inputToken) throws IOException {
 
-		ParseTreeNode p = new ParseTreeNode("CONDITIONAL STATEMENT");
-		p.addChild(new ParseTreeNode(t.getTokenValue()));
-
-		lexer.scan();
-		t = lexer.getCurrentToken();
-
-		if (t.getType() == COBOLTokenType.IDENTIFIER || t instanceof NumberToken || t.getType() == COBOLTokenType.STRING_LITERAL) {
-			p.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan();
-			t = lexer.getCurrentToken();
-		}
-
+		ParseTreeNode root = new ParseTreeNode("CONDITIONAL STATEMENT");
+		
+		// Match and consume IF
+		match(inputToken, COBOLTokenType.IF, root);
+		inputToken = lexer.getCurrentToken();
+		
+		// Match and Consume LHS of IF 
+		matchList(inputToken, userInputAlternatives, root);
+		inputToken = lexer.getCurrentToken();
+		
 		// Parse Condition Body of IF
-		p.addChild(parseCondition(t));
-		
+		parseCondition(inputToken, root);
+
 		// Get next Token - RHS of IF condition
-		t = lexer.getCurrentToken();
-		p.addChild(new ParseTreeNode(t.getTokenValue()));
-		lexer.scan(); // Consume RHS of IF
-		t = lexer.getCurrentToken();
+		inputToken = lexer.getCurrentToken();
+		matchList(inputToken, userInputAlternatives, root);
 		
+		inputToken = lexer.getCurrentToken();
+
 		// Recursively call Parse Statement for body of IF
-		p.addChild(parse(t));
+		root.addChild(parse(inputToken));
+
+		inputToken = lexer.getCurrentToken();
 		
-		t = lexer.getCurrentToken();
-		if(t.getType() == COBOLTokenType.ELSE) {
-			// Handle ELSE statements
-			p.addChild(new ParseTreeNode("ELSE"));
-			lexer.scan();
-			t = lexer.getCurrentToken();
-			p.addChild(parse(t)); // Recursively call more statements 
+		if (inputToken.getType() == COBOLTokenType.ELSE) {			
+			match(inputToken, COBOLTokenType.ELSE, root);
+			inputToken = lexer.getCurrentToken();
+			root.addChild(parse(inputToken)); // Recursively call more statements
 		}
 
-		return p;
+		return root;
 
 	}
 
-	private ParseTreeNode parseCondition(Token t) throws IOException {
-		ParseTreeNode p = new ParseTreeNode("CONDITION");
+	private ParseTreeNode parseCondition(Token inputToken, ParseTreeNode root) throws IOException {
+	
+		match(inputToken, COBOLTokenType.IS, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.NOT, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.GREATER, root);			
+		match(lexer.getCurrentToken(), COBOLTokenType.THAN, root);			
+		match(lexer.getCurrentToken(), COBOLTokenType.OR, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.GREATER_THAN, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.LESS, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.THAN, root);			
+		match(lexer.getCurrentToken(), COBOLTokenType.OR, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);	
+		match(lexer.getCurrentToken(), COBOLTokenType.LESS_THAN, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);		
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUALS, root);	
 
-		while (t.getType() != COBOLTokenType.IDENTIFIER && !(t instanceof NumberToken)) {
-			switch ((COBOLTokenType) t.getType()) {
-			case GREATER:
-			case LESS:
-			case THAN:
-			case EQUAL:
-			case OR:
-			case TO:
-			case IS:
-			case GREATER_THAN:
-			case LESS_THAN:
-			case LESS_THAN_EQUALS:
-			case GREATER_THAN_EQUALS:
-			case EQUALS:
-			case NOT:
-				p.addChild(new ParseTreeNode(t.getTokenValue()));
-				break;
-			default:
-				break;
-			}
-
-			lexer.scan();
-			t = lexer.getCurrentToken();
-		}
-
-		return p;
+		return root;
 	}
 
 }

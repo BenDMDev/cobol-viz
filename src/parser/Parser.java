@@ -1,9 +1,11 @@
 package parser;
 
 import java.io.IOException;
+import java.util.Set;
 
 import lexer.Lexer;
 import lexer.tokens.Token;
+import lexer.tokens.TokenType;
 
 public abstract class Parser {
 
@@ -24,6 +26,23 @@ public abstract class Parser {
 			printParseTree(c);
 		}
 		
+	}
+	
+	public void match(Token input, TokenType expected, ParseTreeNode p) throws IOException {
+		
+		if(input.getType() == expected) {
+			p.addChild(new ParseTreeNode(input.getTokenValue()));
+			lexer.scan();
+		} 
+		
+	}
+	
+	public void matchList(Token input, Set<TokenType> expected, ParseTreeNode p) throws IOException {
+		
+		if(expected.contains(input.getType())) {
+			p.addChild(new ParseTreeNode(input.getTokenValue()));
+			lexer.scan();
+		}
 	}
 	
 }

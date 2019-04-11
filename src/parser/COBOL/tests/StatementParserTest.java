@@ -18,7 +18,7 @@ public class StatementParserTest {
 
 	@Test
 	public void testParseMoveStatement() {
-		String input = "MOVE one TO two three four";
+		String input = "MOVE CORRESPONDING one TO two three four";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -84,7 +84,7 @@ public class StatementParserTest {
 	@Test
 	public void testParseConditionalStatement() {
 		String input = "IF \"LDA-RC\" NOT = 0\n" 
-					   + "IF 'LDA-RB' GREATER THAN OR EQUAL TO 10\n"
+					   + "IF 'LDA-RB' GREATER THAN OR EQUAL TO 'test'\n"
 					   + "IF y > z\n" 
 					   + "IF z < x\n"
 					   + "ADD ten TO five\n"
