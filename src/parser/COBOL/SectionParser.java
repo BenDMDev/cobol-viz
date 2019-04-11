@@ -4,10 +4,9 @@ import java.io.IOException;
 
 import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
-import lexer.tokens.EOFToken;
 import lexer.tokens.Token;
-import lexer.tokens.WordToken;
 import parser.trees.ParseTreeNode;
+import parser.trees.nodes.COBOL.SectionNode;
 import parser.Parser;
 
 public class SectionParser extends Parser {
@@ -20,7 +19,7 @@ public class SectionParser extends Parser {
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
 		
-		parseTree = new ParseTreeNode("SECTION");
+		parseTree = new SectionNode("SECTION");
 				
 		if(t.getType() == COBOLTokenType.IDENTIFIER && lexer.lookAhead().getType() == COBOLTokenType.SECTION) {
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));

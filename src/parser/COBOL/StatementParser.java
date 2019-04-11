@@ -10,19 +10,27 @@ import lexer.tokens.Token;
 import lexer.tokens.TokenType;
 import lexer.tokens.WordToken;
 import parser.trees.ParseTreeNode;
+import parser.trees.nodes.COBOL.StatementNode;
 import parser.Parser;
 
 public class StatementParser extends Parser {
 
 	private HashSet<TokenType> userInputAlternatives;
+	private HashSet<TokenType> statementPrefixes;
 
 	public StatementParser(Lexer l) {
 		super(l);
 		userInputAlternatives = new HashSet<TokenType>();
+		statementPrefixes = new HashSet<TokenType>();
+		
 		userInputAlternatives.add(COBOLTokenType.IDENTIFIER);
 		userInputAlternatives.add(COBOLTokenType.STRING_LITERAL);
 		userInputAlternatives.add(COBOLTokenType.REAL);
 		userInputAlternatives.add(COBOLTokenType.INTEGER);
+		
+		statementPrefixes.add(COBOLTokenType.MOVE);
+		statementPrefixes.add(COBOLTokenType.ADD);
+		statementPrefixes.add(COBOLTokenType.IF);
 	}
 
 	@Override
@@ -115,14 +123,16 @@ public class StatementParser extends Parser {
 
 		ParseTreeNode root = new ParseTreeNode("CONDITIONAL STATEMENT");
 
+		
 		// Match and consume IF
 		match(inputToken, COBOLTokenType.IF, root);
 		inputToken = lexer.getCurrentToken();
+		
 
 		// Match and Consume LHS of IF
 		matchList(inputToken, userInputAlternatives, root);
 		inputToken = lexer.getCurrentToken();
-
+		
 		// Parse Condition Body of IF
 		parseCondition(inputToken, root);
 
@@ -133,7 +143,10 @@ public class StatementParser extends Parser {
 		inputToken = lexer.getCurrentToken();
 
 		// Recursively call Parse Statement for body of IF
-		root.addChild(parse(inputToken));
+		while(statementPrefixes.contains(inputToken.getType())){
+			root.addChild(parse(inputToken));
+			inputToken = lexer.getCurrentToken();
+		}
 
 		inputToken = lexer.getCurrentToken();
 
@@ -143,7 +156,7 @@ public class StatementParser extends Parser {
 			root.addChild(parse(inputToken)); // Recursively call more
 												// statements
 		}
-
+		
 		return root;
 
 	}
@@ -168,6 +181,7 @@ public class StatementParser extends Parser {
 		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);
 		match(lexer.getCurrentToken(), COBOLTokenType.EQUALS, root);
 
+		
 		return root;
 	}
 

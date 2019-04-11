@@ -6,6 +6,7 @@ import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
 import lexer.tokens.Token;
 import parser.trees.ParseTreeNode;
+import parser.trees.nodes.COBOL.SentenceNode;
 import parser.Parser;
 
 public class SentenceParser extends Parser {
@@ -18,7 +19,7 @@ public class SentenceParser extends Parser {
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
 				
-		parseTree = new ParseTreeNode ("SENTENCE");		
+		parseTree = new SentenceNode ("SENTENCE");		
 		while(t.getType() != COBOLTokenType.FULL_STOP) {
 			StatementParser sp = new StatementParser(lexer);
 			//ParseTreeNode p = new ParseTreeNode("STATEMENT");

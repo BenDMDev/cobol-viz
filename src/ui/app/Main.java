@@ -7,6 +7,7 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 
 import javax.swing.JPanel;
+
 import org.gephi.io.importer.api.Container;
 import org.gephi.io.importer.api.ImportController;
 import org.gephi.io.processor.plugin.DefaultProcessor;
@@ -26,7 +27,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -63,16 +63,24 @@ public class Main extends Application {
         //Import file
         ImportController importController = Lookup.getDefault().lookup(ImportController.class);
         Container container;
+       
+        
         try {
-            File file = new File(getClass().getResource("hello.gexf").toURI());
+            File file = new File(getClass().getResource("yeast.gexf").toURI());
             container = importController.importFile(file);
         } catch (Exception ex) {
             ex.printStackTrace();
             return;
         }
 
+         
+        
+       
+        
         //Append imported data to GraphAPI
         importController.process(container, new DefaultProcessor(), workspace);
+        
+        
 
         //Preview configuration
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
@@ -83,6 +91,9 @@ public class Main extends Application {
         previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 50);
         previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR, Color.WHITE);
 
+        
+
+        
         //New Processing target, get the PApplet
         G2DTarget target = (G2DTarget) previewController.getRenderTarget(RenderTarget.G2D_TARGET);
         final PreviewSketch previewSketch = new PreviewSketch(target);

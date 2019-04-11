@@ -2,9 +2,9 @@ package parser.trees.nodes.COBOL;
 
 import parser.trees.ParseTreeNode;
 
-public class StatementNode extends ParseTreeNode {
+public class ParagraphNode extends ParseTreeNode {
 
-	public StatementNode(String type) {
+	public ParagraphNode(String type) {
 		super(type);		
 	}
 

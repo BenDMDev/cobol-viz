@@ -83,13 +83,8 @@ public class StatementParserTest {
 	
 	@Test
 	public void testParseConditionalStatement() {
-		String input = "IF \"LDA-RC\" NOT = 0\n" 
-					   + "IF 'LDA-RB' GREATER THAN OR EQUAL TO 'test'\n"
-					   + "IF y > z\n" 
-					   + "IF z < x\n"
-					   + "ADD ten TO five\n"
-					   + "ELSE\n"
-					   + " MOVE x TO five.\n";
+		String input = "IF lda-rc NOT = y\n" 
+				+ "MOVE ten TO five\n";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -97,7 +92,7 @@ public class StatementParserTest {
 
 		StatementParser sp = new StatementParser(l);
 		try {
-			l.scan();
+			l.scan();			
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 
