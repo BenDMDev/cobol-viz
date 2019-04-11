@@ -6,7 +6,7 @@ import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
 import lexer.tokens.EOFToken;
 import lexer.tokens.Token;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.Parser;
 
 public class ParagraphParser extends Parser {

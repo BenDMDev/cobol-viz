@@ -5,7 +5,7 @@ import java.io.IOException;
 import lexer.Lexer;
 import lexer.tokens.COBOLTokenType;
 import lexer.tokens.Token;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.Parser;
 
 public class SentenceParser extends Parser {

@@ -9,13 +9,13 @@ import lexer.tokens.NumberToken;
 import lexer.tokens.Token;
 import lexer.tokens.TokenType;
 import lexer.tokens.WordToken;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.Parser;
 
 public class StatementParser extends Parser {
 
 	private HashSet<TokenType> userInputAlternatives;
-	
+
 	public StatementParser(Lexer l) {
 		super(l);
 		userInputAlternatives = new HashSet<TokenType>();
@@ -30,17 +30,20 @@ public class StatementParser extends Parser {
 
 		ParseTreeNode p = new ParseTreeNode("STATEMENT");
 
-		if (t.getType() == COBOLTokenType.MOVE) {
+		switch ((COBOLTokenType) t.getType()) {
+		case MOVE:
 			p.addChild(parseMoveStatement(t));
-		} else
-
-		if (t.getType() == COBOLTokenType.ADD) {
+			break;
+		case ADD:
 			p.addChild(parseAddStatement(t));
-		} else
-
-		if (t.getType() == COBOLTokenType.IF) {
+			break;
+		case IF:
 			p.addChild(parseConditionalStatement(t));
+			break;
+		default:
+			break;
 		}
+
 		return p;
 	}
 
@@ -111,33 +114,34 @@ public class StatementParser extends Parser {
 	public ParseTreeNode parseConditionalStatement(Token inputToken) throws IOException {
 
 		ParseTreeNode root = new ParseTreeNode("CONDITIONAL STATEMENT");
-		
+
 		// Match and consume IF
 		match(inputToken, COBOLTokenType.IF, root);
 		inputToken = lexer.getCurrentToken();
-		
-		// Match and Consume LHS of IF 
+
+		// Match and Consume LHS of IF
 		matchList(inputToken, userInputAlternatives, root);
 		inputToken = lexer.getCurrentToken();
-		
+
 		// Parse Condition Body of IF
 		parseCondition(inputToken, root);
 
 		// Get next Token - RHS of IF condition
 		inputToken = lexer.getCurrentToken();
 		matchList(inputToken, userInputAlternatives, root);
-		
+
 		inputToken = lexer.getCurrentToken();
 
 		// Recursively call Parse Statement for body of IF
 		root.addChild(parse(inputToken));
 
 		inputToken = lexer.getCurrentToken();
-		
-		if (inputToken.getType() == COBOLTokenType.ELSE) {			
+
+		if (inputToken.getType() == COBOLTokenType.ELSE) {
 			match(inputToken, COBOLTokenType.ELSE, root);
 			inputToken = lexer.getCurrentToken();
-			root.addChild(parse(inputToken)); // Recursively call more statements
+			root.addChild(parse(inputToken)); // Recursively call more
+												// statements
 		}
 
 		return root;
@@ -145,24 +149,24 @@ public class StatementParser extends Parser {
 	}
 
 	private ParseTreeNode parseCondition(Token inputToken, ParseTreeNode root) throws IOException {
-	
-		match(inputToken, COBOLTokenType.IS, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.NOT, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.GREATER, root);			
-		match(lexer.getCurrentToken(), COBOLTokenType.THAN, root);			
+
+		match(inputToken, COBOLTokenType.IS, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.NOT, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.GREATER, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.THAN, root);
 		match(lexer.getCurrentToken(), COBOLTokenType.OR, root);
-		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.GREATER_THAN, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.LESS, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.THAN, root);			
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.GREATER_THAN, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.LESS, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.THAN, root);
 		match(lexer.getCurrentToken(), COBOLTokenType.OR, root);
-		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);	
-		match(lexer.getCurrentToken(), COBOLTokenType.LESS_THAN, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);		
-		match(lexer.getCurrentToken(), COBOLTokenType.EQUALS, root);	
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.LESS_THAN, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUAL, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.TO, root);
+		match(lexer.getCurrentToken(), COBOLTokenType.EQUALS, root);
 
 		return root;
 	}

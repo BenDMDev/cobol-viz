@@ -7,7 +7,7 @@ import lexer.tokens.COBOLTokenType;
 import lexer.tokens.EOFToken;
 import lexer.tokens.Token;
 import lexer.tokens.WordToken;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.Parser;
 
 public class SectionParser extends Parser {

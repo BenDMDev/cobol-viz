@@ -11,7 +11,7 @@ import org.junit.Test;
 import lexer.Lexer;
 import lexer.SourceFile;
 import lexer.tokens.COBOLTokenType;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.COBOL.StatementParser;
 
 public class StatementParserTest {
