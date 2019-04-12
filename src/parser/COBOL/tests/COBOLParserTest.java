@@ -6,9 +6,12 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
+import intermediate.graph.Graph;
 import lexer.Lexer;
 import lexer.SourceFile;
 import parser.trees.ParseTreeNode;
+import parser.trees.TreeVisitor;
+import parser.trees.nodes.COBOL.COBOLVisitor;
 import parser.COBOL.COBOLParser;
 
 public class COBOLParserTest {
@@ -32,6 +35,8 @@ public class COBOLParserTest {
 				+ "IF x > y\n"
 				+ "MOVE y TO x.\n"
 				+ "sec-two SECTION.\n"
+				+ "Para-name-four.\n"
+				+ "Para-name-five.\n"
 				+ "MOVE five TO six.\n"
 				+ "END PROGRAM.";
 
@@ -45,6 +50,11 @@ public class COBOLParserTest {
 
 			ParseTreeNode pt = cbp.parse(l.getCurrentToken());
 			cbp.printParseTree(pt);
+			COBOLVisitor tv = new COBOLVisitor();
+			pt.accept(tv);
+			Graph g = tv.getGraph();
+			g.printMatrix();
+			
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

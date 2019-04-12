@@ -66,7 +66,7 @@ public class Main extends Application {
        
         
         try {
-            File file = new File(getClass().getResource("yeast.gexf").toURI());
+            File file = new File(getClass().getResource("test.gexf").toURI());
             container = importController.importFile(file);
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -7,6 +7,7 @@ import lexer.tokens.COBOLTokenType;
 import lexer.tokens.EOFToken;
 import lexer.tokens.Token;
 import parser.trees.ParseTreeNode;
+import parser.trees.nodes.COBOL.ParagraphNode;
 import parser.Parser;
 
 public class ParagraphParser extends Parser {
@@ -18,7 +19,7 @@ public class ParagraphParser extends Parser {
 
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
-		parseTree = new ParseTreeNode("PARAGRAPH");
+		parseTree = new ParagraphNode("PARAGRAPH");
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
 
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));

@@ -13,7 +13,7 @@ public class Graph {
 	}
 	
 	public Graph(int numVertices) {
-		this.numVertices = numVertices;
+		this.numVertices = 0;
 		adjacencyMatrix = new int[numVertices][numVertices];
 		vertices = new Vertex[numVertices];		
 		index = 0;
@@ -22,6 +22,7 @@ public class Graph {
 	
 	public int addVertices(Vertex v) {
 		vertices[index] = v;
+		numVertices++;
 		return index++;
 	}
 	
@@ -48,6 +49,18 @@ public class Graph {
 	
 	public Vertex getVertex(int index) {
 		return vertices[index];
+	}
+	
+	public Vertex[] getVertices() {
+		return vertices;
+	}
+	
+	public boolean edgeExists(int from, int to) {
+		return adjacencyMatrix[from][to] == 1;
+	}
+	
+	public int getNumberOfVertices() {
+		return numVertices;
 	}
 	
 }
