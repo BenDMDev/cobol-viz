@@ -2,12 +2,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import parser.trees.ParseTreeNode;
-import parser.trees.nodes.COBOL.COBOLVisitor;
-import parser.trees.nodes.COBOL.ParagraphNode;
-import parser.trees.nodes.COBOL.SectionNode;
-import parser.trees.nodes.COBOL.SentenceNode;
-import parser.trees.nodes.COBOL.StatementNode;
+import main.java.trees.ParseTreeNode;
+import main.java.trees.cobol.ParagraphNode;
+import main.java.trees.cobol.SectionNode;
+import main.java.trees.cobol.SentenceNode;
+import main.java.trees.cobol.StatementNode;
+import main.java.trees.visitors.cobol.COBOLVisitor;
 
 public class NodeVisitorTest {
 

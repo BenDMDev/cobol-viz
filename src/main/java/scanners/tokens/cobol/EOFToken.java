@@ -1,0 +1,23 @@
+package main.java.scanners.tokens.cobol;
+
+import java.io.IOException;
+
+import main.java.scanners.SourceFile;
+import main.java.scanners.tokens.Token;
+
+public class EOFToken extends Token {
+
+	public EOFToken(SourceFile source) {
+		super(source);		
+		this.type = COBOLTokenType.EOF;
+	}
+
+	@Override
+	public void extract() throws IOException {
+		
+		
+	}
+	
+	
+
+}
