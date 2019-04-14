@@ -90,7 +90,7 @@ public class Lexer {
 	 */
 	private void skipWhiteSpace() throws IOException {
 
-		while (source.getCurrentChar() == ' ' || source.getCurrentChar() == '\n') {
+		while (source.getCurrentChar() == ' ' || source.getCurrentChar() == '\n' || source.getCurrentChar() == '\t') {
 			source.nextChar();
 		}
 

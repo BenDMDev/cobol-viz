@@ -34,6 +34,7 @@ public class SectionParser extends Parser {
 		}
 		
 		ParagraphParser pp = new ParagraphParser(lexer);
+		
 		while(!(t.getType() == COBOLTokenType.END)
 				&& !(t.getType() == COBOLTokenType.IDENTIFIER 
 				&& lexer.lookAhead().getType() == COBOLTokenType.SECTION)) {			

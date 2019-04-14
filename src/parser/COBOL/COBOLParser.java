@@ -41,6 +41,7 @@ public class COBOLParser extends Parser {
 			SectionParser sp = new SectionParser(lexer);
 			lexer.scan();
 			t = lexer.getCurrentToken();
+			System.out.println(lexer.getCurrentToken().getTokenValue());
 			while (t.getType() != COBOLTokenType.END) {
 				parseTree.addChild(sp.parse(t));
 				t = lexer.getCurrentToken();

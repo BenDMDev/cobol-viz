@@ -1,6 +1,9 @@
 package parser.COBOL.tests;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -40,7 +43,13 @@ public class COBOLParserTest {
 				+ "MOVE five TO six.\n"
 				+ "END PROGRAM.";
 
-		BufferedReader in = new BufferedReader(new StringReader(input));
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader(new File("src/test.txt")));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		SourceFile s = new SourceFile(in);
 		Lexer l = new Lexer(s);
 		COBOLParser cbp = new COBOLParser(l);

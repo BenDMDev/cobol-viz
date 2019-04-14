@@ -8,9 +8,14 @@ import java.io.File;
 
 import javax.swing.JPanel;
 
+import org.gephi.graph.api.DirectedGraph;
+import org.gephi.graph.api.GraphController;
+import org.gephi.graph.api.GraphModel;
 import org.gephi.io.importer.api.Container;
 import org.gephi.io.importer.api.ImportController;
 import org.gephi.io.processor.plugin.DefaultProcessor;
+import org.gephi.layout.plugin.force.StepDisplacement;
+import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
 import org.gephi.preview.api.G2DTarget;
 import org.gephi.preview.api.PreviewController;
 import org.gephi.preview.api.PreviewModel;
@@ -23,38 +28,47 @@ import org.openide.util.Lookup;
 
 import javafx.application.Application;
 import javafx.embed.swing.SwingNode;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	@FXML
+	private BorderPane mainPane;
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+		
+		
 		stage.setTitle("Hello World");
-		SwingNode swing = new SwingNode();
-		script(swing);      	
-      	BorderPane box = new BorderPane();  
-      	box.setLeft(new TextField("Test"));
-      	box.setCenter(swing);
-      	FlowPane fp = new FlowPane();
-      	fp.getChildren().add(new TextField("Bottom Text"));
-      	box.setBottom(fp);
+		
+	    
+		Parent root = FXMLLoader.load(getClass().getResource("mainView.fxml"));
+		
+      	
+      	
+      	
+      	
       	//root.getChildren().add(box);
-      	stage.setScene(new Scene(box, 1080, 720));
+      	stage.setScene(new Scene(root, 1080, 720));
       	stage.show();
       	
 
 		
 	}
 	
-	public void script(SwingNode swing) {
+	public void script() {
         //Init a project - and therefore a workspace
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
         pc.newProject();
@@ -66,7 +80,7 @@ public class Main extends Application {
        
         
         try {
-            File file = new File(getClass().getResource("test.gexf").toURI());
+            File file = new File(getClass().getResource("Test.gexf").toURI());
             container = importController.importFile(file);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -80,8 +94,20 @@ public class Main extends Application {
         //Append imported data to GraphAPI
         importController.process(container, new DefaultProcessor(), workspace);
         
-        
+        GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
+        DirectedGraph graph = graphModel.getDirectedGraph();
 
+        YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
+        layout.setGraphModel(graphModel);
+        layout.initAlgo();
+        layout.resetPropertiesValues();
+        layout.setOptimalDistance(200f);
+         
+        for (int i = 0; i < 100 && layout.canAlgo(); i++) {
+           layout.goAlgo();
+        }
+        layout.endAlgo();
+        
         //Preview configuration
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
@@ -118,7 +144,10 @@ public class Main extends Application {
         
        
         frame.setVisible(true);   
+        SwingNode swing = new SwingNode();
+        
         swing.setContent(frame);
+        mainPane.setCenter(swing);
     }
 	
 	
