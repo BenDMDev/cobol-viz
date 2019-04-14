@@ -11,14 +11,14 @@ import org.junit.Test;
 import lexer.Lexer;
 import lexer.SourceFile;
 import lexer.tokens.COBOLTokenType;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.COBOL.StatementParser;
 
 public class StatementParserTest {
 
 	@Test
 	public void testParseMoveStatement() {
-		String input = "MOVE one TO two three four";
+		String input = "MOVE CORRESPONDING one TO two three four";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -83,8 +83,8 @@ public class StatementParserTest {
 	
 	@Test
 	public void testParseConditionalStatement() {
-		String input = "IF LDA-RC NOT = 0\n" 
-					   + "MOVE x TO y";
+		String input = "IF lda-rc NOT = y\n" 
+				+ "MOVE ten TO five\n";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -92,7 +92,7 @@ public class StatementParserTest {
 
 		StatementParser sp = new StatementParser(l);
 		try {
-			l.scan();
+			l.scan();			
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			sp.printParseTree(pt);
 

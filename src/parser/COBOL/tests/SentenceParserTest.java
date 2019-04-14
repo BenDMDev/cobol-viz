@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import lexer.Lexer;
 import lexer.SourceFile;
-import parser.ParseTreeNode;
+import parser.trees.ParseTreeNode;
 import parser.COBOL.SentenceParser;
 
 public class SentenceParserTest {

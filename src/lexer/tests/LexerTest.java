@@ -11,6 +11,7 @@ import org.junit.Test;
 import lexer.Lexer;
 import lexer.SourceFile;
 import lexer.tokens.COBOLTokenType;
+import lexer.tokens.Token;
 
 public class LexerTest {
 
@@ -122,6 +123,70 @@ public class LexerTest {
 		
 	}
 	
+	@Test
+	public void testLookAhead() {
+		BufferedReader in = new BufferedReader(new StringReader("test DIVISION"));
+		SourceFile s = new SourceFile(in);
+		Lexer l = new Lexer(s);
+		
+		try {
+			l.scan();				
+			assertEquals("test", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			Token t = l.lookAhead();
+			t = l.lookAhead();
+			t = l.lookAhead();
+			assertEquals(COBOLTokenType.DIVISION, t.getType());
+			assertEquals("test", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@Test
+	public void testNameWithNumbers() {
+		BufferedReader in = new BufferedReader(new StringReader("test9-name-0"));
+		SourceFile s = new SourceFile(in);
+		Lexer l = new Lexer(s);
+		
+		try {
+			l.scan();				
+			assertEquals("test9-name-0", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	@Test 
+	public void testStringLiteral() {
+		BufferedReader in = new BufferedReader(new StringReader("IF \"LDA-RC\" NOT = 0\n"));
+		SourceFile s = new SourceFile(in);
+		Lexer l = new Lexer(s);
+		
+		try {
+			l.scan();			
+			assertEquals("IF", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IF, l.getCurrentToken().getType());
+			l.scan();			
+			assertEquals("LDA-RC", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.STRING_LITERAL, l.getCurrentToken().getType());
+			l.scan();			
+			assertEquals("NOT", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.NOT, l.getCurrentToken().getType());
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
 	
 
 }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import lexer.SourceFile;
 import lexer.tokens.TokenType;
 
-public abstract class Token implements TokenType {
+public abstract class Token  {
 
 	
 	protected String value;

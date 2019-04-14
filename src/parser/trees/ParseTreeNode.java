@@ -1,4 +1,4 @@
-package parser;
+package parser.trees;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 public class ParseTreeNode {
 
 	private String type;
-	private String value;
+	
 	private List<ParseTreeNode> children; 
 	
 	public ParseTreeNode(String type) {
@@ -29,6 +29,13 @@ public class ParseTreeNode {
 	
 	public List<ParseTreeNode> getChildren() {
 		return children;
+	}
+	
+	public void accept(TreeVisitor visitor) {
+		visitor.visit(this);
+		for(ParseTreeNode p : children) {
+			p.accept(visitor);
+		}
 	}
 	
 	
