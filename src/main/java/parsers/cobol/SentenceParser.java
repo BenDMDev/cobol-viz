@@ -21,9 +21,7 @@ public class SentenceParser extends Parser {
 				
 		parseTree = new SentenceNode ("SENTENCE");		
 		while(t.getType() != COBOLTokenType.FULL_STOP) {
-			StatementParser sp = new StatementParser(lexer);
-			//ParseTreeNode p = new ParseTreeNode("STATEMENT");
-			//p.addChild(sp.parse());
+			StatementParser sp = new StatementParser(lexer);		
 			parseTree.addChild(sp.parse(t));			
 			t = lexer.getCurrentToken();	
 		}

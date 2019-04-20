@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui.app;
+package main.java.ui.models;
 
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -76,7 +76,10 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
     public void mouseClicked(MouseEvent e) {
         if (previewController.sendMouseEvent(buildPreviewMouseEvent(e, PreviewMouseEvent.Type.CLICKED))) {
             refreshLoop.refreshSketch();
+            
         }
+        Vector pos = screenPositionToModelPosition(new Vector(e.getX(), e.getY()));
+        System.out.println(pos.getX() + " : " + pos.getY());
     }
 
     public void mousePressed(MouseEvent e) {

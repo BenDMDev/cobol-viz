@@ -13,7 +13,7 @@ import main.java.trees.visitors.TreeVisitor;
 public class COBOLVisitor implements TreeVisitor {
 
 	private Graph g;
-	private Vertex lastSeen;
+	private CallGraphVertex lastSeen;
 	
 	public COBOLVisitor() {
 		g = new Graph(10);
@@ -36,17 +36,18 @@ public class COBOLVisitor implements TreeVisitor {
 	}
 	
 	public void visit(StatementNode statement) {
-		System.out.println(statement.getType());
+		
+	
 	}
 	
 	public void visit(SectionNode section) {
-		System.out.println(section.getType());
+		
 	}
 	
 	public void visit(ParagraphNode paragraph) {
-		System.out.println(paragraph.getType());
 		
-		Vertex v = new CallGraphVertex(paragraph.getType());
+		
+		CallGraphVertex v = new CallGraphVertex(paragraph.getType());
 		v.setIndex(g.addVertices(v));
 		
 		if(lastSeen == null) { 
@@ -60,7 +61,7 @@ public class COBOLVisitor implements TreeVisitor {
 	}
 	
 	public void visit(SentenceNode sentence) {
-		System.out.println(sentence.getType());
+		
 	}
 	
 	public Graph getGraph() {

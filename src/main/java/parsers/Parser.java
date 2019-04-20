@@ -38,9 +38,15 @@ public abstract class Parser {
 		
 	}
 	
-	public void matchList(Token input, Set<TokenType> expected, ParseTreeNode p) throws IOException {
+	public void matchList(Token input, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
 		
-		if(expected.contains(input.getType())) {
+		boolean found = false;
+		for(TokenType t : tokenTypes) {
+			
+			if(input.getType() == t)
+				found = true;			
+		}
+		if(found) {
 			p.addChild(new ParseTreeNode(input.getTokenValue()));
 			lexer.scan();
 		}

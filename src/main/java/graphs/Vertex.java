@@ -2,8 +2,8 @@ package main.java.graphs;
 
 public class Vertex {
 
-	private int index;
-	private String text;
+	protected int index;
+	protected String text;
 	
 	public Vertex() {
 		this(0);

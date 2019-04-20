@@ -18,7 +18,7 @@ public class StatementParserTest {
 
 	@Test
 	public void testParseMoveStatement() {
-		String input = "MOVE CORRESPONDING one TO two three four";
+		String input = "MOVE CORRESPONDING 2.2 TO two three four";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -61,7 +61,7 @@ public class StatementParserTest {
 	
 	@Test
 	public void testParseAddStatement() {
-		String input = "ADD xy zw TO one two ROUNDED three.";
+		String input = "ADD 10 zw 2.2 TO one two ROUNDED three.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -84,7 +84,10 @@ public class StatementParserTest {
 	@Test
 	public void testParseConditionalStatement() {
 		String input = "IF lda-rc NOT = y\n" 
-				+ "MOVE ten TO five\n";
+				+ "MOVE ten TO five\n"
+				+ "ELSE \n" 
+				+ "ADD ten TO five\n"
+				+ "MOVE five TO six.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

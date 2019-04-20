@@ -100,5 +100,14 @@ public class SourceFile {
 		else
 			return EOL;
 	}
+	
+	public void close() {
+		try {
+			input.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

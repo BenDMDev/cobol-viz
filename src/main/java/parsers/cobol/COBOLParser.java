@@ -40,22 +40,21 @@ public class COBOLParser extends Parser {
 
 			SectionParser sp = new SectionParser(lexer);
 			lexer.scan();
-			t = lexer.getCurrentToken();
-			System.out.println(lexer.getCurrentToken().getTokenValue());
-			while (t.getType() != COBOLTokenType.END) {
+			t = lexer.getCurrentToken();		
+			while (t.getType() != COBOLTokenType.EOF) {
 				parseTree.addChild(sp.parse(t));
 				t = lexer.getCurrentToken();
 			}
 			
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue())); 
-			lexer.scan(); // Consume END token
-			t = lexer.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan(); // Consume PROGRAM token
-			t = lexer.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan(); // Consume terminator
-			t = lexer.getCurrentToken();
+			//parseTree.addChild(new ParseTreeNode(t.getTokenValue())); 
+			//lexer.scan(); // Consume END token
+			//t = lexer.getCurrentToken();
+			//parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			//lexer.scan(); // Consume PROGRAM token
+			//t = lexer.getCurrentToken();
+			//parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			//lexer.scan(); // Consume terminator
+			//t = lexer.getCurrentToken();
 			
 			if(t instanceof EOFToken)		
 				System.out.println("Parse Success");

@@ -1,0 +1,26 @@
+PROCEDURE DIVISION.
+sec-one SECTION.
+	PARA-NAME.
+		IF ten > ten
+		MOVE x TO Y 
+ADD x TO z 
+IF x > y. 
+sec-two SECTION.
+PARA-NAME-TWO. 
+ADD two TO three 
+IF one > five
+ADD 10 TO five
+ELSE
+MOVE five TO ten
+ADD ten TO six.
+PARA-NAME-THREE. 
+ADD two TO three 
+IF one > five
+MOVE two TO three
+ELSE
+ADD two TO five. 
+PARA-NAME-FOUR.
+IF 5 GREATER y 
+ADD two TO three 
+IF one > five
+ADD 1.1 TO ten.

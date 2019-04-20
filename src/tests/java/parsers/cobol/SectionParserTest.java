@@ -15,8 +15,7 @@ public class SectionParserTest {
 
 	@Test
 	public void testTwoSections() {
-		String input = "two-sections SECTION.\n" + "para-label.\n" + "MOVE x TO y.\n" + "section-label SECTION.\n"
-	+ "END PROGRAM.";
+		String input = "two-sections SECTION.\n" + "para-label.\n" + "MOVE x TO y.\n" + "section-label SECTION.\n";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -37,7 +36,7 @@ public class SectionParserTest {
 
 	@Test
 	public void testOneSection() {
-		String input = "one-sections SECTION.\n" + "para-label.\n" + "MOVE x TO y.\n" + "END PROGRAM.";
+		String input = "one-sections SECTION.\n" + "para-label.\n" + "MOVE x TO y.\n";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

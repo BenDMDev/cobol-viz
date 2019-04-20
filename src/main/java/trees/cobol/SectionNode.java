@@ -5,8 +5,7 @@ import main.java.trees.ParseTreeNode;
 public class SectionNode extends ParseTreeNode {
 
 	public SectionNode(String type) {
-		super(type);
-		
+		super(type);		
 	}
 
 }
