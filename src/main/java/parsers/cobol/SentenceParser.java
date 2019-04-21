@@ -11,8 +11,8 @@ import main.java.trees.cobol.SentenceNode;
 
 public class SentenceParser extends Parser {
 
-	public SentenceParser(Scanner l) {
-		super(l);
+	public SentenceParser(Scanner scanner) {
+		super(scanner);
 		
 	}
 
@@ -21,13 +21,14 @@ public class SentenceParser extends Parser {
 				
 		parseTree = new SentenceNode ("SENTENCE");		
 		while(t.getType() != COBOLTokenType.FULL_STOP) {
-			StatementParser sp = new StatementParser(lexer);		
+			StatementParser sp = new StatementParser(scanner);		
 			parseTree.addChild(sp.parse(t));			
-			t = lexer.getCurrentToken();	
+			t = scanner.getCurrentToken();	
 		}
 		
+		// Consume '.' terminating sentence
 		parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-		lexer.scan();
+		scanner.scan();
 		
 		return parseTree;
 	}

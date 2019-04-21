@@ -12,8 +12,8 @@ import main.java.trees.cobol.ParagraphNode;
 
 public class ParagraphParser extends Parser {
 
-	public ParagraphParser(Scanner l) {
-		super(l);
+	public ParagraphParser(Scanner scanner) {
+		super(scanner);
 
 	}
 
@@ -24,34 +24,27 @@ public class ParagraphParser extends Parser {
 
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
-			lexer.scan(); // Consume Paragraph identifier
-			t = lexer.getCurrentToken();
+			scanner.scan(); // Consume Paragraph identifier
+			t = scanner.getCurrentToken();
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan(); // Consume '.' terminator
-			t = lexer.getCurrentToken();
+			scanner.scan(); // Consume '.' terminator
+			t = scanner.getCurrentToken();
 
 		}
+	
+		parseSentences(t);
+	
 
-		switch ((COBOLTokenType) t.getType()) {
-		case ADD:
-		case MOVE:
-		case IF:
-			parseSentences(t);
-			break;
-		default:
-			break;
-		}
-
-		return this.parseTree;
+		return parseTree;
 	}
 
 	private void parseSentences(Token t) throws IOException {
 
 		while (t.getType() != COBOLTokenType.IDENTIFIER
 				&& !(t.getType() == COBOLTokenType.END || t instanceof EOFToken)) {
-			SentenceParser senParse = new SentenceParser(lexer);
+			SentenceParser senParse = new SentenceParser(scanner);
 			parseTree.addChild(senParse.parse(t));
-			t = lexer.getCurrentToken();
+			t = scanner.getCurrentToken();
 		}
 
 	}

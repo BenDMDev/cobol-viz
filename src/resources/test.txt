@@ -3,7 +3,10 @@ sec-one SECTION.
 	PARA-NAME.
 		IF ten > ten
 		MOVE x TO Y 
-ADD x TO z 
+ADD x TO z
+DIVIDE ten INTO five ROUNDED
+DIVIDE 2.2 INTO ten
+MULTIPLY my-val BY my-val-2 my-val-2 ROUNDED
 IF x > y. 
 sec-two SECTION.
 PARA-NAME-TWO. 
@@ -14,7 +17,8 @@ ELSE
 MOVE five TO ten
 ADD ten TO six.
 PARA-NAME-THREE. 
-ADD two TO three 
+ADD two TO three
+SUBTRACT three FROM two 
 IF one > five
 MOVE two TO three
 ELSE

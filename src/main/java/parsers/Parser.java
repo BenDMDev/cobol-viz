@@ -1,8 +1,6 @@
 package main.java.parsers;
 
 import java.io.IOException;
-import java.util.Set;
-
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.TokenType;
@@ -10,11 +8,11 @@ import main.java.trees.ParseTreeNode;
 
 public abstract class Parser {
 
-	protected Scanner lexer;
+	protected Scanner scanner;
 	protected ParseTreeNode parseTree;
 
-	public Parser(Scanner l) {
-		lexer = l;
+	public Parser(Scanner scanner) {
+		this.scanner = scanner;
 		parseTree = null;
 	}
 	
@@ -33,7 +31,7 @@ public abstract class Parser {
 		
 		if(input.getType() == expected) {
 			p.addChild(new ParseTreeNode(input.getTokenValue()));
-			lexer.scan();
+			scanner.scan();
 		} 
 		
 	}
@@ -48,7 +46,7 @@ public abstract class Parser {
 		}
 		if(found) {
 			p.addChild(new ParseTreeNode(input.getTokenValue()));
-			lexer.scan();
+			scanner.scan();
 		}
 	}
 	

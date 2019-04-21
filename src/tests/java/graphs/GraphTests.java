@@ -20,11 +20,14 @@ public class GraphTests {
 		v3.setIndex(g.addVertices(v3));
 		g.addEdge(v3.getIndex(),v2.getIndex());
 		g.addEdge(v1.getIndex(),v3.getIndex());
-		g.addEdge(v1.getIndex(),v3.getIndex());
+		g.addEdge(v2.getIndex(),v3.getIndex());
 		g.printMatrix();
 		
 		Vertex v4 = g.getVertex(2);
 		System.out.println(v4.getText());
+		
+		assertEquals(2, g.inDegree(v3.getIndex()));
+		assertEquals(1, g.outDegree(v3.getIndex()));
 	}
 
 }

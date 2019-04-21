@@ -11,8 +11,8 @@ import main.java.trees.cobol.SectionNode;
 
 public class SectionParser extends Parser {
 
-	public SectionParser(Scanner l) {
-		super(l);
+	public SectionParser(Scanner scanner) {
+		super(scanner);
 		
 	}
 
@@ -21,25 +21,25 @@ public class SectionParser extends Parser {
 		
 		parseTree = new SectionNode("SECTION");
 				
-		if(t.getType() == COBOLTokenType.IDENTIFIER && lexer.lookAhead().getType() == COBOLTokenType.SECTION) {
+		if(t.getType() == COBOLTokenType.IDENTIFIER && scanner.lookAhead().getType() == COBOLTokenType.SECTION) {
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan(); // Consume section label
-			t = lexer.getCurrentToken();
+			scanner.scan(); // Consume section label
+			t = scanner.getCurrentToken();
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan(); // Consume SECTION keyword
-			t = lexer.getCurrentToken();
+			scanner.scan(); // Consume SECTION keyword
+			t = scanner.getCurrentToken();
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			lexer.scan(); // Consume terminator
-			t = lexer.getCurrentToken();
+			scanner.scan(); // Consume terminator
+			t = scanner.getCurrentToken();
 		}
 		
-		ParagraphParser pp = new ParagraphParser(lexer);
+		ParagraphParser paragraphParser = new ParagraphParser(scanner);
 		
 		while(!(t.getType() == COBOLTokenType.EOF)
 				&& !(t.getType() == COBOLTokenType.IDENTIFIER 
-				&& lexer.lookAhead().getType() == COBOLTokenType.SECTION)) {			
-			parseTree.addChild(pp.parse(t));
-			t = lexer.getCurrentToken();
+				&& scanner.lookAhead().getType() == COBOLTokenType.SECTION)) {			
+			parseTree.addChild(paragraphParser.parse(t));
+			t = scanner.getCurrentToken();
 			
 			
 		}

@@ -5,13 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
-
 import org.junit.Test;
 
 import main.java.graphs.Graph;
-import main.java.graphs.Vertex;
-import main.java.graphs.cobol.CallGraphVertex;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;

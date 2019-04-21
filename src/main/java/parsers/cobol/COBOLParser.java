@@ -11,8 +11,8 @@ import main.java.trees.ParseTreeNode;
 
 public class COBOLParser extends Parser {
 
-	public COBOLParser(Scanner l) {
-		super(l);
+	public COBOLParser(Scanner scanner) {
+		super(scanner);
 	}
 
 	public ParseTreeNode parse(Token t) throws IOException {
@@ -30,31 +30,22 @@ public class COBOLParser extends Parser {
 
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
-			lexer.scan();
-			t = lexer.getCurrentToken();
+			scanner.scan();
+			t = scanner.getCurrentToken();
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
-			lexer.scan();
-			t = lexer.getCurrentToken();
+			scanner.scan();
+			t = scanner.getCurrentToken();
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
-			SectionParser sp = new SectionParser(lexer);
-			lexer.scan();
-			t = lexer.getCurrentToken();		
+			SectionParser sp = new SectionParser(scanner);
+			scanner.scan();
+			t = scanner.getCurrentToken();		
 			while (t.getType() != COBOLTokenType.EOF) {
 				parseTree.addChild(sp.parse(t));
-				t = lexer.getCurrentToken();
+				t = scanner.getCurrentToken();
 			}
-			
-			//parseTree.addChild(new ParseTreeNode(t.getTokenValue())); 
-			//lexer.scan(); // Consume END token
-			//t = lexer.getCurrentToken();
-			//parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			//lexer.scan(); // Consume PROGRAM token
-			//t = lexer.getCurrentToken();
-			//parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			//lexer.scan(); // Consume terminator
-			//t = lexer.getCurrentToken();
+						
 			
 			if(t instanceof EOFToken)		
 				System.out.println("Parse Success");

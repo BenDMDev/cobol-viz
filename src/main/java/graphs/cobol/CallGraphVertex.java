@@ -5,12 +5,11 @@ import main.java.graphs.Vertex;
 
 public class CallGraphVertex extends Vertex {
 	
-	private String label;
+	
 	private Graph g;
 	
 	public CallGraphVertex(String label) {
-		super(label);		
-		this.label = label;
+		super(label);				
 		g = new Graph(10);
 	}
 	

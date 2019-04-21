@@ -15,7 +15,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Hello World");
+		primaryStage.setTitle("Cobol Viz");
 			    
 		Parent root = FXMLLoader.load(getClass().getResource("views/MainView.fxml"));
 		      	

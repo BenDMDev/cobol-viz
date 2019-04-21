@@ -1,7 +1,6 @@
 package main.java.trees.visitors.cobol;
 
 import main.java.graphs.Graph;
-import main.java.graphs.Vertex;
 import main.java.graphs.cobol.CallGraphVertex;
 import main.java.trees.ParseTreeNode;
 import main.java.trees.cobol.ParagraphNode;

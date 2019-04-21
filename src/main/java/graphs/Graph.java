@@ -59,8 +59,30 @@ public class Graph {
 		return adjacencyMatrix[from][to] == 1;
 	}
 	
+	public int inDegree(int vertex) {
+		int degree = 0;
+		for(int i = 0; i < numVertices; i++) {
+			if(adjacencyMatrix[i][vertex] >= 1)
+				degree++;
+		}
+		return degree;
+	}
+	
+	public int outDegree(int vertex) {
+		int degree = 0;
+		for(int i = 0; i < numVertices; i++) {
+			if(adjacencyMatrix[vertex][i] >= 1)
+				degree++;
+		}
+		return degree;
+	}
+	
 	public int getNumberOfVertices() {
 		return numVertices;
+	}
+	
+	public int getNumberOfEdges() {
+		return numEdges;
 	}
 	
 }

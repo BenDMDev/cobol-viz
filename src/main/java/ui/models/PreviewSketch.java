@@ -28,7 +28,11 @@ import org.openide.util.Lookup;
  */
 public class PreviewSketch extends JPanel implements MouseListener, MouseWheelListener, MouseMotionListener {
 
-    private static final int WHEEL_TIMER = 500;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -408530542291714845L;
+	private static final int WHEEL_TIMER = 500;
     //Data
     private final PreviewController previewController;
     private final G2DTarget target;
