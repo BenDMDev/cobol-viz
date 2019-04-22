@@ -43,6 +43,10 @@ public class StatementParser extends Parser {
 			ConditionalParser conditional = new ConditionalParser(scanner);
 			parseTree = conditional.parse(inputToken);
 			break;
+		case PERFORM:
+			PerformStatementParser perform = new PerformStatementParser(scanner);
+			parseTree = perform.parse(inputToken);
+			break;
 		default:
 			break;
 		}

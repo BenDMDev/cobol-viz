@@ -11,7 +11,7 @@ import main.java.graphs.Graph;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
-import main.java.trees.ParseTreeNode;
+import main.java.trees.ParseTree;
 import main.java.trees.visitors.cobol.COBOLVisitor;
 
 public class COBOLParserTest {
@@ -33,13 +33,15 @@ public class COBOLParserTest {
 		try {
 			l.scan();
 
-			ParseTreeNode pt = cbp.parse(l.getCurrentToken());			
+			ParseTree tree = new ParseTree();
+			tree.setRoot(cbp.parse(l.getCurrentToken()));			
 			COBOLVisitor tv = new COBOLVisitor();
-			pt.accept(tv);
+			tree.accept(tv);
 			Graph g = tv.getGraph();
 			g.printMatrix();
-			cbp.printParseTree(pt);
+			tree.printParseTree();
 			s.close();
+			
 		
 	
 			

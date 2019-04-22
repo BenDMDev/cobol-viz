@@ -9,6 +9,7 @@ import org.junit.Test;
 import main.java.parsers.cobol.ParagraphParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
+import main.java.trees.ParseTree;
 import main.java.trees.ParseTreeNode;
 
 public class ParagraphParserTest {
@@ -32,7 +33,9 @@ public class ParagraphParserTest {
 			l.scan();
 
 			ParseTreeNode pt = pp.parse(l.getCurrentToken());
-			pp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -58,7 +61,9 @@ public class ParagraphParserTest {
 		l.scan();
 
 		ParseTreeNode pt = pp.parse(l.getCurrentToken());
-		pp.printParseTree(pt);
+		ParseTree tree = new ParseTree();
+		tree.setRoot(pt);
+		tree.printParseTree();
 
 	} catch (IOException e) {
 		// TODO Auto-generated catch block

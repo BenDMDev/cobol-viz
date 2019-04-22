@@ -9,6 +9,7 @@ import org.junit.Test;
 import main.java.parsers.cobol.SectionParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
+import main.java.trees.ParseTree;
 import main.java.trees.ParseTreeNode;
 
 public class SectionParserTest {
@@ -26,7 +27,9 @@ public class SectionParserTest {
 			l.scan();
 
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
-			sp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -47,7 +50,9 @@ public class SectionParserTest {
 			l.scan();
 
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
-			sp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

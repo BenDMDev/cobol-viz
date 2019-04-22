@@ -131,7 +131,7 @@ public class FileChooserController {
         layout.setGraphModel(graphModel);
         layout.initAlgo();
         layout.resetPropertiesValues();
-        layout.setOptimalDistance(200f);
+        layout.setOptimalDistance(500f);
         
          
         for (int i = 0; i < 100 && layout.canAlgo(); i++) {
@@ -148,10 +148,12 @@ public class FileChooserController {
         //Preview configuration
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
-        previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);       
+        previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);
         previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR, new DependantOriginalColor(Color.BLACK));
-        previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.TRUE);
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
         previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 50);
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, 5);
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_RADIUS, 10);
         previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR, Color.WHITE);
 
         

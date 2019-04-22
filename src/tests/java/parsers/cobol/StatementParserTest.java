@@ -12,6 +12,7 @@ import main.java.parsers.cobol.StatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
+import main.java.trees.ParseTree;
 import main.java.trees.ParseTreeNode;
 
 public class StatementParserTest {
@@ -29,7 +30,9 @@ public class StatementParserTest {
 			l.scan();
 			
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
-			sp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -50,7 +53,9 @@ public class StatementParserTest {
 		try {
 			l.scan();
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
-			sp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -71,7 +76,9 @@ public class StatementParserTest {
 		try {
 			l.scan();
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
-			sp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 			assertEquals(COBOLTokenType.FULL_STOP, l.getCurrentToken().getType());
 
 		} catch (IOException e) {
@@ -97,7 +104,9 @@ public class StatementParserTest {
 		try {
 			l.scan();			
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
-			sp.printParseTree(pt);
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			tree.printParseTree();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

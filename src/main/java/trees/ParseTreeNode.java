@@ -1,4 +1,4 @@
-package main.java.trees;
+	package main.java.trees;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,18 @@ import main.java.trees.visitors.TreeVisitor;
 
 public class ParseTreeNode {
 
-	private String type;
+	private String value;
+	private TreeNodeType type;
 	
 	private List<ParseTreeNode> children; 
 	
-	public ParseTreeNode(String type) {
+	public ParseTreeNode(String value) {
+		this.value = value;
+		children = new ArrayList<ParseTreeNode>();
+	}
+	
+	public ParseTreeNode(TreeNodeType type, String value) {
+		this.value = value;
 		this.type = type;
 		children = new ArrayList<ParseTreeNode>();
 	}
@@ -25,7 +32,11 @@ public class ParseTreeNode {
 	}
 	
 	public String getType() {
-		return type;		
+		return value;		
+	}
+	
+	public TreeNodeType getTreeNodeType() {
+		return type;
 	}
 		
 	

@@ -19,7 +19,7 @@ public class NodeVisitorTest {
 		root.addChild(new StatementNode("STATEMENT"));
 		root.addChild(new SectionNode("SECTION TWO"));
 		root.addChild(new SentenceNode("SUBROOT"));
-		ParseTreeNode node = new ParagraphNode("ROOT TWO");
+		ParseTreeNode node = new ParagraphNode("ROOT TWO", "LABEL ONE");
 		node.addChild(new StatementNode("STATEMENT TWO"));
 		root.addChild(node);
 		

@@ -1,6 +1,7 @@
 package main.java.parsers.cobol;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import main.java.parsers.Parser;
 import main.java.scanners.Scanner;
@@ -11,12 +12,15 @@ import main.java.trees.ParseTreeNode;
 
 public class COBOLParser extends Parser {
 
+	public static ArrayList<String> REFERENCES = new ArrayList<String>();
+	
 	public COBOLParser(Scanner scanner) {
 		super(scanner);
 	}
 
 	public ParseTreeNode parse(Token t) throws IOException {
 
+				
 		switch ((COBOLTokenType) t.getType()) {
 		case IDENTIFICATION:
 			break;
@@ -25,9 +29,10 @@ public class COBOLParser extends Parser {
 		case DATA:
 			break;
 		case PROCEDURE:
-
+			
+			
 			parseTree = new ParseTreeNode("PROCEDURE DIVISION");
-
+			
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
 			scanner.scan();

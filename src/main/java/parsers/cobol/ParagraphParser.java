@@ -19,9 +19,9 @@ public class ParagraphParser extends Parser {
 
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
-		parseTree = new ParagraphNode("PARAGRAPH");
+		parseTree = new ParagraphNode("PARAGRAPH", t.getTokenValue());
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-
+			COBOLParser.REFERENCES.add(t.getTokenValue());
 			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
 			scanner.scan(); // Consume Paragraph identifier

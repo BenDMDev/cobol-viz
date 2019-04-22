@@ -19,23 +19,25 @@ public class GraphWriter {
 	}
 	
 	public void generate() {
-		gString = "<graph>\n" 
+		gString = "<graph defaultedgetype=\"directed\" type=\"static\">\n" 
 				+ "<nodes>\n";
 		
 		String body;
 		Vertex[] v = g.getVertices();
 		int numVer = g.getNumberOfVertices();
+		int numEdges = g.getNumberOfEdges();
 		for(int i = 0; i < numVer; i++) {
 			gString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\" /> \n"; 
 		}
 		
 		gString += "</nodes>\n" 
 				+ "<edges>\n";
-		
+		int edges = 0;
 		for(int i = 0; i < numVer; i++) {
 			for(int j = 0; j < v.length; j++){
 				if(g.edgeExists(i,j)) {
-					gString += "<edge id=\"" + i + "\" source=\"" + i + "\" target=\"" + j + "\"/>\n";
+					gString += "<edge id=\"" + edges + "\" source=\"" + i + "\" target=\"" + j + "\"/>\n";
+					edges++;
 				}
 			}
 		}

@@ -20,10 +20,12 @@ public class Graph {
 		numEdges = 0;
 	}
 	
-	public int addVertices(Vertex v) {
+	public void addVertices(Vertex v) {
 		vertices[index] = v;
 		numVertices++;
-		return index++;
+		v.setIndex(index);
+		index++;
+		
 	}
 	
 	public void addEdge(int from, int to) {
@@ -44,11 +46,21 @@ public class Graph {
 			}
 			
 		}
+		System.out.println();
 		
 	}
 	
 	public Vertex getVertex(int index) {
 		return vertices[index];
+	}
+	
+	public Vertex getVertex(String text) {
+		Vertex vertex = null;
+		for(int i = 0; i < numVertices; i++) {
+			if(vertices[i].getText().equals(text))
+				vertex = vertices[i];
+		}
+		return vertex;
 	}
 	
 	public Vertex[] getVertices() {
