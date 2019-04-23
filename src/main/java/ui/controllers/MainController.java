@@ -33,22 +33,26 @@ import org.openide.util.Lookup;
 
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import main.java.graphs.Graph;
 import main.java.graphs.GraphWriter;
+import main.java.graphs.Vertex;
 import main.java.parsers.Parser;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTreeNode;
 import main.java.trees.visitors.cobol.COBOLVisitor;
+import main.java.ui.models.GraphDataModel;
 import main.java.ui.models.PreviewSketch;
 
-public class FileChooserController {
+public class MainController {
 
+	private GraphDataModel dataModel;
 	
 	@FXML 
 	private BorderPane mainPane;
@@ -56,40 +60,30 @@ public class FileChooserController {
 	@FXML
 	private AnchorPane anchorPane;
 	
+	@FXML ListView<String> listView;
+	
 	String fileName; 
 	
 	final FileChooser chooser = new FileChooser();
 	
 	
 	@FXML
-	private void setText() {
+	private void openFile() {
 		
 		File file = chooser.showOpenDialog(null);
 		fileName = file.getName();
 		if(file != null) {
-			BufferedReader reader;
-			try {
-				reader = new BufferedReader(new FileReader(file));
-				SourceFile source = new SourceFile(reader);
-				Scanner s = new Scanner(source);
-				Parser p = new COBOLParser(s);
+			// BufferedReader reader;
+			dataModel = new GraphDataModel(file);
+			dataModel.parse();
+			Graph g = dataModel.generateGraph();
+			script();			
+			
+			listView.getItems().clear();
+			for(int i = 0; i < g.getNumberOfVertices(); i++) {
+				Vertex[] vert = g.getVertices();
+				listView.getItems().add(vert[i].getText());
 				
-				s.scan();
-				ParseTreeNode pt = p.parse(s.getCurrentToken());
-				COBOLVisitor visitor = new COBOLVisitor();
-				pt.accept(visitor);
-				Graph g = visitor.getGraph();
-				GraphWriter writer = new GraphWriter(g);
-				writer.generate();
-				writer.write("test.gexf");
-				script();
-				
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			
 		}

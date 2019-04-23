@@ -14,10 +14,12 @@ public class COBOLVisitor implements TreeVisitor {
 
 	private Graph g;
 	private CallGraphVertex lastSeen;
+	
 
 	public COBOLVisitor() {
 		g = new Graph(50);
 		lastSeen = null;
+		
 
 	}
 
@@ -25,13 +27,13 @@ public class COBOLVisitor implements TreeVisitor {
 	public void visit(ParseTreeNode treeNode) {
 
 		if (treeNode instanceof StatementNode) {
-			visit((StatementNode) treeNode);
+			// visit((StatementNode) treeNode);
 		} else if (treeNode instanceof SectionNode) {
 			visit((SectionNode) treeNode);
 		} else if (treeNode instanceof ParagraphNode) {
 			visit((ParagraphNode) treeNode);
 		} else if (treeNode instanceof SentenceNode) {
-			visit((SentenceNode) treeNode);
+			// visit((SentenceNode) treeNode);
 		}
 
 	}
@@ -50,25 +52,39 @@ public class COBOLVisitor implements TreeVisitor {
 
 	public void visit(ParagraphNode paragraph) {
 
-		CallGraphVertex v = (CallGraphVertex) g.getVertex(paragraph.getLabel());
+		CallGraphVertex vertex = (CallGraphVertex) g.getVertex(paragraph.getLabel());
 
-		if (v == null) {
-			v = new CallGraphVertex(paragraph.getLabel());
-			g.addVertices(v);
+		if (vertex == null) {
+			vertex = new CallGraphVertex(paragraph.getLabel());
+			g.addVertices(vertex);
 			if (lastSeen == null)
-				lastSeen = v;
+				lastSeen = vertex;
 			else {
-				g.addEdge(lastSeen.getIndex(), v.getIndex());
-				lastSeen = v;
+				g.addEdge(lastSeen.getIndex(), vertex.getIndex());
+				lastSeen = vertex;			
 			}
-		} else
-			lastSeen = v;
-	
+			for(ParseTreeNode n : paragraph.getChildren()) {
+				if(n instanceof SentenceNode)
+					visit((SentenceNode) n);
+			}
+			
+		} else {
+			CallGraphVertex holder = lastSeen;
+			lastSeen = vertex;
+			for(ParseTreeNode n : paragraph.getChildren()) {
+				if(n instanceof SentenceNode)
+					visit((SentenceNode) n);
+			}
+			lastSeen = holder;
+		}
 
 	}
 
 	public void visit(SentenceNode sentence) {
-
+		for(ParseTreeNode n : sentence.getChildren()) {
+			if(n instanceof StatementNode)
+				visit((StatementNode) n);
+		}
 	}
 
 	public Graph getGraph() {
@@ -97,7 +113,7 @@ public class COBOLVisitor implements TreeVisitor {
 		}
 
 		addPerformVertices(beginIndex, endIndex);
-
+		
 	}
 
 	private void addPerformVertices(int begin, int end) {
@@ -111,9 +127,9 @@ public class COBOLVisitor implements TreeVisitor {
 			}
 
 			g.addEdge(lastSeen.getIndex(), v.getIndex());
-
+			
 		}
-
+		
 	}
 
 }
