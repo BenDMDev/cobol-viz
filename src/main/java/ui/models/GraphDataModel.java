@@ -20,6 +20,8 @@ public class GraphDataModel {
 	
 	private File currentFile;
 	private String projectDir;
+	private String inputFileName;
+	
 	private GraphGenerator graphGenerator;
 	private Parser parser;
 	private Scanner scanner;
@@ -28,6 +30,7 @@ public class GraphDataModel {
 	
 	public GraphDataModel(File file) {		
 		currentFile = file;
+		inputFileName = file.getName().replaceFirst("[.][^.]+$",  "");
 		
 	}
 	
@@ -46,7 +49,7 @@ public class GraphDataModel {
 			g = visitor.getGraph();
 			GraphWriter writer = new GraphWriter(g);
 			writer.generate();
-			writer.write(projectDir + "/" + "test.gexf");
+			writer.write(projectDir + "\\" + inputFileName + ".gexf");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -67,9 +70,13 @@ public class GraphDataModel {
 			
 			source.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
+	}
+	
+	public String getOutputFileName() {
+		return projectDir + "\\" + inputFileName + ".gexf";
 	}
 	
 	private void initParser() {

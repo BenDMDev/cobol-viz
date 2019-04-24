@@ -6,6 +6,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 import javax.swing.JPanel;
@@ -35,7 +36,9 @@ import javafx.embed.swing.SwingNode;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TreeView;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -47,6 +50,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
@@ -54,10 +58,12 @@ import main.java.graphs.Graph;
 import main.java.graphs.Vertex;
 import main.java.ui.models.GraphDataModel;
 import main.java.ui.models.PreviewSketch;
+import main.java.ui.models.Project;
 
 public class MainController {
 
 	private GraphDataModel dataModel;
+	
 
 	@FXML
 	private BorderPane mainPane;
@@ -68,87 +74,95 @@ public class MainController {
 	@FXML
 	TreeView<String> treeView;
 
-	String fileName;
+	String sourceFile;
+	String outputFile;
 	String projectName;
 	File projectDir;
 
 	final FileChooser chooser = new FileChooser();
 	final DirectoryChooser dirChooser = new DirectoryChooser();
 
-	
-	
 	@FXML
 	private void openFile() {
 
-		File file = chooser.showOpenDialog(null);		
-		
-		
+		File file = chooser.showOpenDialog(null);
+		sourceFile = file.getName();
 		if (file != null) {
 
 			dataModel = new GraphDataModel(file);
 			dataModel.setWorkingDir(projectDir.getAbsolutePath());
 			dataModel.parse();
 			Graph g = dataModel.generateGraph();
-			script();
-
-			TreeItem<String> rootNode = new TreeItem<String>(projectName);
-			rootNode.setExpanded(true);
-			TreeItem<String> childNode = new TreeItem<String>(fileName);
+			outputFile = dataModel.getOutputFileName();
+			// script();
+			System.out.println(outputFile);
+			
+			
+			TreeItem<String> sourceNode = new TreeItem<String>("Source File");
+			treeView.getRoot().getChildren().add(sourceNode);
+			sourceNode.getChildren().add(new TreeItem<String>(sourceFile));
+			TreeItem<String> graphs = new TreeItem<String>("Graphs");
+			TreeItem<String> graphNode = new TreeItem<String>(outputFile);
+			
 			for (int i = 0; i < g.getNumberOfVertices(); i++) {
 				Vertex[] vert = g.getVertices();
-				childNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
+				graphNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
 
 			}
-			rootNode.getChildren().add(childNode);
-			treeView.setRoot(rootNode);
+			graphs.getChildren().add(graphNode);
+			treeView.getRoot().getChildren().add(graphs);
+			
+			treeView.setOnMouseClicked(e -> {
+				if(e.getClickCount() == 2) {
+					TreeItem<String> item = treeView.getSelectionModel().getSelectedItem();
+					if(item.getValue().contains(".gexf"))	
+						script();
+						
+				}
+			});
 		}
 	}
 
 	@FXML
-	private void createProject() {
+	private void createProject() throws IOException {
 
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
 		dialog.setTitle("Create New Project");
+
+		ButtonType confirmButton = new ButtonType("Create", ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(confirmButton, ButtonType.CANCEL);
 		
-		ButtonType selectButton = new ButtonType("Create", ButtonData.OK_DONE);
-		dialog.getDialogPane().getButtonTypes().addAll(selectButton, ButtonType.CANCEL);
+		Pane gridPane = FXMLLoader.load(getClass().getResource("../views/CreateProjectView.fxml"));
+		dialog.getDialogPane().setContent(gridPane);
 		
-		GridPane grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-		TextField project = new TextField();
-		project.setPromptText("Project Name");
 		
-		TextField directory = new TextField();
-		directory.setPromptText("Project Directory");
+		TextField projectNameField = (TextField) gridPane.lookup("#projectName");
+		TextField directoryNameField = (TextField) gridPane.lookup("#projectDirectory");
+		Button selectButton = (Button) gridPane.lookup("#selectDirectory");
 		
-		Button createButton = new Button("Select");
-		createButton.setOnAction(e -> { projectDir = dirChooser.showDialog(null);
-				directory.setText(projectDir.getPath());
+
+		selectButton.setOnAction(e -> {
+			projectDir = dirChooser.showDialog(null);
+			directoryNameField.setText(projectDir.getAbsolutePath());
+
 		});
-		
-		grid.add(new Label("Project Name: "),0, 0);
-		grid.add(project,1, 0);
-		grid.add(new Label("Project Directory: "), 0,1);
-		grid.add(directory,1, 1);
-		grid.add(createButton, 2, 1);
-		
-		dialog.getDialogPane().setContent(grid);
-		
+
 		dialog.setResultConverter(btn -> {
-			if(btn == selectButton)
-				return new Pair<>(project.getText(), directory.getText());
+			if (btn == confirmButton)
+				return new Pair<>(projectNameField.getText(), directoryNameField.getText());
 			else
 				return null;
 		});
-		
-		Optional<Pair<String, String>> result =  dialog.showAndWait();
+
+		Optional<Pair<String, String>> result = dialog.showAndWait();
 		result.ifPresent(dirDetails -> {
 			projectName = dirDetails.getKey();
 		});
 		
-		// projectDir = dirChooser.showDialog(null);
 		
+		TreeItem<String> rootNode = new TreeItem<String>(projectName);
+		rootNode.setExpanded(true);
+		treeView.setRoot(rootNode);
 
 	}
 
@@ -167,8 +181,8 @@ public class MainController {
 		Container container;
 
 		try {
-			File file = chooser.showOpenDialog(null);
-			fileName = file.getName();
+			File file = new File(outputFile);	
+			
 			container = importController.importFile(file);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -192,10 +206,7 @@ public class MainController {
 			layout.goAlgo();
 		}
 		layout.endAlgo();
-
-		for (Node n : graph.getNodes()) {
-			System.out.println(n.x() + " : " + n.y());
-		}
+		
 
 		// Preview configuration
 		PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
@@ -204,9 +215,9 @@ public class MainController {
 		previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR,
 				new DependantOriginalColor(Color.BLACK));
 		previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 50);
+		previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 100);
 		previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, 5);
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_RADIUS, 10);
+		previewModel.getProperties().putValue(PreviewProperty.EDGE_RADIUS, 5);
 		previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR, Color.WHITE);
 
 		// New Processing target, get the PApplet
@@ -218,52 +229,27 @@ public class MainController {
 		JPanel frame = new JPanel();
 		frame.setLayout(new BorderLayout());
 
-		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(previewSketch, BorderLayout.CENTER);
-
-		//frame.setSize(800, 420);
-
-		// Wait for the frame to be visible before painting, or the result
-		// drawing will be strange
-//		frame.addComponentListener(new ComponentAdapter() {
-//			@Override
-//			public void componentShown(ComponentEvent e) {
-//				previewSketch.resetZoom();
-//			}
-//		});
-
-		frame.setVisible(true);
-		// AnchorPane aPane = new AnchorPane();
-		SwingNode swing = new SwingNode();
-		// swing.setContent(frame);
+	
+		frame.setVisible(true);		
+		SwingNode swing = new SwingNode();		
 		createSwingContent(swing, frame, previewSketch);
 		anchorPane.getChildren().add(swing);
 		AnchorPane.setBottomAnchor(swing, 0.0d);
 		AnchorPane.setTopAnchor(swing, 0.0d);
 		AnchorPane.setRightAnchor(swing, 0.0d);
 		AnchorPane.setLeftAnchor(swing, 0.0d);
-		
-		
-		
-		mainPane.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				// previewSketch.refresh();
-				System.out.println(event);
-				
-			}
-			
-		});
+	
 
 	}
 	
-	 private void createSwingContent(final SwingNode swingNode, JPanel frame, PreviewSketch preview) {
-	        SwingUtilities.invokeLater(() -> {
-	            swingNode.setContent(frame);
-	            preview.resetZoom();
-	        });
-	 }
-	
+
+
+	private void createSwingContent(final SwingNode swingNode, JPanel frame, PreviewSketch preview) {
+		SwingUtilities.invokeLater(() -> {
+			swingNode.setContent(frame);
+			preview.resetZoom();
+		});
+	}
 
 }

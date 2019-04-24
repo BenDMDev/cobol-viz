@@ -18,7 +18,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem fx:id="newProject" mnemonicParsing="false" onAction="#createProject" text="New Project" />
-              <MenuItem mnemonicParsing="false" text="Close Project" />
+              <MenuItem disable="true" mnemonicParsing="false" text="Close Project" />
                   <MenuItem fx:id="openFile" mnemonicParsing="false" onAction="#openFile" text="Open Project" />
             </items>
           </Menu>
