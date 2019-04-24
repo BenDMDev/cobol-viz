@@ -162,6 +162,10 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
         target.reset();
         refreshLoop.refreshSketch();
     }
+    
+    public void refresh() {
+    	refreshLoop.refreshSketch();
+    }
 
     private Vector screenPositionToModelPosition(Vector screenPos) {
         Vector center = new Vector(getWidth() / 2f, getHeight() / 2f);

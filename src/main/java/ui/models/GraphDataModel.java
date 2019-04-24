@@ -46,7 +46,7 @@ public class GraphDataModel {
 			g = visitor.getGraph();
 			GraphWriter writer = new GraphWriter(g);
 			writer.generate();
-			writer.write("test.gexf");
+			writer.write(projectDir + "/" + "test.gexf");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
