@@ -2,26 +2,19 @@ package main.java.ui.controllers;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.gephi.graph.api.DirectedGraph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.Node;
 import org.gephi.io.importer.api.Container;
 import org.gephi.io.importer.api.ImportController;
 import org.gephi.io.processor.plugin.DefaultProcessor;
 import org.gephi.layout.plugin.force.StepDisplacement;
 import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
-import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
 import org.gephi.preview.api.G2DTarget;
 import org.gephi.preview.api.PreviewController;
 import org.gephi.preview.api.PreviewModel;
@@ -33,23 +26,19 @@ import org.gephi.project.api.Workspace;
 import org.openide.util.Lookup;
 
 import javafx.embed.swing.SwingNode;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TreeView;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -62,62 +51,53 @@ import main.java.ui.models.Project;
 
 public class MainController {
 
-	private GraphDataModel dataModel;
-	
+	final FileChooser chooser = new FileChooser();
+	final DirectoryChooser dirChooser = new DirectoryChooser();
+	private Project currentProject;
 
 	@FXML
 	private BorderPane mainPane;
 
 	@FXML
-	private AnchorPane anchorPane;
+	private TabPane previewTabs;
 
 	@FXML
-	TreeView<String> treeView;
-
-	String sourceFile;
-	String outputFile;
-	String projectName;
-	File projectDir;
-
-	final FileChooser chooser = new FileChooser();
-	final DirectoryChooser dirChooser = new DirectoryChooser();
+	private TreeView<String> treeView;
+	// Static Tree Nodes in TreeView
+	private TreeItem<String> projectRootNode;
+	private TreeItem<String> sourceRootNode;
+	private TreeItem<String> graphRootNode;
 
 	@FXML
 	private void openFile() {
 
 		File file = chooser.showOpenDialog(null);
-		sourceFile = file.getName();
-		if (file != null) {
 
-			dataModel = new GraphDataModel(file);
-			dataModel.setWorkingDir(projectDir.getAbsolutePath());
-			dataModel.parse();
-			Graph g = dataModel.generateGraph();
-			outputFile = dataModel.getOutputFileName();
-			// script();
-			System.out.println(outputFile);
-			
-			
-			TreeItem<String> sourceNode = new TreeItem<String>("Source File");
-			treeView.getRoot().getChildren().add(sourceNode);
-			sourceNode.getChildren().add(new TreeItem<String>(sourceFile));
-			TreeItem<String> graphs = new TreeItem<String>("Graphs");
-			TreeItem<String> graphNode = new TreeItem<String>(outputFile);
-			
+		if (file != null) {
+			String outputFile;
+			String sourceFile = file.getName();
+			currentProject.parse(file);
+			outputFile = file.getName().replaceFirst("[.][^.]+$", "");
+			GraphDataModel m = currentProject.getModel(outputFile);
+			Graph g = m.getGraph();
+
+			sourceRootNode.getChildren().add(new TreeItem<String>(sourceFile));
+			TreeItem<String> graphNode = new TreeItem<String>(outputFile + ".gexf");
+
 			for (int i = 0; i < g.getNumberOfVertices(); i++) {
 				Vertex[] vert = g.getVertices();
 				graphNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
 
 			}
-			graphs.getChildren().add(graphNode);
-			treeView.getRoot().getChildren().add(graphs);
-			
+			graphRootNode.getChildren().add(graphNode);
+
 			treeView.setOnMouseClicked(e -> {
-				if(e.getClickCount() == 2) {
+				if (e.getClickCount() == 2) {
 					TreeItem<String> item = treeView.getSelectionModel().getSelectedItem();
-					if(item.getValue().contains(".gexf"))	
-						script();
-						
+					if (item.getValue().contains(".gexf") && !checkPreviewTabExists(item.getValue())) {
+						createGraphPreviewContent(item.getValue());
+					}
+
 				}
 			});
 		}
@@ -131,20 +111,19 @@ public class MainController {
 
 		ButtonType confirmButton = new ButtonType("Create", ButtonData.OK_DONE);
 		dialog.getDialogPane().getButtonTypes().addAll(confirmButton, ButtonType.CANCEL);
-		
-		Pane gridPane = FXMLLoader.load(getClass().getResource("../views/CreateProjectView.fxml"));
+
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("/resources/views/CreateProjectView.fxml"));
+		Pane gridPane = loader.load();
 		dialog.getDialogPane().setContent(gridPane);
-		
-		
+
 		TextField projectNameField = (TextField) gridPane.lookup("#projectName");
 		TextField directoryNameField = (TextField) gridPane.lookup("#projectDirectory");
 		Button selectButton = (Button) gridPane.lookup("#selectDirectory");
-		
 
 		selectButton.setOnAction(e -> {
-			projectDir = dirChooser.showDialog(null);
+			File projectDir = dirChooser.showDialog(null);
 			directoryNameField.setText(projectDir.getAbsolutePath());
-
 		});
 
 		dialog.setResultConverter(btn -> {
@@ -156,21 +135,13 @@ public class MainController {
 
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 		result.ifPresent(dirDetails -> {
-			projectName = dirDetails.getKey();
+			currentProject = new Project(dirDetails.getKey(), dirDetails.getValue());
+			treeViewInit(currentProject.getProjectName());
 		});
-		
-		
-		TreeItem<String> rootNode = new TreeItem<String>(projectName);
-		rootNode.setExpanded(true);
-		treeView.setRoot(rootNode);
 
 	}
 
-	public void printMouseXY(MouseEvent e) {
-		System.out.println(e.getX() + " : " + e.getY());
-	}
-
-	public void script() {
+	public void createGraphPreviewContent(String fileName) {
 		// Init a project - and therefore a workspace
 		ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
 		pc.newProject();
@@ -181,8 +152,7 @@ public class MainController {
 		Container container;
 
 		try {
-			File file = new File(outputFile);	
-			
+			File file = currentProject.getOutputFile(fileName);
 			container = importController.importFile(file);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -193,7 +163,7 @@ public class MainController {
 		importController.process(container, new DefaultProcessor(), workspace);
 
 		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
-		DirectedGraph graph = graphModel.getDirectedGraph();
+		// DirectedGraph graph = graphModel.getDirectedGraph();
 
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		layout.setGraphModel(graphModel);
@@ -206,7 +176,6 @@ public class MainController {
 			layout.goAlgo();
 		}
 		layout.endAlgo();
-		
 
 		// Preview configuration
 		PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
@@ -228,28 +197,55 @@ public class MainController {
 		// Add the applet to a JFrame and display
 		JPanel frame = new JPanel();
 		frame.setLayout(new BorderLayout());
-
 		frame.add(previewSketch, BorderLayout.CENTER);
-	
-		frame.setVisible(true);		
-		SwingNode swing = new SwingNode();		
+		frame.setVisible(true);
+
+		SwingNode swing = new SwingNode();
 		createSwingContent(swing, frame, previewSketch);
-		anchorPane.getChildren().add(swing);
-		AnchorPane.setBottomAnchor(swing, 0.0d);
-		AnchorPane.setTopAnchor(swing, 0.0d);
-		AnchorPane.setRightAnchor(swing, 0.0d);
-		AnchorPane.setLeftAnchor(swing, 0.0d);
-	
+		addPreviewTab(swing, fileName);
 
 	}
-	
-
 
 	private void createSwingContent(final SwingNode swingNode, JPanel frame, PreviewSketch preview) {
 		SwingUtilities.invokeLater(() -> {
 			swingNode.setContent(frame);
 			preview.resetZoom();
 		});
+	}
+
+	private void addPreviewTab(javafx.scene.Node node, String name) {
+
+		Tab tab = new Tab(name);
+		tab.setId(name);
+		AnchorPane anchor = new AnchorPane();
+		anchor.getChildren().add(node);
+		tab.setContent(anchor);
+		previewTabs.getTabs().add(tab);
+		AnchorPane.setBottomAnchor(node, 0.0d);
+		AnchorPane.setTopAnchor(node, 0.0d);
+		AnchorPane.setRightAnchor(node, 0.0d);
+		AnchorPane.setLeftAnchor(node, 0.0d);
+
+	}
+
+	private boolean checkPreviewTabExists(String id) {
+		boolean exists = false;
+		for (Tab t : previewTabs.getTabs()) {
+			if (t.getId().equals(id))
+				exists = true;
+		}
+
+		return exists;
+	}
+
+	private void treeViewInit(String projectName) {
+		projectRootNode = new TreeItem<String>(projectName);
+		sourceRootNode = new TreeItem<String>("Source Files");
+		graphRootNode = new TreeItem<String>("Graphs");
+		treeView.setRoot(projectRootNode);
+		projectRootNode.getChildren().add(sourceRootNode);
+		projectRootNode.getChildren().add(graphRootNode);
+
 	}
 
 }

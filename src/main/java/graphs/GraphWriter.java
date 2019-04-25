@@ -61,4 +61,17 @@ public class GraphWriter {
 		
 	}
 	
+	public void write(File file) throws IOException {
+				
+		file.createNewFile();
+		
+		FileWriter writer = new FileWriter(file);
+		
+		writer.write(header + gString);
+		writer.flush();
+		writer.close();
+		
+		
+	}
+	
 }
