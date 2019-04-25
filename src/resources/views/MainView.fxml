@@ -44,7 +44,7 @@
                     <tabs>
                       <Tab text="Navigation">
                            <content>
-                              <TreeView fx:id="treeView" />
+                              <TreeView fx:id="projectNavigator" />
                            </content>
                         </Tab>
                     </tabs>
@@ -56,7 +56,7 @@
               <tabs>
                 <Tab text="Console">
                      <content>
-                        <TextArea prefHeight="154.0" prefWidth="598.0" />
+                        <TextArea fx:id="console" editable="false" prefHeight="154.0" prefWidth="598.0" />
                      </content>
                 </Tab>
               </tabs>

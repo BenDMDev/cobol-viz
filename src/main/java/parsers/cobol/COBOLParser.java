@@ -9,6 +9,7 @@ import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.EOFToken;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 
 public class COBOLParser extends Parser {
 
@@ -20,7 +21,7 @@ public class COBOLParser extends Parser {
 
 	public ParseTreeNode parse(Token t) throws IOException {
 		
-		
+		sendMessage("BEGIN PARSING");
 				
 		switch ((COBOLTokenType) t.getType()) {
 		case IDENTIFICATION:
@@ -34,18 +35,19 @@ public class COBOLParser extends Parser {
 			
 			parseTree = new ParseTreeNode("PROCEDURE DIVISION");
 			
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			
+			match(t, COBOLTokenType.PROCEDURE, parseTree, TreeNodeType.KEYWORD);
 
-			scanner.scan();
+			
 			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			match(t, COBOLTokenType.DIVISION, parseTree, TreeNodeType.KEYWORD);
+			
 
-			scanner.scan();
-			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-
-			SectionParser sp = new SectionParser(scanner);
-			scanner.scan();
+			
+			t = scanner.getCurrentToken();			
+			match(t, COBOLTokenType.FULL_STOP, parseTree);
+			
+			SectionParser sp = new SectionParser(scanner);			
 			t = scanner.getCurrentToken();		
 			while (t.getType() != COBOLTokenType.EOF) {
 				parseTree.addChild(sp.parse(t));
@@ -54,7 +56,7 @@ public class COBOLParser extends Parser {
 						
 			
 			if(t instanceof EOFToken)		
-				System.out.println("Parse Success");
+				sendMessage("PARSE SUCCESS");
 			
 			break;
 		default:

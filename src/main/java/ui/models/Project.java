@@ -10,6 +10,7 @@ import java.util.Map;
 
 import main.java.graphs.Graph;
 import main.java.graphs.GraphWriter;
+import main.java.messages.MessageListener;
 import main.java.parsers.Parser;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
@@ -30,6 +31,7 @@ public class Project {
 	private Scanner scanner;
 	private SourceFile source;
 	private ParseTree tree;
+	private MessageListener listener;
 	
 
 	public Project(String projectName, String dirPath) {
@@ -75,6 +77,7 @@ public class Project {
 			initSource(file);
 			initScanner();
 			initParser();
+			parser.addListener(listener);
 			scanner.scan();
 			tree = new ParseTree();
 			tree.setRoot(parser.parse(scanner.getCurrentToken()));			
@@ -128,11 +131,16 @@ public class Project {
 			FileReader reader = new FileReader(currentFile);
 			BufferedReader input = new BufferedReader(reader);
 			source = new SourceFile(input);
+			//source.addListener(listener);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void addListener(MessageListener listener) {
+		this.listener = listener;
 	}
 	
 	

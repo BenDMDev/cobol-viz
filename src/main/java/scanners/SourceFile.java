@@ -3,13 +3,17 @@ package main.java.scanners;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class SourceFile {
+import main.java.messages.MessageListener;
+import main.java.messages.MessageEmitter;
+
+public class SourceFile implements MessageEmitter {
 
 	private BufferedReader input;
 	private String inputBuffer;	
 	private int numLines;
 	private int charPos;
 	private int markerPos;
+	private MessageListener listener;
 	static char EOL = '\n';
 	static char EOF = 0; 
 
@@ -36,7 +40,8 @@ public class SourceFile {
 		
 		if(charPos == -1) {		
 			charPos++;
-			inputBuffer = input.readLine();				
+			inputBuffer = input.readLine();	
+			
 		}
 		
 		
@@ -108,6 +113,24 @@ public class SourceFile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void addListener(MessageListener listener) {
+		this.listener = listener;
+		
+	}
+
+	@Override
+	public void removeListener(MessageListener listener) {
+		this.listener = null;
+		
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		listener.listen(message);
+		
 	}
 
 }

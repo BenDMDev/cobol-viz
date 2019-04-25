@@ -35,6 +35,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
@@ -45,13 +46,14 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import main.java.graphs.Graph;
 import main.java.graphs.Vertex;
+import main.java.messages.MessageListener;
 import main.java.ui.models.GraphDataModel;
 import main.java.ui.models.PreviewSketch;
 import main.java.ui.models.Project;
 
-public class MainController {
+public class MainController implements MessageListener {
 
-	final FileChooser chooser = new FileChooser();
+	final FileChooser fileChooser = new FileChooser();
 	final DirectoryChooser dirChooser = new DirectoryChooser();
 	private Project currentProject;
 
@@ -60,9 +62,12 @@ public class MainController {
 
 	@FXML
 	private TabPane previewTabs;
+	
+	@FXML
+	private TextArea console;
 
 	@FXML
-	private TreeView<String> treeView;
+	private TreeView<String> projectNavigator;
 	// Static Tree Nodes in TreeView
 	private TreeItem<String> projectRootNode;
 	private TreeItem<String> sourceRootNode;
@@ -71,7 +76,9 @@ public class MainController {
 	@FXML
 	private void openFile() {
 
-		File file = chooser.showOpenDialog(null);
+		File file = fileChooser.showOpenDialog(null);
+		System.out.println(this);
+		currentProject.addListener(this);
 
 		if (file != null) {
 			String outputFile;
@@ -91,9 +98,9 @@ public class MainController {
 			}
 			graphRootNode.getChildren().add(graphNode);
 
-			treeView.setOnMouseClicked(e -> {
+			projectNavigator.setOnMouseClicked(e -> {
 				if (e.getClickCount() == 2) {
-					TreeItem<String> item = treeView.getSelectionModel().getSelectedItem();
+					TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
 					if (item.getValue().contains(".gexf") && !checkPreviewTabExists(item.getValue())) {
 						createGraphPreviewContent(item.getValue());
 					}
@@ -137,11 +144,13 @@ public class MainController {
 		result.ifPresent(dirDetails -> {
 			currentProject = new Project(dirDetails.getKey(), dirDetails.getValue());
 			treeViewInit(currentProject.getProjectName());
+			
 		});
-
+		
+		
 	}
 
-	public void createGraphPreviewContent(String fileName) {
+	private void createGraphPreviewContent(String fileName) {
 		// Init a project - and therefore a workspace
 		ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
 		pc.newProject();
@@ -242,10 +251,16 @@ public class MainController {
 		projectRootNode = new TreeItem<String>(projectName);
 		sourceRootNode = new TreeItem<String>("Source Files");
 		graphRootNode = new TreeItem<String>("Graphs");
-		treeView.setRoot(projectRootNode);
+		projectNavigator.setRoot(projectRootNode);
 		projectRootNode.getChildren().add(sourceRootNode);
 		projectRootNode.getChildren().add(graphRootNode);
 
+	}
+
+	@Override
+	public void listen(String input) {
+		console.appendText(input + "\n");
+		
 	}
 
 }
