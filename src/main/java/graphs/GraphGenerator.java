@@ -1,20 +1,24 @@
 package main.java.graphs;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
-import main.java.parsers.Parser;
-import main.java.scanners.SourceFile;
+import main.java.trees.ParseTree;
+import main.java.trees.visitors.cobol.COBOLVisitor;
 
 public class GraphGenerator {
 
+	ParseTree rootNode;
 	
-	
-	public GraphGenerator(String fileName) {
-		
+	public GraphGenerator(ParseTree root) {
+		rootNode = root;
 	}
+	
+	
+	public Graph generateGraph() {		
+		COBOLVisitor visitor = new COBOLVisitor();
+		rootNode.accept(visitor);
+		Graph graph = visitor.getGraph();
+		return graph;
+	}
+	
 	
 	
 	

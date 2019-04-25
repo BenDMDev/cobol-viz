@@ -82,8 +82,8 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
             refreshLoop.refreshSketch();
             
         }
-        Vector pos = screenPositionToModelPosition(new Vector(e.getX(), e.getY()));
-        System.out.println(pos.getX() + " : " + pos.getY());
+       
+        
     }
 
     public void mousePressed(MouseEvent e) {

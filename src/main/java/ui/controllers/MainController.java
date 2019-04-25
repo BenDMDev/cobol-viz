@@ -1,29 +1,13 @@
 package main.java.ui.controllers;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Scanner;
+
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import org.gephi.graph.api.GraphController;
-import org.gephi.graph.api.GraphModel;
-import org.gephi.io.importer.api.Container;
-import org.gephi.io.importer.api.ImportController;
-import org.gephi.io.processor.plugin.DefaultProcessor;
-import org.gephi.layout.plugin.force.StepDisplacement;
-import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
-import org.gephi.preview.api.G2DTarget;
-import org.gephi.preview.api.PreviewController;
-import org.gephi.preview.api.PreviewModel;
-import org.gephi.preview.api.PreviewProperty;
-import org.gephi.preview.api.RenderTarget;
-import org.gephi.preview.types.DependantOriginalColor;
-import org.gephi.project.api.ProjectController;
-import org.gephi.project.api.Workspace;
-import org.openide.util.Lookup;
 
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
@@ -32,7 +16,10 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -48,66 +35,67 @@ import main.java.graphs.Graph;
 import main.java.graphs.Vertex;
 import main.java.messages.MessageListener;
 import main.java.ui.models.GraphDataModel;
-import main.java.ui.models.PreviewSketch;
+import main.java.ui.models.GraphLoader;
 import main.java.ui.models.Project;
 
 public class MainController implements MessageListener {
 
 	final FileChooser fileChooser = new FileChooser();
 	final DirectoryChooser dirChooser = new DirectoryChooser();
+	final GraphLoader graphLoader = new GraphLoader();
 	private Project currentProject;
 
 	@FXML
 	private BorderPane mainPane;
-
 	@FXML
 	private TabPane previewTabs;
-	
 	@FXML
 	private TextArea console;
-
+	@FXML
+	private MenuItem importMenuItem;
+	@FXML
+	private Button parseSourceButton;
+	@FXML
+	private CheckBox showLabelsChkBox;
+	@FXML
+	private Slider edgeOpacitySlider;
 	@FXML
 	private TreeView<String> projectNavigator;
+
 	// Static Tree Nodes in TreeView
 	private TreeItem<String> projectRootNode;
 	private TreeItem<String> sourceRootNode;
 	private TreeItem<String> graphRootNode;
 
 	@FXML
-	private void openFile() {
+	private void importSourceFile() {
 
 		File file = fileChooser.showOpenDialog(null);
-		System.out.println(this);
-		currentProject.addListener(this);
 
 		if (file != null) {
-			String outputFile;
 			String sourceFile = file.getName();
-			currentProject.parse(file);
-			outputFile = file.getName().replaceFirst("[.][^.]+$", "");
-			GraphDataModel m = currentProject.getModel(outputFile);
-			Graph g = m.getGraph();
-
+			currentProject.addSourceFile(file);
 			sourceRootNode.getChildren().add(new TreeItem<String>(sourceFile));
-			TreeItem<String> graphNode = new TreeItem<String>(outputFile + ".gexf");
 
-			for (int i = 0; i < g.getNumberOfVertices(); i++) {
-				Vertex[] vert = g.getVertices();
-				graphNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
-
-			}
-			graphRootNode.getChildren().add(graphNode);
-
-			projectNavigator.setOnMouseClicked(e -> {
-				if (e.getClickCount() == 2) {
-					TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
-					if (item.getValue().contains(".gexf") && !checkPreviewTabExists(item.getValue())) {
-						createGraphPreviewContent(item.getValue());
-					}
-
-				}
-			});
 		}
+	}
+
+	@FXML
+	private void parseSourceFile() {
+		String fileName = getSelectedFile();
+		File file = currentProject.getSourceFile(fileName);
+		currentProject.parse(file);
+		String outputFileName = file.getName().replaceFirst("[.][^.]+$", ".gexf");
+		GraphDataModel m = currentProject.getModel(outputFileName);
+		Graph g = m.getGraph();
+		TreeItem<String> graphNode = new TreeItem<String>(outputFileName);
+		for (int i = 0; i < g.getNumberOfVertices(); i++) {
+			Vertex[] vert = g.getVertices();
+			graphNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
+
+		}
+		graphRootNode.getChildren().add(graphNode);
+		createGraphPreviewContent(outputFileName);
 	}
 
 	@FXML
@@ -143,93 +131,52 @@ public class MainController implements MessageListener {
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 		result.ifPresent(dirDetails -> {
 			currentProject = new Project(dirDetails.getKey(), dirDetails.getValue());
-			treeViewInit(currentProject.getProjectName());
-			
+			projectNavigatorInit(currentProject.getProjectName());
+			importMenuItem.setDisable(false);
+			currentProject.addListener(this);
 		});
-		
-		
+
+	}
+
+	@FXML
+	private void updateGraph() {
+		graphLoader.setEdgeOpacity(edgeOpacitySlider.getValue());
+		graphLoader.setShowLabels(showLabelsChkBox.selectedProperty().get());
+		graphLoader.reload();
+	}
+
+	private String getSelectedFile() {
+		return projectNavigator.getSelectionModel().getSelectedItem().getValue();
 	}
 
 	private void createGraphPreviewContent(String fileName) {
-		// Init a project - and therefore a workspace
-		ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
-		pc.newProject();
-		Workspace workspace = pc.getCurrentWorkspace();
 
-		// Import file
-		ImportController importController = Lookup.getDefault().lookup(ImportController.class);
-		Container container;
-
-		try {
-			File file = currentProject.getOutputFile(fileName);
-			container = importController.importFile(file);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return;
-		}
-
-		// Append imported data to GraphAPI
-		importController.process(container, new DefaultProcessor(), workspace);
-
-		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
-		// DirectedGraph graph = graphModel.getDirectedGraph();
-
-		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
-		layout.setGraphModel(graphModel);
-		layout.initAlgo();
-		layout.resetPropertiesValues();
-
-		layout.setOptimalDistance(500f);
-
-		for (int i = 0; i < 100 && layout.canAlgo(); i++) {
-			layout.goAlgo();
-		}
-		layout.endAlgo();
-
-		// Preview configuration
-		PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
-		PreviewModel previewModel = previewController.getModel();
-		previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.FALSE);
-		previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR,
-				new DependantOriginalColor(Color.BLACK));
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.FALSE);
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 100);
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, 5);
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_RADIUS, 5);
-		previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR, Color.WHITE);
-
-		// New Processing target, get the PApplet
-		G2DTarget target = (G2DTarget) previewController.getRenderTarget(RenderTarget.G2D_TARGET);
-		final PreviewSketch previewSketch = new PreviewSketch(target);
-		previewController.refreshPreview();
-
-		// Add the applet to a JFrame and display
-		JPanel frame = new JPanel();
-		frame.setLayout(new BorderLayout());
-		frame.add(previewSketch, BorderLayout.CENTER);
-		frame.setVisible(true);
-
+		JPanel frame = graphLoader.initProject(currentProject.getOutputFile(fileName));
 		SwingNode swing = new SwingNode();
-		createSwingContent(swing, frame, previewSketch);
-		addPreviewTab(swing, fileName);
+		createSwingContent(swing, frame);
+		addGraphPreviewTab(swing, fileName);
 
 	}
 
-	private void createSwingContent(final SwingNode swingNode, JPanel frame, PreviewSketch preview) {
+	private void createSwingContent(final SwingNode swingNode, JPanel frame) {
 		SwingUtilities.invokeLater(() -> {
+
 			swingNode.setContent(frame);
-			preview.resetZoom();
+			// preview.resetZoom();
 		});
 	}
 
-	private void addPreviewTab(javafx.scene.Node node, String name) {
+	private void addGraphPreviewTab(SwingNode node, String fileName) {
 
-		Tab tab = new Tab(name);
-		tab.setId(name);
 		AnchorPane anchor = new AnchorPane();
+		anchor.getChildren().clear();
 		anchor.getChildren().add(node);
+		Tab tab = previewTabs.getTabs().get(0);
+		tab.setText("Preview: " + fileName);
+
 		tab.setContent(anchor);
-		previewTabs.getTabs().add(tab);
+		tab.setClosable(false);
+		previewTabs.getSelectionModel().select(tab);
 		AnchorPane.setBottomAnchor(node, 0.0d);
 		AnchorPane.setTopAnchor(node, 0.0d);
 		AnchorPane.setRightAnchor(node, 0.0d);
@@ -237,17 +184,38 @@ public class MainController implements MessageListener {
 
 	}
 
-	private boolean checkPreviewTabExists(String id) {
-		boolean exists = false;
-		for (Tab t : previewTabs.getTabs()) {
-			if (t.getId().equals(id))
-				exists = true;
-		}
+	private void addSourcePreviewTab(String fileName) {
+		Tab tab = new Tab(fileName);
+		tab.setId(fileName);
+		TextArea area = new TextArea();
+		area.setEditable(false);
+		File file = currentProject.getSourceFile(fileName);
+		loadFileToTextArea(area, file);
+		tab.setContent(area);
 
-		return exists;
+		previewTabs.getTabs().add(tab);
+		previewTabs.getSelectionModel().select(tab);
+
 	}
 
-	private void treeViewInit(String projectName) {
+	private void loadFileToTextArea(TextArea area, File file) {
+		try {
+			Scanner scanner = new Scanner(file);
+
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				area.appendText(line + "\n");
+			}
+
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void projectNavigatorInit(String projectName) {
+
 		projectRootNode = new TreeItem<String>(projectName);
 		sourceRootNode = new TreeItem<String>("Source Files");
 		graphRootNode = new TreeItem<String>("Graphs");
@@ -255,12 +223,38 @@ public class MainController implements MessageListener {
 		projectRootNode.getChildren().add(sourceRootNode);
 		projectRootNode.getChildren().add(graphRootNode);
 
+		projectNavigator.setOnMouseClicked(e -> {
+			TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
+			if (e.getClickCount() == 2) {
+				handleNavigationDoubleClick();
+				if (item != null && item.getParent() == sourceRootNode)
+					parseSourceButton.setDisable(false);
+				else
+					parseSourceButton.setDisable(true);
+			}
+		});
+
+	}
+
+	private void handleNavigationDoubleClick() {
+
+		TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
+		if (item != null) {
+			if (item.getParent() == graphRootNode) {
+				graphLoader.switchWorkSpace(item.getValue());
+				graphLoader.reload();
+				
+			} else if (item.getParent() == sourceRootNode) {
+				addSourcePreviewTab(item.getValue());
+			}
+		}
+
 	}
 
 	@Override
 	public void listen(String input) {
 		console.appendText(input + "\n");
-		
+
 	}
 
 }

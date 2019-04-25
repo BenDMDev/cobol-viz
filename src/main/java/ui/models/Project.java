@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import main.java.graphs.Graph;
+import main.java.graphs.GraphGenerator;
 import main.java.graphs.GraphWriter;
 import main.java.messages.MessageListener;
 import main.java.parsers.Parser;
@@ -56,7 +57,11 @@ public class Project {
 		return outputFiles.get(key);
 	}
 	
-	public void addSourceFile(File file) {
+	public File getSourceFile(String key) {
+		return sourceFiles.get(key);
+	}
+	
+	public void addSourceFile(File file) {		
 		sourceFiles.put(file.getName(), file);
 	}
 	
@@ -81,9 +86,8 @@ public class Project {
 			scanner.scan();
 			tree = new ParseTree();
 			tree.setRoot(parser.parse(scanner.getCurrentToken()));			
-			source.close();
-			addSourceFile(file);
-			String fileName = file.getName().replaceFirst("[.][^.]+$",  "");
+			source.close();			
+			String fileName = file.getName().replaceFirst("[.][^.]+$",  ".gexf");
 			generateModel(tree, fileName);
 		} catch (IOException e) {
 			
@@ -92,12 +96,11 @@ public class Project {
 	}
 	
 	private void generateModel(ParseTree tree, String fileName) {
-		COBOLVisitor visitor = new COBOLVisitor();
-		tree.accept(visitor);
-		Graph g = visitor.getGraph();
-		GraphDataModel model = new GraphDataModel(g);
+		GraphGenerator graphGen = new GraphGenerator(tree);
+		Graph graph = graphGen.generateGraph();
+		GraphDataModel model = new GraphDataModel(graph);
 		addDataModel(fileName, model);
-		GraphWriter writer = new GraphWriter(g);
+		GraphWriter writer = new GraphWriter(graph);
 		writer.generate();
 		saveToFile(writer, fileName);
 		
@@ -105,7 +108,7 @@ public class Project {
 	
 	private void saveToFile(GraphWriter writer, String fileName) {
 		try {
-			File file = new File(dirPath + "\\" + fileName + ".gexf");
+			File file = new File(dirPath + "\\" + fileName);
 			writer.write(file);
 			addOutputFile(file);
 		} catch (IOException e) {

@@ -10,6 +10,7 @@ import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.EOFToken;
 import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
+import main.java.trees.cobol.ProgramNode;
 
 public class COBOLParser extends Parser {
 
@@ -21,7 +22,8 @@ public class COBOLParser extends Parser {
 
 	public ParseTreeNode parse(Token t) throws IOException {
 		
-		sendMessage("BEGIN PARSING");
+		
+		long startTime = System.currentTimeMillis();
 				
 		switch ((COBOLTokenType) t.getType()) {
 		case IDENTIFICATION:
@@ -33,7 +35,7 @@ public class COBOLParser extends Parser {
 		case PROCEDURE:
 			
 			
-			parseTree = new ParseTreeNode("PROCEDURE DIVISION");
+			parseTree = new ProgramNode("PROCEDURE DIVISION");
 			
 			
 			match(t, COBOLTokenType.PROCEDURE, parseTree, TreeNodeType.KEYWORD);
@@ -55,8 +57,14 @@ public class COBOLParser extends Parser {
 			}
 						
 			
-			if(t instanceof EOFToken)		
-				sendMessage("PARSE SUCCESS");
+			if(t instanceof EOFToken){		
+				if (listener != null){
+					sendMessage("PARSE SUCCESS");
+					float timeTaken = (System.currentTimeMillis() - startTime) / 1000f;
+					sendMessage("PARSE TIME: " + timeTaken );
+				}
+				
+			}
 			
 			break;
 		default:
