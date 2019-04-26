@@ -1,7 +1,7 @@
 package main.java.graphs;
 
 import main.java.trees.ParseTree;
-import main.java.trees.visitors.cobol.COBOLVisitor;
+import main.java.trees.visitors.cobol.CallGraphVisitor;
 
 public class GraphGenerator {
 
@@ -13,7 +13,7 @@ public class GraphGenerator {
 	
 	
 	public Graph generateGraph() {		
-		COBOLVisitor visitor = new COBOLVisitor();
+		CallGraphVisitor visitor = new CallGraphVisitor();
 		rootNode.accept(visitor);
 		Graph graph = visitor.getGraph();		
 		return graph;

@@ -29,10 +29,10 @@ public class GraphWriter {
 				+ "</attributes >"	
 				+ "<nodes>\n";
 		
-		String body;
+		
 		Vertex[] v = g.getVertices();
 		int numVer = g.getNumberOfVertices();
-		int numEdges = g.getNumberOfEdges();
+		
 		for(int i = 0; i < numVer; i++) {
 			gString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\"> \n";
 			gString += "<attvalues>\n" 

@@ -17,7 +17,7 @@ import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
-import main.java.trees.visitors.cobol.COBOLVisitor;
+import main.java.trees.visitors.cobol.CallGraphVisitor;
 
 public class Project {
 

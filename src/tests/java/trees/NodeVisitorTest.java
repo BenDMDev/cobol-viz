@@ -9,7 +9,7 @@ import main.java.trees.cobol.ParagraphNode;
 import main.java.trees.cobol.SectionNode;
 import main.java.trees.cobol.SentenceNode;
 import main.java.trees.cobol.StatementNode;
-import main.java.trees.visitors.cobol.COBOLVisitor;
+import main.java.trees.visitors.cobol.CallGraphVisitor;
 
 public class NodeVisitorTest {
 
@@ -23,7 +23,7 @@ public class NodeVisitorTest {
 		node.addChild(new StatementNode("STATEMENT TWO"));
 		root.addChild(node);
 		
-		root.accept(new COBOLVisitor());
+		root.accept(new CallGraphVisitor());
 	}
 
 }

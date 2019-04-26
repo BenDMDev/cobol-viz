@@ -10,7 +10,7 @@ import main.java.trees.cobol.SentenceNode;
 import main.java.trees.cobol.StatementNode;
 import main.java.trees.visitors.TreeVisitor;
 
-public class COBOLVisitor implements TreeVisitor {
+public class CallGraphVisitor implements TreeVisitor {
 
 	private Graph g;
 	private CallGraphVertex lastSeen;
@@ -18,7 +18,7 @@ public class COBOLVisitor implements TreeVisitor {
 	private int lineEnd;
 	
 
-	public COBOLVisitor() {
+	public CallGraphVisitor() {
 		g = new Graph(50);
 		lastSeen = null;
 		
@@ -42,6 +42,7 @@ public class COBOLVisitor implements TreeVisitor {
 
 	public void visit(StatementNode statement) {
 		lineEnd = statement.getLineNumber();
+		
 		if (statement.getType().contains("PERFORM")) {
 			processPerformStatement(statement);
 		}

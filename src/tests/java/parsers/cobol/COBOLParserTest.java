@@ -10,11 +10,12 @@ import org.junit.Test;
 import main.java.graphs.Graph;
 import main.java.graphs.Vertex;
 import main.java.graphs.cobol.CallGraphVertex;
+import main.java.graphs.cobol.ControlGraphVertex;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
-import main.java.trees.visitors.cobol.COBOLVisitor;
+import main.java.trees.visitors.cobol.CallGraphVisitor;
 
 public class COBOLParserTest {
 
@@ -37,13 +38,17 @@ public class COBOLParserTest {
 
 			ParseTree tree = new ParseTree();
 			tree.setRoot(cbp.parse(l.getCurrentToken()));			
-			COBOLVisitor tv = new COBOLVisitor();
+			CallGraphVisitor tv = new CallGraphVisitor();
 			tree.accept(tv);
 			Graph g = tv.getGraph();
-			g.printMatrix();
+			// g.printMatrix();
 			for(int i = 0; i < g.getNumberOfVertices(); i++) {
 				CallGraphVertex c = (CallGraphVertex) g.getVertex(i);
-				System.out.println(c.getText() + " : Number of Lines : " + c.getNumberOfLines());
+				
+				for(int j = 0; i < c.getGraph().getNumberOfVertices(); j++) {
+					ControlGraphVertex cg = (ControlGraphVertex) c.getGraph().getVertex(j);
+					System.out.println(cg.getText());
+				}
 			}
 			
 			//tree.printParseTree();

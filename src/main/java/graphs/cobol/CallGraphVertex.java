@@ -10,13 +10,17 @@ public class CallGraphVertex extends Vertex {
 	
 	public CallGraphVertex(String label) {
 		super(label);				
-		g = new Graph(10);
+		g = new Graph(100);
 		numberOfLines = 0;
 	}
 	
 	public Graph getGraph() {
 		return g;
 	} 
+	
+	public void setGraph(Graph g) {
+		this.g = g;
+	}
 	
 	public void setNumberOfLines(int numberOfLines) {
 		this.numberOfLines = numberOfLines;
