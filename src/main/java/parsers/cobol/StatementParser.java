@@ -26,7 +26,7 @@ public class StatementParser extends Parser {
 
 	@Override
 	public ParseTreeNode parse(Token inputToken) throws IOException {
-
+		int lineNumber = inputToken.getLineNumber();
 		switch ((COBOLTokenType) inputToken.getType()) {
 		case MOVE:
 			MoveStatementParser moveParser = new MoveStatementParser(scanner);
@@ -50,7 +50,7 @@ public class StatementParser extends Parser {
 		default:
 			break;
 		}
-
+		parseTree.setLineNumber(lineNumber);
 		return parseTree;
 	}
 

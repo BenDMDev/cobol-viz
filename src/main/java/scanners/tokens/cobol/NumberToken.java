@@ -28,7 +28,7 @@ public class NumberToken extends Token {
 		}	
 		
 		this.value = s.toString();
-		
+		lineNumber = source.getNumberOfLines();
 		
 	}
 

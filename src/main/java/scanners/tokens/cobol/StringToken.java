@@ -26,6 +26,7 @@ public class StringToken extends Token {
 		this.value = s.toString();
 		
 		this.type = COBOLTokenType.STRING_LITERAL;
+		lineNumber = source.getNumberOfLines();
 	}
 
 }

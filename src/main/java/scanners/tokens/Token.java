@@ -10,6 +10,7 @@ public abstract class Token  {
 	protected String value;
 	protected SourceFile source;
 	protected TokenType type;
+	protected int lineNumber;
 	
 	public Token(SourceFile source) {
 		this.source = source;
@@ -22,6 +23,10 @@ public abstract class Token  {
 	
 	public String getTokenValue() {
 		return value;
+	}
+	
+	public int getLineNumber() {
+		return lineNumber;
 	}
 	
 	public abstract void extract() throws IOException;

@@ -8,6 +8,8 @@ import java.io.IOException;
 import org.junit.Test;
 
 import main.java.graphs.Graph;
+import main.java.graphs.Vertex;
+import main.java.graphs.cobol.CallGraphVertex;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
@@ -39,7 +41,12 @@ public class COBOLParserTest {
 			tree.accept(tv);
 			Graph g = tv.getGraph();
 			g.printMatrix();
-			tree.printParseTree();
+			for(int i = 0; i < g.getNumberOfVertices(); i++) {
+				CallGraphVertex c = (CallGraphVertex) g.getVertex(i);
+				System.out.println(c.getText() + " : Number of Lines : " + c.getNumberOfLines());
+			}
+			
+			//tree.printParseTree();
 			s.close();
 			
 		

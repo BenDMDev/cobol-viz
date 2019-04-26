@@ -32,6 +32,7 @@ import org.gephi.preview.types.EdgeColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.GraphDistance;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 public class GraphLoader {
@@ -91,26 +92,28 @@ public class GraphLoader {
 		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
 		DirectedGraph graph = graphModel.getDirectedGraph();
 
-		Function degreeRanking = appearanceModel.getNodeFunction(graph, AppearanceModel.GraphFunction.NODE_DEGREE,
+		Column outDegreeCol = graphModel.getNodeTable().getColumn("out");
+		Function degreeRanking = appearanceModel.getNodeFunction(graph, outDegreeCol,
 				RankingElementColorTransformer.class);
 		RankingElementColorTransformer degreeTransformer = (RankingElementColorTransformer) degreeRanking
 				.getTransformer();
 		degreeTransformer.setColors(new Color[] { new Color(0xFEF0D9), new Color(0xB30000) });
 		degreeTransformer.setColorPositions(new float[] { 0f, 1f });
 		appearanceController.transform(degreeRanking);
-
-		// Get Centrality
-		GraphDistance distance = new GraphDistance();
-		distance.setDirected(true);
-		distance.execute(graphModel);
-
+//
+//		// Get Centrality
+//		GraphDistance distance = new GraphDistance();
+//		distance.setDirected(true);
+//		distance.execute(graphModel);
+//
 		// Rank size by centrality
-		Column centralityColumn = graphModel.getNodeTable().getColumn(GraphDistance.BETWEENNESS);
+		Column centralityColumn = graphModel.getNodeTable().getColumn("loc");
+		
 		Function centralityRanking = appearanceModel.getNodeFunction(graph, centralityColumn,
 				RankingNodeSizeTransformer.class);
 		RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) centralityRanking
 				.getTransformer();
-		centralityTransformer.setMinSize(3);
+		centralityTransformer.setMinSize(10);
 		centralityTransformer.setMaxSize(50);
 		appearanceController.transform(centralityRanking);
 

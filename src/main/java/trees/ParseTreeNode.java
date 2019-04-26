@@ -7,10 +7,10 @@ import main.java.trees.visitors.TreeVisitor;
 
 public class ParseTreeNode {
 
-	private String value;
-	private TreeNodeType type;
-	
-	private List<ParseTreeNode> children; 
+	protected String value;
+	protected TreeNodeType type;
+	protected int lineNumber;
+	protected List<ParseTreeNode> children; 
 	
 	public ParseTreeNode(String value) {
 		this.value = value;
@@ -42,6 +42,14 @@ public class ParseTreeNode {
 	
 	public List<ParseTreeNode> getChildren() {
 		return children;
+	}
+	
+	public void setLineNumber(int lineNum) {
+		lineNumber = lineNum;
+	}
+	
+	public int getLineNumber() {
+		return lineNumber;
 	}
 	
 	public void accept(TreeVisitor visitor) {

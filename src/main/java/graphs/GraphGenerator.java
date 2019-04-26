@@ -15,7 +15,7 @@ public class GraphGenerator {
 	public Graph generateGraph() {		
 		COBOLVisitor visitor = new COBOLVisitor();
 		rootNode.accept(visitor);
-		Graph graph = visitor.getGraph();
+		Graph graph = visitor.getGraph();		
 		return graph;
 	}
 	

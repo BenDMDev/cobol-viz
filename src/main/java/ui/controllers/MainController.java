@@ -9,6 +9,8 @@ import java.util.Scanner;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -172,6 +174,8 @@ public class MainController implements MessageListener {
 			enableImportMenuItems();
 			currentProject.addListener(this);
 		});
+		
+		createTabPaneListeners();
 
 	}
 
@@ -237,11 +241,14 @@ public class MainController implements MessageListener {
 		AnchorPane anchor = new AnchorPane();
 		anchor.getChildren().clear();
 		anchor.getChildren().add(node);
-		Tab tab = previewTabs.getTabs().get(0);
-		tab.setText("Preview: " + fileName);
+		//Tab tab = previewTabs.getTabs().get(0);
+		Tab tab = new Tab();
+		tab.setText(fileName);
+		tab.setId(fileName);
 
 		tab.setContent(anchor);
 		tab.setClosable(false);
+		previewTabs.getTabs().add(tab);
 		previewTabs.getSelectionModel().select(tab);
 		AnchorPane.setBottomAnchor(node, 0.0d);
 		AnchorPane.setTopAnchor(node, 0.0d);
@@ -314,6 +321,10 @@ public class MainController implements MessageListener {
 		TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
 		if (item != null) {
 			if (item.getParent() == graphRootNode) {
+				Tab activeTab = getActiveTab(item.getValue());			
+				if(activeTab != null) {
+					previewTabs.getSelectionModel().select(activeTab);
+				}
 				graphLoader.switchWorkSpace(item.getValue());
 				graphLoader.reload();
 
@@ -322,6 +333,29 @@ public class MainController implements MessageListener {
 			}
 		}
 
+	}
+	
+	private void createTabPaneListeners() {
+		previewTabs.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Tab>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				if(newValue.getId().contains(".gexf")) {
+					graphLoader.switchWorkSpace(newValue.getId());
+					graphLoader.reload();
+				}				
+			}
+			
+		});
+	}
+	
+	private Tab getActiveTab(String id) {
+		Tab activeTab = null;
+		for(Tab t : previewTabs.getTabs()) {
+			if (t.getId().equals(id))
+				activeTab = t;
+		}
+		return activeTab;
 	}
 
 	@Override

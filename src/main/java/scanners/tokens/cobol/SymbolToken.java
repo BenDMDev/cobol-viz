@@ -56,6 +56,7 @@ public class SymbolToken extends Token {
 		}
 
 		this.value = s.toString();
+		lineNumber = source.getNumberOfLines();
 		source.nextChar();
 	}
 

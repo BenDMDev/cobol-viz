@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import main.java.graphs.cobol.CallGraphVertex;
+
 public class GraphWriter {
 
 	private Graph g;
@@ -20,6 +22,11 @@ public class GraphWriter {
 	
 	public void generate() {
 		gString = "<graph defaultedgetype=\"directed\" type=\"static\">\n" 
+				+ "<attributes class=\"node\">\n" 
+				+ "<attribute id=\"loc\" title=\"linesOfCode\" type=\"int\" />"
+				+ "<attribute id=\"in\" title=\"inDegree\" type=\"int\" />"
+				+ "<attribute id=\"out\" title=\"outDegree\" type=\"int\" />"
+				+ "</attributes >"	
 				+ "<nodes>\n";
 		
 		String body;
@@ -27,7 +34,16 @@ public class GraphWriter {
 		int numVer = g.getNumberOfVertices();
 		int numEdges = g.getNumberOfEdges();
 		for(int i = 0; i < numVer; i++) {
-			gString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\" /> \n"; 
+			gString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\"> \n";
+			gString += "<attvalues>\n" 
+						+ "<attvalue for=\"loc\" value=\"" +
+						((CallGraphVertex)v[i]).getNumberOfLines() + "\"/> \n"						
+						+ "<attvalue for=\"in\" value=\"" +
+						 g.inDegree(i) + "\"/> \n"
+						+ "<attvalue for=\"out\" value=\"" +
+						  g.outDegree(i) + "\"/> \n"
+						+"</attvalues>\n"
+						+"</node>";
 		}
 		
 		gString += "</nodes>\n" 

@@ -32,6 +32,8 @@ public class WordToken extends Token {
 		} else {
 			type = COBOLTokenType.IDENTIFIER;
 		}
+		
+		lineNumber = source.getNumberOfLines();
 	}
 	
 	

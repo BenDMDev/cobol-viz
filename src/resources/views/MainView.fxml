@@ -74,14 +74,7 @@
                         </Tab>
                     </tabs>
                   </TabPane>
-                  <TabPane fx:id="previewTabs">
-                     <tabs>
-                        <Tab text="Preview">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                          </content>
-                        </Tab>
-                     </tabs></TabPane>
+                  <TabPane fx:id="previewTabs" />
                   <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                       <Tab fx:id="previewOptionsTab" disable="true" text="Preview Options">
@@ -91,6 +84,7 @@
                                     <GridPane layoutX="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columnConstraints>
                                         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints />
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
