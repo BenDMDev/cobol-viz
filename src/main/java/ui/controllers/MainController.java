@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
@@ -28,6 +29,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
@@ -45,23 +47,45 @@ public class MainController implements MessageListener {
 	final GraphLoader graphLoader = new GraphLoader();
 	private Project currentProject;
 
+	// Main view
 	@FXML
 	private BorderPane mainPane;
 	@FXML
 	private TabPane previewTabs;
+	@FXML 
+	private Tab previewOptionsTab;
 	@FXML
 	private TextArea console;
+	
+	// Buttons and Menu Items
 	@FXML
-	private MenuItem importMenuItem;
+	private MenuItem importSourceMenuItem;
+	@FXML
+	private MenuItem importGraphMenuItem;
 	@FXML
 	private Button parseSourceButton;
+	
+	// Preview Options Tab
 	@FXML
 	private CheckBox showLabelsChkBox;
 	@FXML
 	private Slider edgeOpacitySlider;
 	@FXML
 	private TreeView<String> projectNavigator;
-
+	@FXML 
+	private TextField edgeThicknessField;
+	@FXML
+	private CheckBox curvedEdgesChkBox;
+	@FXML
+	private TextField edgeRadiusField;
+	@FXML
+	private ColorPicker backgroundColourPicker;
+	@FXML
+	private ColorPicker edgeColourPicker;
+	@FXML
+	private ColorPicker labelColourPicker;
+	
+	
 	// Static Tree Nodes in TreeView
 	private TreeItem<String> projectRootNode;
 	private TreeItem<String> sourceRootNode;
@@ -76,6 +100,19 @@ public class MainController implements MessageListener {
 			String sourceFile = file.getName();
 			currentProject.addSourceFile(file);
 			sourceRootNode.getChildren().add(new TreeItem<String>(sourceFile));
+
+		}
+	}
+	
+	@FXML 
+	private void importGraphFile() {
+		File file = fileChooser.showOpenDialog(null);
+
+		if (file != null) {
+			String outputFile = file.getName();
+			currentProject.addOutputFile(file);
+			graphRootNode.getChildren().add(new TreeItem<String>(outputFile));
+			createGraphPreviewContent(outputFile);
 
 		}
 	}
@@ -131,8 +168,8 @@ public class MainController implements MessageListener {
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 		result.ifPresent(dirDetails -> {
 			currentProject = new Project(dirDetails.getKey(), dirDetails.getValue());
-			projectNavigatorInit(currentProject.getProjectName());
-			importMenuItem.setDisable(false);
+			initProjectNavigation(currentProject.getProjectName());
+			enableImportMenuItems();
 			currentProject.addListener(this);
 		});
 
@@ -142,7 +179,21 @@ public class MainController implements MessageListener {
 	private void updateGraph() {
 		graphLoader.setEdgeOpacity(edgeOpacitySlider.getValue());
 		graphLoader.setShowLabels(showLabelsChkBox.selectedProperty().get());
+		graphLoader.setEdgeThickness(Double.parseDouble(edgeThicknessField.getText()));
+		graphLoader.setCurvedEdges(curvedEdgesChkBox.selectedProperty().getValue());
+		graphLoader.setEdgeRadius(Double.parseDouble(edgeRadiusField.getText()));
+		Color color = backgroundColourPicker.getValue();
+		graphLoader.setBackgroundColour(color.getRed(), color.getGreen(), color.getBlue());	
+		color = edgeColourPicker.getValue();
+		graphLoader.setEdgeColor(color.getRed(), color.getGreen(), color.getBlue());		
+		color = labelColourPicker.getValue();
+		graphLoader.setLabelColor(color.getRed(), color.getGreen(), color.getBlue());
 		graphLoader.reload();
+	}
+	
+	@FXML
+	private void runLayout() {
+		graphLoader.runLayout();
 	}
 
 	private String getSelectedFile() {
@@ -150,13 +201,16 @@ public class MainController implements MessageListener {
 	}
 
 	private void createGraphPreviewContent(String fileName) {
-
+		
 		JPanel frame = graphLoader.initProject(currentProject.getOutputFile(fileName));
 		SwingNode swing = new SwingNode();
 		createSwingContent(swing, frame);
 		addGraphPreviewTab(swing, fileName);
-
+		previewOptionsTab.setDisable(false);
+		updateGraphPreviewOptionsTab();
 	}
+	
+
 
 	private void createSwingContent(final SwingNode swingNode, JPanel frame) {
 		SwingUtilities.invokeLater(() -> {
@@ -164,6 +218,18 @@ public class MainController implements MessageListener {
 			swingNode.setContent(frame);
 			// preview.resetZoom();
 		});
+	}
+	
+	private void updateGraphPreviewOptionsTab() {
+		edgeThicknessField.setText(Double.toString(graphLoader.getEdgeThickness()));
+		edgeRadiusField.setText(Double.toString(graphLoader.getEdgeRadius()));
+		edgeOpacitySlider.adjustValue(graphLoader.getEdgeOpacity());
+		int[] rgb = graphLoader.getBackgroundColour();
+		backgroundColourPicker.setValue(Color.rgb(rgb[0], rgb[1],rgb[2]));
+		rgb = graphLoader.getEdgeColour();
+		edgeColourPicker.setValue(Color.rgb(rgb[0], rgb[1],rgb[2]));
+		rgb = graphLoader.getLabelColour();
+		labelColourPicker.setValue(Color.rgb(rgb[0], rgb[1],rgb[2]));
 	}
 
 	private void addGraphPreviewTab(SwingNode node, String fileName) {
@@ -197,6 +263,11 @@ public class MainController implements MessageListener {
 		previewTabs.getSelectionModel().select(tab);
 
 	}
+	
+	private void enableImportMenuItems() {
+		importSourceMenuItem.setDisable(false);
+		importGraphMenuItem.setDisable(false);
+	}
 
 	private void loadFileToTextArea(TextArea area, File file) {
 		try {
@@ -214,7 +285,7 @@ public class MainController implements MessageListener {
 		}
 	}
 
-	private void projectNavigatorInit(String projectName) {
+	private void initProjectNavigation(String projectName) {
 
 		projectRootNode = new TreeItem<String>(projectName);
 		sourceRootNode = new TreeItem<String>("Source Files");
@@ -227,6 +298,8 @@ public class MainController implements MessageListener {
 			TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
 			if (e.getClickCount() == 2) {
 				handleNavigationDoubleClick();
+
+			} else {
 				if (item != null && item.getParent() == sourceRootNode)
 					parseSourceButton.setDisable(false);
 				else
@@ -243,7 +316,7 @@ public class MainController implements MessageListener {
 			if (item.getParent() == graphRootNode) {
 				graphLoader.switchWorkSpace(item.getValue());
 				graphLoader.reload();
-				
+
 			} else if (item.getParent() == sourceRootNode) {
 				addSourcePreviewTab(item.getValue());
 			}
