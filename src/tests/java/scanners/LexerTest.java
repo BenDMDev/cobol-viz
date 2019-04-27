@@ -17,14 +17,14 @@ public class LexerTest {
 
 	@Test
 	public void testWordScan() {
-		BufferedReader in = new BufferedReader(new StringReader("IDENTIFICATION DIVISION. \n PROGRAM-ID HELLO 45685"));
+		BufferedReader in = new BufferedReader(new StringReader("ACCEPT DIVISION. \n PROGRAM-ID HELLO 45685"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();				
-			assertEquals("IDENTIFICATION", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IDENTIFICATION, l.getCurrentToken().getType());
+			assertEquals("ACCEPT", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.ACCEPT, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("DIVISION", l.getCurrentToken().getTokenValue());
 			assertEquals(COBOLTokenType.DIVISION, l.getCurrentToken().getType());

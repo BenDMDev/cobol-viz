@@ -7,6 +7,7 @@ import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.TokenType;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
 public class ExpressionParser extends StatementParser {
@@ -69,10 +70,12 @@ public class ExpressionParser extends StatementParser {
 			type = inputToken.getType();
 		}
 
-		
+		if(inputToken.getType() == COBOLTokenType.NOT || scanner.lookAhead().getType() == COBOLTokenType.SIZE)
+			parseOnSizeError(inputToken);
+
 	}
 
-	private void  parseSubtractStatement(Token inputToken) throws IOException {
+	private void parseSubtractStatement(Token inputToken) throws IOException {
 
 		parseTree = new StatementNode("SUBTRACT STATEMENT");
 
@@ -103,7 +106,6 @@ public class ExpressionParser extends StatementParser {
 			type = inputToken.getType();
 		}
 
-		
 	}
 
 	private void parseDivideStatement(Token inputToken) throws IOException {
@@ -131,17 +133,14 @@ public class ExpressionParser extends StatementParser {
 			type = inputToken.getType();
 		}
 
-		
 	}
 
 	private void parseMultiplyStatement(Token inputToken) throws IOException {
 		parseTree = new StatementNode("MULTIPLY STATEMENT");
-		
+
 		// Match and consume MULTIPLY
 		match(inputToken, COBOLTokenType.MULTIPLY, parseTree);
 		inputToken = scanner.getCurrentToken();
-
-		
 
 		matchList(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL, COBOLTokenType.INTEGER);
 		inputToken = scanner.getCurrentToken();
@@ -161,7 +160,40 @@ public class ExpressionParser extends StatementParser {
 			type = inputToken.getType();
 		}
 
-		
 	}
 
+	private void parseOnSizeError(Token inputToken) throws IOException {
+
+		StatementNode node = new StatementNode("CONDITIONAL STATEMENT");
+		node.setTreeType(TreeNodeType.CONDITIONAL);
+		
+		// Consume NOT
+		match(inputToken, COBOLTokenType.NOT, node);
+		inputToken = scanner.getCurrentToken();
+
+		// Consume Rounded
+		match(inputToken, COBOLTokenType.ROUNDED, node);
+		inputToken = scanner.getCurrentToken();
+
+		// Consume ON
+		match(inputToken, COBOLTokenType.ON, node);
+		inputToken = scanner.getCurrentToken();
+
+		// Consume SIZE
+		match(inputToken, COBOLTokenType.SIZE, node);
+		inputToken = scanner.getCurrentToken();
+
+		// Consume ERROR
+		match(inputToken, COBOLTokenType.ERROR, node);
+		inputToken = scanner.getCurrentToken();
+
+		// CONSUME STATEMENT
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+			StatementParser statementParser = new StatementParser(scanner);
+			node.addChild(statementParser.parse(inputToken));
+			inputToken = scanner.getCurrentToken();
+		}
+
+		parseTree.addChild(node);
+	}
 }

@@ -1,7 +1,8 @@
-package main.java.parsers.cobol;
+package main.java.parsers.cobol.statements;
 
 import java.io.IOException;
 
+import main.java.parsers.cobol.StatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;

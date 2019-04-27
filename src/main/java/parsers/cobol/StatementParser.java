@@ -1,12 +1,12 @@
 package main.java.parsers.cobol;
 
 import java.io.IOException;
-import java.util.HashSet;
-
 import main.java.parsers.Parser;
+import main.java.parsers.cobol.statements.AcceptStatementParser;
+import main.java.parsers.cobol.statements.MoveStatementParser;
+import main.java.parsers.cobol.statements.PerformStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
-import main.java.scanners.tokens.TokenType;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
 
@@ -15,9 +15,7 @@ public class StatementParser extends Parser {
 	
 
 	public StatementParser(Scanner scanner) {
-		super(scanner);
-
-	
+		super(scanner);	
 	}
 
 	@Override
@@ -42,6 +40,10 @@ public class StatementParser extends Parser {
 		case PERFORM:
 			PerformStatementParser perform = new PerformStatementParser(scanner);
 			parseTree = perform.parse(inputToken);
+			break;
+		case ACCEPT:
+			AcceptStatementParser accept = new AcceptStatementParser(scanner);
+			parseTree = accept.parse(inputToken);
 			break;
 		default:
 			break;

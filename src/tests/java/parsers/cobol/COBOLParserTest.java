@@ -42,15 +42,9 @@ public class COBOLParserTest {
 			tree.accept(tv);
 			Graph g = tv.getGraph();
 			g.printMatrix();
-			for(int i = 0; i < g.getNumberOfVertices(); i++) {
-				CallGraphVertex v = (CallGraphVertex) g.getVertex(i);
-				System.out.println(v.getText() + " COMPLEXTIY = " + v.getCyclomaticComplexity());
-				System.out.println("E:" + v.getGraph().getNumberOfEdges() 
-						+ " V:" + v.getGraph().getNumberOfVertices() + "P" + v.getGraph().inDegree(v.getGraph().getVertex("EXIT").getIndex()));
-				
-			}
 			
-			//tree.printParseTree();
+			
+			tree.printParseTree();
 			s.close();
 			
 		
