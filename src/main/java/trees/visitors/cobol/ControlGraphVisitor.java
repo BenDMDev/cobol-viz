@@ -40,10 +40,10 @@ public class ControlGraphVisitor implements TreeVisitor {
 			if (!exitList.isEmpty()) {
 				Vertex v = exitList.pop();
 				while (exitList.size() > 1) {					
-					graph.addEdge(v.getIndex(), exitList.peek().getIndex());
+					graph.addEdge(exitList.peek().getIndex(), v.getIndex());
 					v = exitList.pop();
 				}
-				graph.addEdge(v.getIndex(), exit.getIndex());
+				// graph.addEdge(v.getIndex(), exit.getIndex());
 			}
 		}
 	}
@@ -77,9 +77,9 @@ public class ControlGraphVisitor implements TreeVisitor {
 		graph.addVertices(vertex);
 		graph.addEdge(lastSeen.getIndex(), vertex.getIndex());
 		
-		if(!exitList.isEmpty()) {
-		 graph.addEdge(exitList.pop().getIndex(), vertex.getIndex());
-		}
+//		if(!exitList.isEmpty()) {
+//		 graph.addEdge(exitList.pop().getIndex(), vertex.getIndex());
+//		}
 		if (node.getTreeNodeType() == TreeNodeType.CONDITIONAL) {
 			ControlGraphVertex holder = vertex;
 			lastSeen = vertex;

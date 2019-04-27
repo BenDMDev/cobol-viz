@@ -40,7 +40,11 @@ public class GraphWriter {
 		int numVer = controlGraph.getNumberOfVertices();
 		
 		for(int i = 0; i < numVer; i++) {
-			outputString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\"/> \n";
+			String label = v[i].getText();
+			
+			label = label.replace("<","less than");
+			
+			outputString += "<node id=\"" + i + "\" label=\"" + label + "\"/> \n";
 		}
 	
 		outputString += "</nodes>\n" 
