@@ -48,6 +48,10 @@ public class ParseTreeNode {
 		lineNumber = lineNum;
 	}
 	
+	public void setTreeType(TreeNodeType type) {
+		this.type = type;
+	}
+	
 	public int getLineNumber() {
 		return lineNumber;
 	}

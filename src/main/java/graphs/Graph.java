@@ -29,8 +29,10 @@ public class Graph {
 	}
 	
 	public void addEdge(int from, int to) {
+		if(!edgeExists(from, to)) {
 		adjacencyMatrix[from][to] = 1;
 		numEdges++;
+		}
 		
 	}
 	

@@ -5,6 +5,7 @@ import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
 public class ConditionalParser extends StatementParser {
@@ -15,6 +16,7 @@ public class ConditionalParser extends StatementParser {
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		ParseTreeNode root = new StatementNode("CONDITIONAL STATEMENT");
+		root.setTreeType(TreeNodeType.CONDITIONAL);
 
 		// Match and consume IF
 		match(inputToken, COBOLTokenType.IF, root);
@@ -30,8 +32,10 @@ public class ConditionalParser extends StatementParser {
 
 		// Get next Token - RHS of IF condition
 		inputToken = scanner.getCurrentToken();
+		
 		matchList(inputToken, root, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
 				COBOLTokenType.STRING_LITERAL);
+		
 
 		inputToken = scanner.getCurrentToken();
 
@@ -42,19 +46,42 @@ public class ConditionalParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 		}
 
+		if(inputToken.getType() == COBOLTokenType.NEXT) {
+			//Consume NEXT
+			match(inputToken, COBOLTokenType.NEXT, root);
+			inputToken = scanner.getCurrentToken();
+			//Consume SENTENCE
+			match(inputToken, COBOLTokenType.SENTENCE, root);
+			
+		} 
+		
 		inputToken = scanner.getCurrentToken();
 
 		if (inputToken.getType() == COBOLTokenType.ELSE) {
 			match(inputToken, COBOLTokenType.ELSE, root);
 			inputToken = scanner.getCurrentToken();
 
-			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getType())) {
+			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+				
 				StatementParser parser = new StatementParser(scanner);
 				root.addChild(parser.parse(inputToken));
 				inputToken = scanner.getCurrentToken();
 			}
+			
+			if(inputToken.getType() == COBOLTokenType.NEXT) {
+				//Consume NEXT
+				match(inputToken, COBOLTokenType.NEXT, root);
+				inputToken = scanner.getCurrentToken();
+				//Consume SENTENCE
+				match(inputToken, COBOLTokenType.SENTENCE, root);
+				
+			} 
+						
 
 		}
+				
+		inputToken = scanner.getCurrentToken();	
+		match(inputToken, COBOLTokenType.END_IF, root);
 
 		return root;
 

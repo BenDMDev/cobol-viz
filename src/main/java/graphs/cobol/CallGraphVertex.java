@@ -30,5 +30,13 @@ public class CallGraphVertex extends Vertex {
 	public int getNumberOfLines() {
 		return numberOfLines;
 	}
+	
+	public int getCyclomaticComplexity() {
+		int edges = graph.getNumberOfEdges();
+		int vertices = graph.getNumberOfVertices();
+		int connected = graph.inDegree(graph.getVertex("EXIT").getIndex());
+		return (edges - vertices) + 2 * connected;
+		
+	}
 
 }

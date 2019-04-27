@@ -33,10 +33,11 @@ public abstract class Parser implements MessageEmitter {
 	 * @throws IOException
 	 */
 	public void match(Token input, TokenType expected, ParseTreeNode p) throws IOException {
-
+		
 		if (input.getType() == expected) {
 			p.addChild(new ParseTreeNode(input.getTokenValue()));
-			scanner.scan();			
+			scanner.scan();		
+			
 		}
 
 	}

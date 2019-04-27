@@ -94,7 +94,8 @@ public class StatementParserTest {
 				+ "MOVE ten TO five\n"
 				+ "ELSE \n" 
 				+ "ADD ten TO five\n"
-				+ "MOVE five TO six.";
+				+ "MOVE five TO six.\n";
+				
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

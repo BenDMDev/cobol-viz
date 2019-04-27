@@ -4,6 +4,7 @@ import main.java.graphs.Graph;
 import main.java.graphs.cobol.CallGraphVertex;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.ParagraphNode;
 import main.java.trees.cobol.SectionNode;
 import main.java.trees.cobol.SentenceNode;
@@ -17,13 +18,10 @@ public class CallGraphVisitor implements TreeVisitor {
 	private Graph controlGraph;
 	private int lineBegin;
 	private int lineEnd;
-	
 
 	public CallGraphVisitor() {
 		g = new Graph(50);
 		lastSeen = null;
-		
-
 	}
 
 	@Override
@@ -43,9 +41,14 @@ public class CallGraphVisitor implements TreeVisitor {
 
 	public void visit(StatementNode statement) {
 		lineEnd = statement.getLineNumber();
-		
-		if (statement.getType().contains("PERFORM")) {
+
+		if (statement.getTreeNodeType() == TreeNodeType.REFERENCE) {
 			processPerformStatement(statement);
+		}
+		for (ParseTreeNode n : statement.getChildren()) {
+			if (n instanceof StatementNode) {
+				visit((StatementNode) n);
+			}
 		}
 
 	}
@@ -62,44 +65,39 @@ public class CallGraphVisitor implements TreeVisitor {
 		lineBegin = lineEnd = paragraph.getLineNumber();
 		if (vertex == null) {
 			vertex = new CallGraphVertex(paragraph.getLabel());
-			g.addVertices(vertex);						
+			g.addVertices(vertex);
 			vertex.setGraph(controlGraph);
 			if (lastSeen == null)
 				lastSeen = vertex;
 			else {
 				g.addEdge(lastSeen.getIndex(), vertex.getIndex());
-				lastSeen = vertex;			
+				lastSeen = vertex;
 			}
-			for(ParseTreeNode n : paragraph.getChildren()) {
-				if(n instanceof SentenceNode)
+			for (ParseTreeNode n : paragraph.getChildren()) {
+				if (n instanceof SentenceNode)
 					visit((SentenceNode) n);
 			}
 			int diff = lineEnd - lineBegin;
 			lastSeen.setNumberOfLines(diff);
-			
-			
+
 		} else {
 			CallGraphVertex holder = lastSeen;
 			lastSeen = vertex;
-			for(ParseTreeNode n : paragraph.getChildren()) {
-				if(n instanceof SentenceNode)
+			for (ParseTreeNode n : paragraph.getChildren()) {
+				if (n instanceof SentenceNode)
 					visit((SentenceNode) n);
 			}
 			int diff = lineEnd - lineBegin;
 			lastSeen.setNumberOfLines(diff);
 			lastSeen.setGraph(controlGraph);
 			lastSeen = holder;
-			
 		}
-		
-		
-		
 
 	}
 
 	public void visit(SentenceNode sentence) {
-		for(ParseTreeNode n : sentence.getChildren()) {
-			if(n instanceof StatementNode)
+		for (ParseTreeNode n : sentence.getChildren()) {
+			if (n instanceof StatementNode)
 				visit((StatementNode) n);
 		}
 	}
@@ -130,7 +128,7 @@ public class CallGraphVisitor implements TreeVisitor {
 		}
 
 		addPerformVertices(beginIndex, endIndex);
-		
+
 	}
 
 	private void addPerformVertices(int begin, int end) {
@@ -141,13 +139,15 @@ public class CallGraphVisitor implements TreeVisitor {
 			if (v == null) {
 				v = new CallGraphVertex(COBOLParser.REFERENCES.get(i));
 				g.addVertices(v);
-				
+
 			}
 
 			g.addEdge(lastSeen.getIndex(), v.getIndex());
-			
+
 		}
-		
+
 	}
+	
+
 
 }
