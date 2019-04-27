@@ -22,11 +22,13 @@ public class GraphWriter {
 		
 	}
 	
-	public void generate(int type, Graph graph) {	
+	public String generate(int type, Graph graph) {	
 		if(type == CALL_GRAPH)
 			generateCallGraph(graph);
 		else if (type == CONTROL_GRAPH) 
 			generateControlGraph(graph);
+		
+		return outputString;
 		
 	}
 	
@@ -121,9 +123,18 @@ public class GraphWriter {
 		
 		writer.write(header + outputString);		
 		writer.flush();		
-		writer.close();
+		writer.close();		
 		
+	}
+	
+	public void write(File file, String output) throws IOException {
+		file.createNewFile();
 		
+		FileWriter writer = new FileWriter(file);
+		
+		writer.write(header + output);		
+		writer.flush();		
+		writer.close();	
 	}
 	
 }

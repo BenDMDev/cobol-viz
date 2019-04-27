@@ -114,7 +114,7 @@ public class MainController implements MessageListener {
 			String outputFile = file.getName();
 			currentProject.addOutputFile(file);
 			graphRootNode.getChildren().add(new TreeItem<String>(outputFile));
-			createGraphPreviewContent(outputFile);
+			createGraphPreviewContent(outputFile, GraphLoader.UNRANKED);
 
 		}
 	}
@@ -134,7 +134,7 @@ public class MainController implements MessageListener {
 
 		}
 		graphRootNode.getChildren().add(graphNode);
-		createGraphPreviewContent(outputFileName);
+		createGraphPreviewContent(outputFileName, GraphLoader.RANKED);
 	}
 
 	@FXML
@@ -204,9 +204,9 @@ public class MainController implements MessageListener {
 		return projectNavigator.getSelectionModel().getSelectedItem().getValue();
 	}
 
-	private void createGraphPreviewContent(String fileName) {
+	private void createGraphPreviewContent(String fileName, int ranked) {
 		
-		JPanel frame = graphLoader.initProject(currentProject.getOutputFile(fileName));
+		JPanel frame = graphLoader.initProject(currentProject.getOutputFile(fileName), ranked);
 		SwingNode swing = new SwingNode();
 		createSwingContent(swing, frame);
 		addGraphPreviewTab(swing, fileName);

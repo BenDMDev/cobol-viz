@@ -36,7 +36,7 @@ public class ConditionalParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 
 		// Parse Statement(s) of IF body
-		while (statementPrefixes.contains(inputToken.getType())) {
+		while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 			StatementParser parser = new StatementParser(scanner);
 			root.addChild(parser.parse(inputToken));
 			inputToken = scanner.getCurrentToken();
@@ -48,7 +48,7 @@ public class ConditionalParser extends StatementParser {
 			match(inputToken, COBOLTokenType.ELSE, root);
 			inputToken = scanner.getCurrentToken();
 
-			while (statementPrefixes.contains(inputToken.getType())) {
+			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getType())) {
 				StatementParser parser = new StatementParser(scanner);
 				root.addChild(parser.parse(inputToken));
 				inputToken = scanner.getCurrentToken();

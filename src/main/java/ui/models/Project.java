@@ -103,20 +103,20 @@ public class Project {
 		addDataModel(fileName, model);
 		GraphWriter writer = new GraphWriter();
 		
-		writer.generate(GraphWriter.CALL_GRAPH, graph);
-		saveToFile(writer, fileName);
+		String output = writer.generate(GraphWriter.CALL_GRAPH, graph);
+		saveToFile(writer, fileName, output);
 		for(int i = 0; i < graph.getNumberOfVertices(); i++) {
 			CallGraphVertex v = (CallGraphVertex) graph.getVertex(i);
-			writer.generate(GraphWriter.CONTROL_GRAPH, v.getGraph());
-			saveToFile(writer, v.getText() + ".gexf");
+			output = writer.generate(GraphWriter.CONTROL_GRAPH, v.getGraph());
+			saveToFile(writer, v.getText() + ".gexf", output);
 		}
 		
 	}
 	
-	private void saveToFile(GraphWriter writer, String fileName) {
+	private void saveToFile(GraphWriter writer, String fileName, String output) {
 		try {
 			File file = new File(dirPath + "\\" + fileName);
-			writer.write(file);
+			writer.write(file, output);
 			addOutputFile(file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

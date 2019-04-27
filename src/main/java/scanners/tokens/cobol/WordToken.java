@@ -29,6 +29,8 @@ public class WordToken extends Token {
 			this.type = COBOLTokenType.valueOf(value);
 		} else if(COBOLTokenType.RESERVED_HYPHENS.containsKey(value)) {
 			this.type = COBOLTokenType.RESERVED_HYPHENS.get(value);
+		} else if (COBOLTokenType.STATEMENT_PREFIXES.contains(value)){
+			this.type = COBOLTokenType.valueOf(value);
 		} else {
 			type = COBOLTokenType.IDENTIFIER;
 		}

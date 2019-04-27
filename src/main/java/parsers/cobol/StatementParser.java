@@ -12,16 +12,12 @@ import main.java.trees.ParseTreeNode;
 
 public class StatementParser extends Parser {
 
-	protected HashSet<TokenType> statementPrefixes;
+	
 
 	public StatementParser(Scanner scanner) {
 		super(scanner);
 
-		statementPrefixes = new HashSet<TokenType>();
-
-		statementPrefixes.add(COBOLTokenType.MOVE);
-		statementPrefixes.add(COBOLTokenType.ADD);
-		statementPrefixes.add(COBOLTokenType.IF);
+	
 	}
 
 	@Override

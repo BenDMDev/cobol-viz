@@ -1,6 +1,7 @@
 package main.java.trees.visitors.cobol;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import main.java.graphs.Graph;
 import main.java.graphs.cobol.ControlGraphVertex;
@@ -11,63 +12,86 @@ import main.java.trees.cobol.StatementNode;
 import main.java.trees.visitors.TreeVisitor;
 
 public class ControlGraphVisitor implements TreeVisitor {
-	
+
 	Graph graph;
 	ControlGraphVertex lastSeen;
+	ControlGraphVertex entry;
+	ControlGraphVertex exit;
+	Stack<ControlGraphVertex> exitList;
+
 	public ControlGraphVisitor() {
 		graph = new Graph(100);
-		
+		entry = new ControlGraphVertex("ENTRY");
+		exit = new ControlGraphVertex("EXIT");
+		graph.addVertices(entry);
+		lastSeen = entry;
+		exitList = new Stack<ControlGraphVertex>();
 	}
-	
-	
+
 	@Override
 	public void visit(ParseTreeNode treeNode) {
-		if(treeNode instanceof ParagraphNode)
+		if (treeNode instanceof ParagraphNode) {			
+			
 			visit((ParagraphNode) treeNode);
+			graph.addVertices(exit);
+			graph.addEdge(lastSeen.getIndex(), exit.getIndex());
+			while(!exitList.isEmpty()) {
+				graph.addEdge(exitList.pop().getIndex(), exit.getIndex());
+			}
+		}
 	}
-	
+
 	public void visit(ParagraphNode treeNode) {
-		for(ParseTreeNode n : treeNode.getChildren()) {
-			if(n instanceof SentenceNode)
+		for (ParseTreeNode n : treeNode.getChildren()) {
+			if (n instanceof SentenceNode)
 				visit((SentenceNode) n);
 		}
 	}
-	
+
 	public void visit(SentenceNode treeNode) {
-		for(ParseTreeNode n : treeNode.getChildren()) {
-			if(n instanceof StatementNode) 
-				visit((StatementNode)n);
+		for (ParseTreeNode n : treeNode.getChildren()) {
+			if (n instanceof StatementNode)
+				visit((StatementNode) n);
 		}
 	}
-	
+
 	public void visit(StatementNode node) {
-		
+
 		StringBuilder builder = new StringBuilder();
 		ArrayList<StatementNode> childNodes = new ArrayList<StatementNode>();
-		for(ParseTreeNode n : node.getChildren()) {
-			if(n instanceof StatementNode)
-				childNodes.add((StatementNode)n);
+		for (ParseTreeNode n : node.getChildren()) {
+			if (n instanceof StatementNode) {
+				childNodes.add((StatementNode) n);				
+			}
 			else
-				builder.append(n.getType() + " ");								
+				builder.append(n.getType() + " ");
 		}
-		
+
 		ControlGraphVertex vertex = new ControlGraphVertex(builder.toString());
 		graph.addVertices(vertex);
-		if(lastSeen == null)
+		graph.addEdge(lastSeen.getIndex(), vertex.getIndex());
+		if(!exitList.isEmpty()) {
+			graph.addEdge(exitList.pop().getIndex(), vertex.getIndex());
+			
+		}
+		if(builder.toString().contains("IF")) {
+			ControlGraphVertex holder = vertex;
 			lastSeen = vertex;
-		else {
-			graph.addEdge(lastSeen.getIndex(), vertex.getIndex());
+			for (StatementNode child : childNodes) {
+				visit(child);
+			}
+			exitList.push(lastSeen);
+			lastSeen = holder;
+		} else {
 			lastSeen = vertex;
 		}
 		
-		for(StatementNode child : childNodes) {
-			visit(child);
-		}
 		
+
 	}
-	
+
 	public Graph getGraph() {
-		
+
 		return graph;
 	}
 

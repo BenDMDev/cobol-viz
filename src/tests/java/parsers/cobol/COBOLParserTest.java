@@ -42,13 +42,9 @@ public class COBOLParserTest {
 			tree.accept(tv);
 			Graph g = tv.getGraph();
 			g.printMatrix();
-			for(int i = 0; i < g.getNumberOfVertices(); i++) {
-				CallGraphVertex c = (CallGraphVertex) g.getVertex(i);
-				c.getGraph().printMatrix();
-				
-			}
 			
-			//tree.printParseTree();
+			
+			tree.printParseTree();
 			s.close();
 			
 		
