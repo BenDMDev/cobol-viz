@@ -3,25 +3,67 @@ package main.java.graphs;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import main.java.graphs.cobol.CallGraphVertex;
 
 public class GraphWriter {
 
-	private Graph g;
-	private String gString;
+	public static final int CONTROL_GRAPH = 0;
+	public static final int CALL_GRAPH = 1;
+	private String outputString;	
 	static final String header = "<gexf xmlns=\"http://www.gexf.net/1.2draft\" "
 			+ "xmlns:viz=\"http://www.gexf.net/1.1draft/viz\" "
 			+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
 			+ "xsi:schemaLocation=\"http://www.gexf.net/1.2draft "
 			+ "http://www.gexf.net/1.2draft/gexf.xsd\" version=\"1.2\"> \n";
 	
-	public GraphWriter(Graph g) {
-		this.g = g;
+	public GraphWriter() {
+		
 	}
 	
-	public void generate() {
-		gString = "<graph defaultedgetype=\"directed\" type=\"static\">\n" 
+	public void generate(int type, Graph graph) {	
+		if(type == CALL_GRAPH)
+			generateCallGraph(graph);
+		else if (type == CONTROL_GRAPH) 
+			generateControlGraph(graph);
+		
+	}
+	
+	public void generateControlGraph(Graph controlGraph) {
+		outputString = "<graph defaultedgetype=\"directed\" type=\"static\">\n"
+							+ "<nodes>\n";
+		
+		Vertex[] v = controlGraph.getVertices();
+		int numVer = controlGraph.getNumberOfVertices();
+		
+		for(int i = 0; i < numVer; i++) {
+			outputString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\"/> \n";
+		}
+	
+		outputString += "</nodes>\n" 
+				+ "<edges>\n";
+		
+		int edges = 0;
+		for(int i = 0; i < numVer; i++) {
+			for(int j = 0; j < v.length; j++){
+				if(controlGraph.edgeExists(i,j)) {
+					outputString += "<edge id=\"" + edges + "\" source=\"" + i + "\" target=\"" + j + "\"/>\n";
+					edges++;
+				}
+			}
+		}
+		
+		outputString += "</edges>\n"
+				+ "</graph>\n" +
+				 "</gexf>";
+		
+
+	}
+	
+	public void generateCallGraph(Graph graph) {
+		
+		outputString = "<graph defaultedgetype=\"directed\" type=\"static\">\n" 
 				+ "<attributes class=\"node\">\n" 
 				+ "<attribute id=\"loc\" title=\"linesOfCode\" type=\"int\" />"
 				+ "<attribute id=\"in\" title=\"inDegree\" type=\"int\" />"
@@ -30,49 +72,43 @@ public class GraphWriter {
 				+ "<nodes>\n";
 		
 		
-		Vertex[] v = g.getVertices();
-		int numVer = g.getNumberOfVertices();
+		Vertex[] v = graph.getVertices();
+		int numVer = graph.getNumberOfVertices();
 		
 		for(int i = 0; i < numVer; i++) {
-			gString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\"> \n";
-			gString += "<attvalues>\n" 
+			outputString += "<node id=\"" + i + "\" label=\"" + v[i].getText() + "\"> \n";
+			outputString += "<attvalues>\n" 
 						+ "<attvalue for=\"loc\" value=\"" +
 						((CallGraphVertex)v[i]).getNumberOfLines() + "\"/> \n"						
 						+ "<attvalue for=\"in\" value=\"" +
-						 g.inDegree(i) + "\"/> \n"
+						graph.inDegree(i) + "\"/> \n"
 						+ "<attvalue for=\"out\" value=\"" +
-						  g.outDegree(i) + "\"/> \n"
+						graph.outDegree(i) + "\"/> \n"
 						+"</attvalues>\n"
 						+"</node>";
 		}
 		
-		gString += "</nodes>\n" 
+		outputString += "</nodes>\n" 
 				+ "<edges>\n";
 		int edges = 0;
 		for(int i = 0; i < numVer; i++) {
 			for(int j = 0; j < v.length; j++){
-				if(g.edgeExists(i,j)) {
-					gString += "<edge id=\"" + edges + "\" source=\"" + i + "\" target=\"" + j + "\"/>\n";
+				if(graph.edgeExists(i,j)) {
+					outputString += "<edge id=\"" + edges + "\" source=\"" + i + "\" target=\"" + j + "\"/>\n";
 					edges++;
 				}
 			}
 		}
 		
-		gString += "</edges>\n"
+		outputString += "</edges>\n"
 				+ "</graph>\n" +
 				 "</gexf>";
 	}
 	
 	public void write(String fileName) throws IOException {
 		File file = new File(fileName);
-		
-		file.createNewFile();
-		
-		FileWriter writer = new FileWriter(file);
-		
-		writer.write(header + gString);
-		writer.flush();
-		writer.close();
+		write(file);
+	
 		
 		
 	}
@@ -83,8 +119,8 @@ public class GraphWriter {
 		
 		FileWriter writer = new FileWriter(file);
 		
-		writer.write(header + gString);
-		writer.flush();
+		writer.write(header + outputString);		
+		writer.flush();		
 		writer.close();
 		
 		

@@ -25,8 +25,8 @@ public class GraphWriterTest {
 		g.addEdge(v1.getIndex(),v3.getIndex());
 		g.addEdge(v1.getIndex(),v2.getIndex());
 		
-		GraphWriter gr = new GraphWriter(g);
-		gr.generate();
+		GraphWriter gr = new GraphWriter();
+		gr.generate(GraphWriter.CALL_GRAPH, g);
 		
 		
 		try {

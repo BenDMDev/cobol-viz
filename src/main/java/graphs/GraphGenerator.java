@@ -5,7 +5,8 @@ import main.java.trees.visitors.cobol.CallGraphVisitor;
 
 public class GraphGenerator {
 
-	ParseTree rootNode;
+	private ParseTree rootNode;
+	
 	
 	public GraphGenerator(ParseTree root) {
 		rootNode = root;

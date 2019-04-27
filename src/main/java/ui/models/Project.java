@@ -11,6 +11,7 @@ import java.util.Map;
 import main.java.graphs.Graph;
 import main.java.graphs.GraphGenerator;
 import main.java.graphs.GraphWriter;
+import main.java.graphs.cobol.CallGraphVertex;
 import main.java.messages.MessageListener;
 import main.java.parsers.Parser;
 import main.java.parsers.cobol.COBOLParser;
@@ -100,9 +101,15 @@ public class Project {
 		Graph graph = graphGen.generateGraph();
 		GraphDataModel model = new GraphDataModel(graph);
 		addDataModel(fileName, model);
-		GraphWriter writer = new GraphWriter(graph);
-		writer.generate();
+		GraphWriter writer = new GraphWriter();
+		
+		writer.generate(GraphWriter.CALL_GRAPH, graph);
 		saveToFile(writer, fileName);
+		for(int i = 0; i < graph.getNumberOfVertices(); i++) {
+			CallGraphVertex v = (CallGraphVertex) graph.getVertex(i);
+			writer.generate(GraphWriter.CONTROL_GRAPH, v.getGraph());
+			saveToFile(writer, v.getText() + ".gexf");
+		}
 		
 	}
 	

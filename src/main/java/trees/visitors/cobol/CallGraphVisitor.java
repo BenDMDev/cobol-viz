@@ -14,6 +14,7 @@ public class CallGraphVisitor implements TreeVisitor {
 
 	private Graph g;
 	private CallGraphVertex lastSeen;
+	private Graph controlGraph;
 	private int lineBegin;
 	private int lineEnd;
 	
@@ -54,13 +55,15 @@ public class CallGraphVisitor implements TreeVisitor {
 	}
 
 	public void visit(ParagraphNode paragraph) {
-		
+		ControlGraphVisitor controlVisitor = new ControlGraphVisitor();
+		paragraph.accept(controlVisitor);
+		controlGraph = controlVisitor.getGraph();
 		CallGraphVertex vertex = (CallGraphVertex) g.getVertex(paragraph.getLabel());
 		lineBegin = lineEnd = paragraph.getLineNumber();
 		if (vertex == null) {
 			vertex = new CallGraphVertex(paragraph.getLabel());
 			g.addVertices(vertex);
-			
+			vertex.setGraph(controlGraph);
 			if (lastSeen == null)
 				lastSeen = vertex;
 			else {
@@ -74,6 +77,7 @@ public class CallGraphVisitor implements TreeVisitor {
 			int diff = lineEnd - lineBegin;
 			lastSeen.setNumberOfLines(diff);
 			
+			
 		} else {
 			CallGraphVertex holder = lastSeen;
 			lastSeen = vertex;
@@ -84,7 +88,11 @@ public class CallGraphVisitor implements TreeVisitor {
 			int diff = lineEnd - lineBegin;
 			lastSeen.setNumberOfLines(diff);
 			lastSeen = holder;
+			
 		}
+		
+		
+		
 
 	}
 
@@ -132,6 +140,7 @@ public class CallGraphVisitor implements TreeVisitor {
 			if (v == null) {
 				v = new CallGraphVertex(COBOLParser.REFERENCES.get(i));
 				g.addVertices(v);
+				v.setGraph(controlGraph);
 			}
 
 			g.addEdge(lastSeen.getIndex(), v.getIndex());

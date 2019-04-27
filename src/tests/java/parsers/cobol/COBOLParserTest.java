@@ -41,14 +41,11 @@ public class COBOLParserTest {
 			CallGraphVisitor tv = new CallGraphVisitor();
 			tree.accept(tv);
 			Graph g = tv.getGraph();
-			// g.printMatrix();
+			g.printMatrix();
 			for(int i = 0; i < g.getNumberOfVertices(); i++) {
 				CallGraphVertex c = (CallGraphVertex) g.getVertex(i);
+				c.getGraph().printMatrix();
 				
-				for(int j = 0; i < c.getGraph().getNumberOfVertices(); j++) {
-					ControlGraphVertex cg = (ControlGraphVertex) c.getGraph().getVertex(j);
-					System.out.println(cg.getText());
-				}
 			}
 			
 			//tree.printParseTree();

@@ -5,21 +5,22 @@ import main.java.graphs.Vertex;
 
 public class CallGraphVertex extends Vertex {
 		
-	private Graph g;
+	private Graph graph;
 	private int numberOfLines;
 	
 	public CallGraphVertex(String label) {
 		super(label);				
-		g = new Graph(100);
+		graph = new Graph(100);
 		numberOfLines = 0;
 	}
 	
 	public Graph getGraph() {
-		return g;
+		return graph;
 	} 
 	
 	public void setGraph(Graph g) {
-		this.g = g;
+		graph = g;
+		
 	}
 	
 	public void setNumberOfLines(int numberOfLines) {

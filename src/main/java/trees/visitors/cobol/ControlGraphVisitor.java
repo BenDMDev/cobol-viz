@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import main.java.graphs.Graph;
 import main.java.graphs.cobol.ControlGraphVertex;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.cobol.ParagraphNode;
+import main.java.trees.cobol.SentenceNode;
 import main.java.trees.cobol.StatementNode;
 import main.java.trees.visitors.TreeVisitor;
 
@@ -20,8 +22,22 @@ public class ControlGraphVisitor implements TreeVisitor {
 	
 	@Override
 	public void visit(ParseTreeNode treeNode) {
-		if(treeNode instanceof StatementNode)
-			visit((StatementNode) treeNode);
+		if(treeNode instanceof ParagraphNode)
+			visit((ParagraphNode) treeNode);
+	}
+	
+	public void visit(ParagraphNode treeNode) {
+		for(ParseTreeNode n : treeNode.getChildren()) {
+			if(n instanceof SentenceNode)
+				visit((SentenceNode) n);
+		}
+	}
+	
+	public void visit(SentenceNode treeNode) {
+		for(ParseTreeNode n : treeNode.getChildren()) {
+			if(n instanceof StatementNode) 
+				visit((StatementNode)n);
+		}
 	}
 	
 	public void visit(StatementNode node) {
@@ -39,8 +55,10 @@ public class ControlGraphVisitor implements TreeVisitor {
 		graph.addVertices(vertex);
 		if(lastSeen == null)
 			lastSeen = vertex;
-		else
+		else {
 			graph.addEdge(lastSeen.getIndex(), vertex.getIndex());
+			lastSeen = vertex;
+		}
 		
 		for(StatementNode child : childNodes) {
 			visit(child);
@@ -49,6 +67,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 	}
 	
 	public Graph getGraph() {
+		
 		return graph;
 	}
 
