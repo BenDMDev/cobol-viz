@@ -3,6 +3,8 @@ package main.java.parsers.cobol;
 import java.io.IOException;
 import main.java.parsers.Parser;
 import main.java.parsers.cobol.statements.AcceptStatementParser;
+import main.java.parsers.cobol.statements.AlterStatementParser;
+import main.java.parsers.cobol.statements.CallStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
 import main.java.scanners.Scanner;
@@ -45,6 +47,13 @@ public class StatementParser extends Parser {
 			AcceptStatementParser accept = new AcceptStatementParser(scanner);
 			parseTree = accept.parse(inputToken);
 			break;
+		case ALTER:
+			AlterStatementParser alter = new AlterStatementParser(scanner);
+			parseTree = alter.parse(inputToken);
+			break;
+		case CALL:
+			CallStatementParser call = new CallStatementParser(scanner);
+			parseTree = call.parse(inputToken);
 		default:
 			break;
 		}

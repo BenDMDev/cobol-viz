@@ -27,7 +27,7 @@ public class MoveStatementParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 
 		
-		matchList(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
+		matchList(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.LOW_VALUES);
 		inputToken = scanner.getCurrentToken();		
 	
 

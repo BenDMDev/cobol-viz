@@ -28,13 +28,13 @@ public class CallGraphVisitor implements TreeVisitor {
 	public void visit(ParseTreeNode treeNode) {
 
 		if (treeNode instanceof StatementNode) {
-			// visit((StatementNode) treeNode);
+		
 		} else if (treeNode instanceof SectionNode) {
 			visit((SectionNode) treeNode);
 		} else if (treeNode instanceof ParagraphNode) {
 			visit((ParagraphNode) treeNode);
 		} else if (treeNode instanceof SentenceNode) {
-			// visit((SentenceNode) treeNode);
+			
 		}
 
 	}
