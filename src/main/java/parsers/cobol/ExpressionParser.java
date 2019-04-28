@@ -46,7 +46,12 @@ public class ExpressionParser extends StatementParser {
 		// Match and consume ADD
 		match(inputToken, COBOLTokenType.ADD, parseTree);
 		inputToken = scanner.getCurrentToken();
+		
+		// Match and consume CORR | CORRESPONDING
+		matchList(inputToken, parseTree, COBOLTokenType.CORR, COBOLTokenType.CORRESPONDING);
 
+		inputToken = scanner.getCurrentToken();
+		
 		TokenType type = inputToken.getType();
 		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
 
@@ -62,7 +67,6 @@ public class ExpressionParser extends StatementParser {
 		// Match and Consume Identifiers and Optional ROUNDED clause
 		type = inputToken.getType();
 		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-
 			matchList(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL, COBOLTokenType.INTEGER);
 			inputToken = scanner.getCurrentToken();
 			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
@@ -70,8 +74,21 @@ public class ExpressionParser extends StatementParser {
 			type = inputToken.getType();
 		}
 
-		if(inputToken.getType() == COBOLTokenType.NOT || scanner.lookAhead().getType() == COBOLTokenType.SIZE)
+		if(inputToken.getType() == COBOLTokenType.GIVING) {
+			parseGivingClause(inputToken);
+		}
+		
+		inputToken = scanner.getCurrentToken();
+		if (inputToken.getType() == COBOLTokenType.ON || inputToken.getType() == COBOLTokenType.SIZE)
 			parseOnSizeError(inputToken);
+		
+		inputToken = scanner.getCurrentToken();
+				
+		if(inputToken.getType() == COBOLTokenType.NOT )
+			parseOnSizeError(inputToken);
+		
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_ADD, parseTree);
 
 	}
 
@@ -167,33 +184,58 @@ public class ExpressionParser extends StatementParser {
 		StatementNode node = new StatementNode("CONDITIONAL STATEMENT");
 		node.setTreeType(TreeNodeType.CONDITIONAL);
 		
+		ParseTreeNode conditionNode = new ParseTreeNode("CONDITION");
+		conditionNode.setTreeType(TreeNodeType.CONDITION);
+		
+		node.addChild(conditionNode);
 		// Consume NOT
-		match(inputToken, COBOLTokenType.NOT, node);
+		match(inputToken, COBOLTokenType.NOT, conditionNode);
 		inputToken = scanner.getCurrentToken();
 
 		// Consume Rounded
-		match(inputToken, COBOLTokenType.ROUNDED, node);
+		match(inputToken, COBOLTokenType.ROUNDED, conditionNode);
 		inputToken = scanner.getCurrentToken();
 
 		// Consume ON
-		match(inputToken, COBOLTokenType.ON, node);
+		match(inputToken, COBOLTokenType.ON, conditionNode);
 		inputToken = scanner.getCurrentToken();
 
 		// Consume SIZE
-		match(inputToken, COBOLTokenType.SIZE, node);
+		match(inputToken, COBOLTokenType.SIZE, conditionNode);
 		inputToken = scanner.getCurrentToken();
 
 		// Consume ERROR
-		match(inputToken, COBOLTokenType.ERROR, node);
+		match(inputToken, COBOLTokenType.ERROR, conditionNode);
 		inputToken = scanner.getCurrentToken();
-
+		
+		ParseTreeNode onErrorBody = new ParseTreeNode("CONDITION BODY");
+		onErrorBody.setTreeType(TreeNodeType.CONDITION_BODY);
+		node.addChild(onErrorBody);
 		// CONSUME STATEMENT
 		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 			StatementParser statementParser = new StatementParser(scanner);
-			node.addChild(statementParser.parse(inputToken));
+			onErrorBody.addChild(statementParser.parse(inputToken));
 			inputToken = scanner.getCurrentToken();
 		}
 
 		parseTree.addChild(node);
+	}
+
+	private void parseGivingClause(Token inputToken) throws IOException {
+
+		// CONSUME GIVING
+		match(inputToken, COBOLTokenType.GIVING, parseTree);
+		inputToken = scanner.getCurrentToken();
+		// Match and Consume Identifiers and Optional ROUNDED clause
+		TokenType type = inputToken.getType();
+		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
+
+			matchList(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL, COBOLTokenType.INTEGER);
+			inputToken = scanner.getCurrentToken();
+			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
+			inputToken = scanner.getCurrentToken();
+			type = inputToken.getType();
+		}
+
 	}
 }

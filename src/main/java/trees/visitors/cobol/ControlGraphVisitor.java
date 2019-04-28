@@ -1,6 +1,7 @@
 package main.java.trees.visitors.cobol;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import main.java.graphs.Graph;
@@ -19,7 +20,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 	ControlGraphVertex lastSeen;
 	ControlGraphVertex entry;
 	ControlGraphVertex exit;
-	Stack<ControlGraphVertex> exitList;
+	
 
 	public ControlGraphVisitor() {
 		graph = new Graph(100);
@@ -27,7 +28,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 		exit = new ControlGraphVertex("EXIT");
 		graph.addVertices(entry);
 		lastSeen = entry;
-		exitList = new Stack<ControlGraphVertex>();
+		
 	}
 
 	@Override
@@ -35,16 +36,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 		if (treeNode instanceof ParagraphNode) {
 			visit((ParagraphNode) treeNode);
 			graph.addVertices(exit);
-			graph.addEdge(lastSeen.getIndex(), exit.getIndex());
-			
-			if (!exitList.isEmpty()) {
-				Vertex v = exitList.pop();
-				while (exitList.size() > 1) {					
-					graph.addEdge(exitList.peek().getIndex(), v.getIndex());
-					v = exitList.pop();
-				}
-				// graph.addEdge(v.getIndex(), exit.getIndex());
-			}
+			graph.addEdge(lastSeen.getIndex(), exit.getIndex());	
 		}
 	}
 
@@ -63,43 +55,73 @@ public class ControlGraphVisitor implements TreeVisitor {
 	}
 
 	public void visit(StatementNode node) {
+		if (node.getTreeNodeType() == TreeNodeType.CONDITIONAL) {
+			processConditional(node);
+		} else {
+			processStatement(node);
+		}
+
+	}
+
+	private void processStatement(ParseTreeNode root) {
 
 		StringBuilder builder = new StringBuilder();
-		ArrayList<StatementNode> childNodes = new ArrayList<StatementNode>();
-		for (ParseTreeNode n : node.getChildren()) {
-			if (n instanceof StatementNode) {
-				childNodes.add((StatementNode) n);
-			} else
-				builder.append(n.getType() + " ");
+		List<StatementNode> childStatements = new ArrayList<StatementNode>();
+		for (ParseTreeNode p : root.getChildren()) {
+			if (p instanceof StatementNode)
+				childStatements.add((StatementNode) p);
+			else
+				builder.append(p.getType() + " ");
 		}
 
-		ControlGraphVertex vertex = new ControlGraphVertex(builder.toString());
-		graph.addVertices(vertex);
-		graph.addEdge(lastSeen.getIndex(), vertex.getIndex());
-		
-//		if(!exitList.isEmpty()) {
-//		 graph.addEdge(exitList.pop().getIndex(), vertex.getIndex());
-//		}
-		if (node.getTreeNodeType() == TreeNodeType.CONDITIONAL) {
-			ControlGraphVertex holder = vertex;
-			lastSeen = vertex;
-			for (StatementNode child : childNodes) {
-				visit(child);
+		ControlGraphVertex rootVer = new ControlGraphVertex(builder.toString());
+		graph.addVertices(rootVer);
+		graph.addEdge(lastSeen.getIndex(), rootVer.getIndex());
+		lastSeen = rootVer;
+		for (StatementNode s : childStatements) {
+			visit(s);
+		}
+
+	}
+
+	private void processConditional(ParseTreeNode root) {
+
+		StringBuilder builder = new StringBuilder();
+		List<ParseTreeNode> nodes = root.getChildren().get(0).getChildren();
+		for (ParseTreeNode p : nodes) {
+			builder.append(p.getType() + " ");
+		}
+
+		ControlGraphVertex rootVer = new ControlGraphVertex(builder.toString());
+		ControlGraphVertex holder = rootVer;
+		ControlGraphVertex end = new ControlGraphVertex("END");
+
+		graph.addVertices(rootVer);
+		graph.addEdge(lastSeen.getIndex(), rootVer.getIndex());
+		lastSeen = rootVer;
+		graph.addVertices(end);
+
+		// Handle IF BLOCK
+		nodes = root.getChildren().get(1).getChildren();
+		for (ParseTreeNode p : nodes) {
+			visit((StatementNode) p);
+		}
+
+		graph.addEdge(lastSeen.getIndex(), end.getIndex());
+		lastSeen = holder;
+
+		// HANDLE ELSE BLOCK
+		if (root.getChildren().size() == 3) {
+			nodes = root.getChildren().get(2).getChildren();
+			for (ParseTreeNode p : nodes) {
+				visit((StatementNode) p);
 			}
-			ControlGraphVertex end = new ControlGraphVertex("END IF");
-			graph.addVertices(end);
-			graph.addEdge(holder.getIndex(), end.getIndex());
 			graph.addEdge(lastSeen.getIndex(), end.getIndex());
-			exitList.push(end);
-			lastSeen = end;
 		} else {
-
-			lastSeen = vertex;
-			for (StatementNode child : childNodes) {
-				visit(child);
-			}
-
+			graph.addEdge(holder.getIndex(), end.getIndex());
 		}
+
+		lastSeen = end;
 
 	}
 

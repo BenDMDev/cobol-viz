@@ -15,75 +15,89 @@ public class ConditionalParser extends StatementParser {
 	}
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
-		ParseTreeNode root = new StatementNode("CONDITIONAL STATEMENT");
-		root.setTreeType(TreeNodeType.CONDITIONAL);
+		parseTree = new StatementNode("CONDITIONAL STATEMENT");
+		parseTree.setTreeType(TreeNodeType.CONDITIONAL);
+
+		ParseTreeNode condition = new ParseTreeNode("CONDITIONAL");
+		condition.setTreeType(TreeNodeType.CONDITION);
 
 		// Match and consume IF
-		match(inputToken, COBOLTokenType.IF, root);
+		match(inputToken, COBOLTokenType.IF, condition);
 		inputToken = scanner.getCurrentToken();
 
 		// Match and Consume LHS of IF
-		matchList(inputToken, root, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+		matchList(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
 				COBOLTokenType.STRING_LITERAL);
 		inputToken = scanner.getCurrentToken();
 
 		// Parse Condition Body of IF
-		parseCondition(inputToken, root);
+		parseCondition(inputToken, condition);
 
 		// Get next Token - RHS of IF condition
 		inputToken = scanner.getCurrentToken();
-		
-		matchList(inputToken, root, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+
+		matchList(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
 				COBOLTokenType.STRING_LITERAL);
-		
 
+		parseTree.addChild(condition);
 		inputToken = scanner.getCurrentToken();
 
-		// Parse Statement(s) of IF body
-		while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
-			StatementParser parser = new StatementParser(scanner);
-			root.addChild(parser.parse(inputToken));
+		if (inputToken.getType() == COBOLTokenType.NEXT) {
+			// Consume NEXT
+			match(inputToken, COBOLTokenType.NEXT, parseTree);
 			inputToken = scanner.getCurrentToken();
-		}
+			// Consume SENTENCE
+			match(inputToken, COBOLTokenType.SENTENCE, parseTree);
 
-		if(inputToken.getType() == COBOLTokenType.NEXT) {
-			//Consume NEXT
-			match(inputToken, COBOLTokenType.NEXT, root);
-			inputToken = scanner.getCurrentToken();
-			//Consume SENTENCE
-			match(inputToken, COBOLTokenType.SENTENCE, root);
-			
-		} 
-		
-		inputToken = scanner.getCurrentToken();
+		} else {
 
-		if (inputToken.getType() == COBOLTokenType.ELSE) {
-			match(inputToken, COBOLTokenType.ELSE, root);
-			inputToken = scanner.getCurrentToken();
-
+			ParseTreeNode conditionBodyIF = new ParseTreeNode("IF STATEMENTS");
+			conditionBodyIF.setTreeType(TreeNodeType.CONDITION_BODY);
+			// Parse Statement(s) of IF body
 			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
-				
 				StatementParser parser = new StatementParser(scanner);
-				root.addChild(parser.parse(inputToken));
+				conditionBodyIF.addChild(parser.parse(inputToken));
 				inputToken = scanner.getCurrentToken();
 			}
+
+			parseTree.addChild(conditionBodyIF);
+		}
+
+		inputToken = scanner.getCurrentToken();
+
+		// Handle ELSE
+		if (inputToken.getType() == COBOLTokenType.ELSE) {
+			// match(inputToken, COBOLTokenType.ELSE, parseTree);
 			
-			if(inputToken.getType() == COBOLTokenType.NEXT) {
-				//Consume NEXT
-				match(inputToken, COBOLTokenType.NEXT, root);
+			scanner.scan();
+			inputToken = scanner.getCurrentToken();
+
+			if (inputToken.getType() == COBOLTokenType.NEXT) {
+				// Consume NEXT
+				match(inputToken, COBOLTokenType.NEXT, parseTree);
 				inputToken = scanner.getCurrentToken();
-				//Consume SENTENCE
-				match(inputToken, COBOLTokenType.SENTENCE, root);
-				
-			} 
-						
+				// Consume SENTENCE
+				match(inputToken, COBOLTokenType.SENTENCE, parseTree);
+
+			} else {
+				ParseTreeNode conditionBodyElse = new ParseTreeNode("ELSE STATEMENTS");
+				conditionBodyElse.setTreeType(TreeNodeType.CONDITION_BODY);
+				parseTree.addChild(conditionBodyElse);
+				while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+
+					StatementParser parser = new StatementParser(scanner);
+					conditionBodyElse.addChild(parser.parse(inputToken));
+					inputToken = scanner.getCurrentToken();
+				}
+
+			}
 
 		}
-				
-		inputToken = scanner.getCurrentToken();	
-		match(inputToken, COBOLTokenType.END_IF, root);
 
-		return root;
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_IF, parseTree);
+
+		return parseTree;
 
 	}
 

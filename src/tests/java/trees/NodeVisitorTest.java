@@ -24,6 +24,7 @@ public class NodeVisitorTest {
 		root.addChild(node);
 		
 		root.accept(new CallGraphVisitor());
+		
 	}
 
 }
