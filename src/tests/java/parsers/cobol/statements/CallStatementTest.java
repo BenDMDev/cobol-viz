@@ -24,7 +24,7 @@ public class CallStatementTest {
 	@Test
 	public void testCallSimple() {
 		String input = "CALL \"OLOG\" USING LDA HDA USER-ID USER-ID-L PSW PSW-L CONN CONN-L CONN-MODE.\n";
-				 		
+	 		
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -40,13 +40,40 @@ public class CallStatementTest {
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
 			assertEquals(12, children.size());
-			assertEquals("CONN-MODE", children.get(11).getType());
+			assertEquals("CONN-MODE", children.get(11).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testCallSimpleTwo() {
+		String input = "CALL \"OEXEC\" USING CURSOR-1.";		 		
+
+		BufferedReader in = new BufferedReader(new StringReader(input));
+		SourceFile s = new SourceFile(in);
+		Scanner l = new Scanner(s);
+
+		StatementParser sp = new CallStatementParser(l);
+		try {
+			l.scan();
+			
+			ParseTreeNode pt = sp.parse(l.getCurrentToken());
+			ParseTree tree = new ParseTree();
+			tree.setRoot(pt);
+			ArrayList<ParseTreeNode> children = (ArrayList<ParseTreeNode>) pt.getChildren();
+			tree.printParseTree();
+			assertEquals(4, children.size());
+			assertEquals("CURSOR-1", children.get(3).getAttribute());
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	
 	@Test
@@ -69,9 +96,9 @@ public class CallStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(8, children.size());
-			StatementNode stmt = (StatementNode) children.get(7);
-			assertEquals(TreeNodeType.CONDITIONAL, stmt.getTreeNodeType());
+			assertEquals(9, children.size());
+			StatementNode stmt = (StatementNode) children.get(8);
+			assertEquals(TreeNodeType.CONDITIONAL_STATEMENT, stmt.getTreeNodeType());
 			assertEquals(2, stmt.getChildren().size());
 
 		} catch (IOException e) {
@@ -103,7 +130,7 @@ public class CallStatementTest {
 			tree.printParseTree();
 			assertEquals(8, children.size());
 			StatementNode stmt = (StatementNode) children.get(7);
-			assertEquals(TreeNodeType.CONDITIONAL, stmt.getTreeNodeType());
+			assertEquals(TreeNodeType.CONDITIONAL_STATEMENT, stmt.getTreeNodeType());
 			assertEquals(2, stmt.getChildren().size());
 
 		} catch (IOException e) {

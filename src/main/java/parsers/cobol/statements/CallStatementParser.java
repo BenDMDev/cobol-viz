@@ -18,95 +18,90 @@ public class CallStatementParser extends StatementParser {
 	}
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
-		parseTree = new StatementNode("CALL STATEMENT");
+
+		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
 		match(inputToken, COBOLTokenType.CALL, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		matchList(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL);
-		inputToken = scanner.getCurrentToken();
+		switch ((COBOLTokenType) inputToken.getType()) {
+		case IDENTIFIER:
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			inputToken = scanner.getCurrentToken();
+			break;
+		case STRING_LITERAL:
+			match(inputToken, COBOLTokenType.STRING_LITERAL, parseTree, TreeNodeType.LITERAL);
+			inputToken = scanner.getCurrentToken();
+		default:
+			break;
+		}
+
 		
-		
-		match(inputToken, COBOLTokenType.USING, parseTree);
+		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.USING, COBOLTokenType.BY);
 		inputToken = scanner.getCurrentToken();
 
-		match(inputToken, COBOLTokenType.BY, parseTree);
-
-		inputToken = scanner.getCurrentToken();
-		matchList(inputToken, parseTree, COBOLTokenType.REFERENCE, COBOLTokenType.CONTENT);
-
+		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.REFERENCE, COBOLTokenType.CONTENT);
 		inputToken = scanner.getCurrentToken();
 
 		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
 			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.COMMA_SYMBOL, parseTree);
+			match(inputToken, COBOLTokenType.COMMA_SYMBOL, parseTree, TreeNodeType.SPECIAL_SYMBOL);
 			inputToken = scanner.getCurrentToken();
 		}
 
-		if (inputToken.getType() == COBOLTokenType.ON && scanner.lookAhead().getType() == COBOLTokenType.EXCEPTION || inputToken.getType() == COBOLTokenType.EXCEPTION)
+		if (inputToken.getType() == COBOLTokenType.ON && scanner.lookAhead().getType() == COBOLTokenType.EXCEPTION
+				|| inputToken.getType() == COBOLTokenType.EXCEPTION)
 			parseOnException(inputToken);
 		else if (inputToken.getType() == COBOLTokenType.NOT)
 			parseOnException(inputToken);
-		else if(inputToken.getType() == COBOLTokenType.ON && scanner.lookAhead().getType() == COBOLTokenType.OVERFLOW)
+		else if (inputToken.getType() == COBOLTokenType.ON && scanner.lookAhead().getType() == COBOLTokenType.OVERFLOW)
 			parseOverflow(inputToken);
 
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.END_CALL, parseTree);
-		
+		match(inputToken, COBOLTokenType.END_CALL, parseTree, TreeNodeType.KEYWORD);
+
 		return parseTree;
 
 	}
-	
+
 	private void parseOverflow(Token inputToken) throws IOException {
-		StatementNode overflow = new StatementNode("CONDITIONAL STATEMENT");
-		overflow.setTreeType(TreeNodeType.CONDITIONAL);
-		
-		ParseTreeNode condition = new ParseTreeNode("CONDITION");
-		condition.setTreeType(TreeNodeType.CONDITION);
+		StatementNode overflow = new StatementNode(TreeNodeType.CONDITIONAL_STATEMENT, "CONDITIONAL STATEMENT");
+
+		ParseTreeNode condition = new ParseTreeNode(TreeNodeType.CONDITION, "CONDITION");
 		overflow.addChild(condition);
-
-		match(inputToken, COBOLTokenType.ON, condition);
-		inputToken = scanner.getCurrentToken();
-
-		match(inputToken, COBOLTokenType.OVERFLOW, condition);
-		inputToken = scanner.getCurrentToken();
 		
-		ParseTreeNode onOverFlowBody = new ParseTreeNode("CONDITION BODY");
-		onOverFlowBody.setTreeType(TreeNodeType.CONDITION_BODY);
+		matchSequence(inputToken, TreeNodeType.KEYWORD, condition, COBOLTokenType.ON, COBOLTokenType.OVERFLOW);
+		inputToken = scanner.getCurrentToken();
+
+		ParseTreeNode onOverFlowBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		overflow.addChild(onOverFlowBody);
+		
 		// CONSUME STATEMENT
 		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			onOverFlowBody.addChild(statementParser.parse(inputToken));
 			inputToken = scanner.getCurrentToken();
 		}
-		
+
 		parseTree.addChild(overflow);
-		
+
 	}
 
 	private void parseOnException(Token inputToken) throws IOException {
 
-		StatementNode exception = new StatementNode("CONDITIONAL STATEMENT");
-		exception.setTreeType(TreeNodeType.CONDITIONAL);
+		StatementNode exception = new StatementNode(TreeNodeType.CONDITIONAL_STATEMENT, "CONDITIONAL STATEMENT");
 
-		ParseTreeNode condition = new ParseTreeNode("CONDITION");
-		condition.setTreeType(TreeNodeType.CONDITION);
+		ParseTreeNode condition = new ParseTreeNode(TreeNodeType.CONDITION, "CONDITION");
 		exception.addChild(condition);
 
-		match(inputToken, COBOLTokenType.NOT, condition);
-		inputToken = scanner.getCurrentToken();
 
-		match(inputToken, COBOLTokenType.ON, condition);
+		matchSequence(inputToken, TreeNodeType.KEYWORD, condition, COBOLTokenType.NOT, COBOLTokenType.ON, COBOLTokenType.EXCEPTION);
 		inputToken = scanner.getCurrentToken();
-
-		match(inputToken, COBOLTokenType.EXCEPTION, condition);
-		inputToken = scanner.getCurrentToken();
-
-		ParseTreeNode onExceptionBody = new ParseTreeNode("CONDITION BODY");
-		onExceptionBody.setTreeType(TreeNodeType.CONDITION_BODY);
+		
+		ParseTreeNode onExceptionBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		exception.addChild(onExceptionBody);
+		
 		// CONSUME STATEMENT
 		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 			StatementParser statementParser = new StatementParser(scanner);

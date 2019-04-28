@@ -17,7 +17,7 @@ public class NumberToken extends Token {
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
 		this.type = COBOLTokenType.INTEGER;
-		
+		charPos = source.getCharPos();
 		while(Character.isDigit(c)) {
 			s.append(c);
 			if(source.peek() == '.') {
@@ -29,6 +29,7 @@ public class NumberToken extends Token {
 		
 		this.value = s.toString();
 		lineNumber = source.getNumberOfLines();
+		
 		
 	}
 

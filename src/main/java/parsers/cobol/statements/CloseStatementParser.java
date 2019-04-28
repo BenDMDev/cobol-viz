@@ -10,9 +10,9 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
-public class MoveStatementParser extends StatementParser {
+public class CloseStatementParser extends StatementParser {
 
-	public MoveStatementParser(Scanner scanner) {
+	public CloseStatementParser(Scanner scanner) {
 		super(scanner);
 		
 	}
@@ -20,29 +20,12 @@ public class MoveStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
-
-		match(inputToken, COBOLTokenType.MOVE, parseTree, TreeNodeType.KEYWORD);
-		inputToken = scanner.getCurrentToken();
-
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.CORRESPONDING, COBOLTokenType.CORR);
-		inputToken = scanner.getCurrentToken();
-
 		
-		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
+		match(inputToken, COBOLTokenType.CLOSE, parseTree, TreeNodeType.KEYWORD);
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.FIGURATIVE_CONSTANT, parseTree, TreeNodeType.CONSTANT);
-	
-
-		match(inputToken, COBOLTokenType.TO, parseTree, TreeNodeType.KEYWORD);
-		inputToken = scanner.getCurrentToken();
-
-		
 		matchRepetition(inputToken, TreeNodeType.IDENTIFIER, parseTree, COBOLTokenType.IDENTIFIER);
-
-
+		
 		return parseTree;
 	}
-	
-	
 
 }

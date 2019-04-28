@@ -16,7 +16,7 @@ public class StringToken extends Token {
 		
 		StringBuilder s = new StringBuilder();
 		char c = source.nextChar();
-					
+		charPos = source.getCharPos();			
 		while(c != '\"' && c != '\'') {
 			
 			s.append(c);

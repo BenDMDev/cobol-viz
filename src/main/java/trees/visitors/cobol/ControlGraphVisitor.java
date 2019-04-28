@@ -55,14 +55,21 @@ public class ControlGraphVisitor implements TreeVisitor {
 	}
 
 	public void visit(StatementNode node) {
-		if (node.getTreeNodeType() == TreeNodeType.CONDITIONAL) {
+		if (node.getTreeNodeType() == TreeNodeType.CONDITIONAL_STATEMENT) {
 			processConditional(node);
+		} else if(node.getTreeNodeType() == TreeNodeType.COMPOUND_STATEMENT){
+			processCompoundStatement(node);
 		} else {
 			processStatement(node);
 		}
 
 	}
 
+	/**
+	 * Process an Imperative Statement
+	 * Assumes child nodes are all terminals representing Statement Body
+	 * @param root
+	 */
 	private void processStatement(ParseTreeNode root) {
 
 		StringBuilder builder = new StringBuilder();
@@ -71,7 +78,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 			if (p instanceof StatementNode)
 				childStatements.add((StatementNode) p);
 			else
-				builder.append(p.getType() + " ");
+				builder.append(p.getAttribute() + " ");
 		}
 
 		ControlGraphVertex rootVer = new ControlGraphVertex(builder.toString());
@@ -83,13 +90,45 @@ public class ControlGraphVisitor implements TreeVisitor {
 		}
 
 	}
+	
+	/**
+	 * Process a compound statement
+	 * assumes child nodes are mix of terminals (representing Statement Body)
+	 * and other StatementNodes representing nested statements
+	 * @param root Root node for this Statement
+	 */
+	private void processCompoundStatement(ParseTreeNode root) {
+		
+		StringBuilder builder = new StringBuilder();
+		List<StatementNode> childStatements = new ArrayList<StatementNode>();
+		for (ParseTreeNode p : root.getChildren()) {
+			if (p instanceof StatementNode)
+				childStatements.add((StatementNode) p);
+			else
+				builder.append(p.getAttribute() + " ");
+		}
 
+		ControlGraphVertex rootVer = new ControlGraphVertex(builder.toString());
+		graph.addVertices(rootVer);
+		graph.addEdge(lastSeen.getIndex(), rootVer.getIndex());
+		lastSeen = rootVer;
+		for (StatementNode s : childStatements) {
+			visit(s);
+		}
+	}
+
+	/**
+	 * Process a Conditional statement in the form
+	 * CONDITION, CONDITION_BODY (i.e IF), (Optional) CONDITION_BODY (i.e ELSE)
+	 * Expects nodes to be in the above order.
+	 * @param root
+	 */
 	private void processConditional(ParseTreeNode root) {
 
 		StringBuilder builder = new StringBuilder();
 		List<ParseTreeNode> nodes = root.getChildren().get(0).getChildren();
 		for (ParseTreeNode p : nodes) {
-			builder.append(p.getType() + " ");
+			builder.append(p.getAttribute() + " ");
 		}
 
 		ControlGraphVertex rootVer = new ControlGraphVertex(builder.toString());
@@ -104,7 +143,8 @@ public class ControlGraphVisitor implements TreeVisitor {
 		// Handle IF BLOCK
 		nodes = root.getChildren().get(1).getChildren();
 		for (ParseTreeNode p : nodes) {
-			visit((StatementNode) p);
+			if(p instanceof StatementNode)
+				visit((StatementNode) p);
 		}
 
 		graph.addEdge(lastSeen.getIndex(), end.getIndex());

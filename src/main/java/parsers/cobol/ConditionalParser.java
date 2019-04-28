@@ -16,7 +16,7 @@ public class ConditionalParser extends StatementParser {
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		parseTree = new StatementNode("CONDITIONAL STATEMENT");
-		parseTree.setTreeType(TreeNodeType.CONDITIONAL);
+		parseTree.setTreeType(TreeNodeType.CONDITIONAL_STATEMENT);
 
 		ParseTreeNode condition = new ParseTreeNode("CONDITIONAL");
 		condition.setTreeType(TreeNodeType.CONDITION);
@@ -26,7 +26,7 @@ public class ConditionalParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 
 		// Match and Consume LHS of IF
-		matchList(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+		matchAlternation(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
 				COBOLTokenType.STRING_LITERAL);
 		inputToken = scanner.getCurrentToken();
 
@@ -36,7 +36,7 @@ public class ConditionalParser extends StatementParser {
 		// Get next Token - RHS of IF condition
 		inputToken = scanner.getCurrentToken();
 
-		matchList(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+		matchAlternation(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
 				COBOLTokenType.STRING_LITERAL);
 
 		parseTree.addChild(condition);
@@ -56,6 +56,7 @@ public class ConditionalParser extends StatementParser {
 			// Parse Statement(s) of IF body
 			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 				StatementParser parser = new StatementParser(scanner);
+				parser.addListener(listener);
 				conditionBodyIF.addChild(parser.parse(inputToken));
 				inputToken = scanner.getCurrentToken();
 			}
@@ -86,6 +87,7 @@ public class ConditionalParser extends StatementParser {
 				while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 
 					StatementParser parser = new StatementParser(scanner);
+					parser.addListener(listener);
 					conditionBodyElse.addChild(parser.parse(inputToken));
 					inputToken = scanner.getCurrentToken();
 				}

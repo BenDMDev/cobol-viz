@@ -44,11 +44,13 @@ public class CallGraphVisitor implements TreeVisitor {
 
 		if (statement.getTreeNodeType() == TreeNodeType.REFERENCE) {
 			processPerformStatement(statement);
-		}
+		} 
 		
-		if(statement.getTreeNodeType() == TreeNodeType.CONDITIONAL) {
+		if(statement.getTreeNodeType() == TreeNodeType.CONDITIONAL_STATEMENT) {
 			processConditionalStatement(statement);
 		}
+		
+		
 		for (ParseTreeNode n : statement.getChildren()) {
 			if (n instanceof StatementNode) {
 				visit((StatementNode) n);
@@ -65,10 +67,10 @@ public class CallGraphVisitor implements TreeVisitor {
 		ControlGraphVisitor controlVisitor = new ControlGraphVisitor();
 		paragraph.accept(controlVisitor);
 		controlGraph = controlVisitor.getGraph();
-		CallGraphVertex vertex = (CallGraphVertex) g.getVertex(paragraph.getLabel());
+		CallGraphVertex vertex = (CallGraphVertex) g.getVertex(paragraph.getAttribute());
 		lineBegin = lineEnd = paragraph.getLineNumber();
 		if (vertex == null) {
-			vertex = new CallGraphVertex(paragraph.getLabel());
+			vertex = new CallGraphVertex(paragraph.getAttribute());
 			g.addVertices(vertex);
 			vertex.setGraph(controlGraph);
 			if (lastSeen == null)
@@ -116,12 +118,12 @@ public class CallGraphVisitor implements TreeVisitor {
 		int endIndex = 0;
 		for (int i = 0; i < COBOLParser.REFERENCES.size(); i++) {
 			String ref = COBOLParser.REFERENCES.get(i);
-			String labelLHS = statement.getChildren().get(1).getType();
+			String labelLHS = statement.getChildren().get(1).getAttribute();
 			if (labelLHS.equals(ref)) {
 				beginIndex = i;
 			}
 			if (statement.getChildren().size() >= 4) {
-				String labelRHS = statement.getChildren().get(3).getType();
+				String labelRHS = statement.getChildren().get(3).getAttribute();
 				if (labelRHS.equals(ref)) {
 					endIndex = i;
 				}
@@ -146,7 +148,7 @@ public class CallGraphVisitor implements TreeVisitor {
 
 			}
 
-			g.addWeightedEdge(lastSeen.getIndex(), v.getIndex(), 3);
+			g.addWeightedEdge(lastSeen.getIndex(), v.getIndex(), 2);
 
 		}
 

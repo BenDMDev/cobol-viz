@@ -17,20 +17,33 @@ public class SentenceParser extends Parser {
 	}
 
 	@Override
-	public ParseTreeNode parse(Token t) throws IOException {
+	public ParseTreeNode parse(Token inputToken) throws IOException {
 				
 		parseTree = new SentenceNode ("SENTENCE");		
-		while(t.getType() != COBOLTokenType.FULL_STOP) {
-			StatementParser sp = new StatementParser(scanner);		
-			parseTree.addChild(sp.parse(t));			
-			t = scanner.getCurrentToken();	
+		while(inputToken.getType() != COBOLTokenType.FULL_STOP) {
+			StatementParser sp = new StatementParser(scanner);	
+			sp.addListener(listener);
+			parseTree.addChild(sp.parse(inputToken));			
+			inputToken = scanner.getCurrentToken();	
 		}
 		
 		// Consume '.' terminating sentence
-		parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-		scanner.scan();
+		if(inputToken.getType() != COBOLTokenType.FULL_STOP) {
+			sendMessage("ERROR MISSING TERMINATOR AT " + inputToken.getLineNumber());
+			findNextValidToken(inputToken);
+		} else {
+			parseTree.addChild(new ParseTreeNode(inputToken.getTokenValue()));
+			scanner.scan();
+		}
 		
 		return parseTree;
 	}
 
+	
+	private void findNextValidToken(Token inputToken) throws IOException {
+		while(inputToken.getType() != COBOLTokenType.FULL_STOP) {
+			scanner.scan();
+			inputToken = scanner.getCurrentToken();
+		}
+	}
 }

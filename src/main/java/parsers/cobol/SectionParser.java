@@ -34,6 +34,7 @@ public class SectionParser extends Parser {
 		}
 		
 		ParagraphParser paragraphParser = new ParagraphParser(scanner);
+		paragraphParser.addListener(listener);
 		
 		while(!(t.getType() == COBOLTokenType.EOF)
 				&& !(t.getType() == COBOLTokenType.IDENTIFIER 

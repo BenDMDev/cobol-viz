@@ -19,7 +19,7 @@ public class PerformStatementParser extends StatementParser {
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 
-		parseTree = new StatementNode("PERFORM STATEMENT");
+		parseTree = new StatementNode(inputToken.getTokenValue());
 
 		// Match and consume PERFORM
 		match(inputToken, COBOLTokenType.PERFORM, parseTree, TreeNodeType.KEYWORD);
@@ -38,10 +38,12 @@ public class PerformStatementParser extends StatementParser {
 				|| inputToken.getType() == COBOLTokenType.THRU) {
 			parsePerformThrough(scanner.getCurrentToken());
 			
-		} else {
+		} else if(COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 			inputToken = scanner.getCurrentToken();
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 			while(COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
 				StatementParser parser = new StatementParser(scanner);
+				parser.addListener(listener);
 				parseTree.addChild(parser.parse(inputToken));
 				inputToken = scanner.getCurrentToken();
 			}
@@ -57,7 +59,7 @@ public class PerformStatementParser extends StatementParser {
 
 		// Match and consume THROUGH | THRU
 		inputToken = scanner.getCurrentToken();
-		matchList(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.THROUGH, COBOLTokenType.THRU);
+		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.THROUGH, COBOLTokenType.THRU);
 
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();

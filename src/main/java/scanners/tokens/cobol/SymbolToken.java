@@ -16,7 +16,7 @@ public class SymbolToken extends Token {
 
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
-
+		charPos = source.getCharPos();
 		switch (c) {
 		case '.':
 		case '+':

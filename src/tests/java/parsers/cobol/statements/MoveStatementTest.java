@@ -5,37 +5,39 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
 import main.java.parsers.cobol.StatementParser;
-import main.java.parsers.cobol.statements.AlterStatementParser;
+import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
 import main.java.trees.ParseTreeNode;
 
-public class AlterStatementTest {
+public class MoveStatementTest {
 
 	@Test
-	public void testParse() {
-		String input = "ALTER proc-1 TO proc-2\n" +
-					    "proc-2 TO PROCEED TO proc-4\n";
-				
+	public void testSimpleMove() {
+		String input = "MOVE var-1 TO var-3 var-4";
+ 		
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 
-		StatementParser sp = new AlterStatementParser(l);
+		StatementParser sp = new MoveStatementParser(l);
 		try {
-			l.scan();			
+			l.scan();
+			
 			ParseTreeNode pt = sp.parse(l.getCurrentToken());
 			ParseTree tree = new ParseTree();
 			tree.setRoot(pt);
+			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(9, pt.getChildren().size());
-			assertEquals("proc-2", pt.getChildren().get(4).getAttribute());
+			assertEquals(5, children.size());
+			assertEquals("var-4", children.get(4).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

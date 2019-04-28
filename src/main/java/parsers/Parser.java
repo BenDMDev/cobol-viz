@@ -36,8 +36,7 @@ public abstract class Parser implements MessageEmitter {
 		
 		if (input.getType() == expected) {
 			p.addChild(new ParseTreeNode(input.getTokenValue()));
-			scanner.scan();		
-			
+			scanner.scan();					
 		}
 
 	}
@@ -66,7 +65,7 @@ public abstract class Parser implements MessageEmitter {
 	 * @param tokenTypes
 	 * @throws IOException
 	 */
-	public void matchList(Token input, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
+	public void matchAlternation(Token input, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
 
 		boolean found = false;
 		for (TokenType t : tokenTypes) {
@@ -88,18 +87,34 @@ public abstract class Parser implements MessageEmitter {
 	 * @param tokenTypes
 	 * @throws IOException
 	 */
-	public void matchList(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType... tokenTypes)
+	public void matchAlternation(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType... tokenTypes)
 			throws IOException {
 
 		boolean found = false;
+		
 		for (TokenType t : tokenTypes) {
 
-			if (input.getType() == t)
-				found = true;
+			if (input.getType() == t) {
+				found = true;				
+			}
 		}
 		if (found) {
 			p.addChild(new ParseTreeNode(treeType, input.getTokenValue()));
 			scanner.scan();
+		}
+	}
+	
+	public void matchSequence(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
+		for (TokenType type : tokenTypes) {
+			match(input, type, p, treeType);		
+			input = scanner.getCurrentToken();
+		}
+	}
+	
+	public void matchRepetition(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType type) throws IOException {
+		while(input.getType() == type) {
+			match(input, type, p, treeType);
+			input = scanner.getCurrentToken();
 		}
 	}
 
@@ -117,7 +132,10 @@ public abstract class Parser implements MessageEmitter {
 
 	@Override
 	public void sendMessage(String message) {
-		listener.listen(message);
+		if(listener != null)
+			listener.listen(message);
+		else 
+			System.out.println(message);
 		
 	}
 

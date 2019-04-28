@@ -19,7 +19,7 @@ public class AcceptStatementParser extends StatementParser {
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 
-		parseTree = new StatementNode("ACCEPT STATEMENT");
+		parseTree = new StatementNode(TreeNodeType.STATEMENT, "ACCEPT STATEMENT");
 		
 		
 		// Consume ACCEPT
@@ -28,7 +28,6 @@ public class AcceptStatementParser extends StatementParser {
 
 		// Consume Identifier
 		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
-
 		inputToken = scanner.getCurrentToken();
 
 		if (inputToken.getType() == COBOLTokenType.FROM) {
@@ -41,7 +40,7 @@ public class AcceptStatementParser extends StatementParser {
 				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
 			} else {
 				// Consume DATE/DAY/DAY-OF-WEEK/TIME
-				matchList(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.DATE, COBOLTokenType.DAY,
+				matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.DATE, COBOLTokenType.DAY,
 						COBOLTokenType.DAY_OF_WEEK, COBOLTokenType.TIME);
 			}
 		}

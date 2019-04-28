@@ -49,7 +49,8 @@ public class COBOLParser extends Parser {
 			t = scanner.getCurrentToken();			
 			match(t, COBOLTokenType.FULL_STOP, parseTree);
 			
-			SectionParser sp = new SectionParser(scanner);			
+			SectionParser sp = new SectionParser(scanner);
+			sp.addListener(listener);
 			t = scanner.getCurrentToken();		
 			while (t.getType() != COBOLTokenType.EOF) {
 				parseTree.addChild(sp.parse(t));
