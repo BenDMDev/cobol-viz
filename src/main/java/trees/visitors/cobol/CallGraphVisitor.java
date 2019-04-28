@@ -45,10 +45,14 @@ public class CallGraphVisitor implements TreeVisitor {
 		if (statement.getTreeNodeType() == TreeNodeType.REFERENCE) {
 			processPerformStatement(statement);
 		}
+		
+		if(statement.getTreeNodeType() == TreeNodeType.CONDITIONAL) {
+			processConditionalStatement(statement);
+		}
 		for (ParseTreeNode n : statement.getChildren()) {
 			if (n instanceof StatementNode) {
 				visit((StatementNode) n);
-			}
+			} 			
 		}
 
 	}
@@ -142,12 +146,25 @@ public class CallGraphVisitor implements TreeVisitor {
 
 			}
 
-			g.addEdge(lastSeen.getIndex(), v.getIndex());
+			g.addWeightedEdge(lastSeen.getIndex(), v.getIndex(), 3);
 
 		}
 
 	}
 	
+	
+	private void processConditionalStatement(StatementNode statement) {
+		
+		for(ParseTreeNode n : statement.getChildren()) {
+			if(n.getTreeNodeType() == TreeNodeType.CONDITION_BODY) {
+				for(ParseTreeNode c : n.getChildren()) {
+					if(c instanceof StatementNode)
+						visit((StatementNode) c);
+				}
+			}
+		}
+		
+	}
 
 
 }

@@ -40,6 +40,8 @@ public class CallStatementParser extends StatementParser {
 		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
 			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			inputToken = scanner.getCurrentToken();
+			match(inputToken, COBOLTokenType.COMMA_SYMBOL, parseTree);
+			inputToken = scanner.getCurrentToken();
 		}
 
 		if (inputToken.getType() == COBOLTokenType.ON && scanner.lookAhead().getType() == COBOLTokenType.EXCEPTION || inputToken.getType() == COBOLTokenType.EXCEPTION)

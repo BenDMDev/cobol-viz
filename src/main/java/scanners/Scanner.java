@@ -54,8 +54,13 @@ public class Scanner {
 	
 	private Token nextToken() throws IOException {
 		
+		
+		checkAndSkipCommentLine();
+		
 		char c = source.getCurrentChar();
-		Token t = null;
+		Token t = null;		
+			
+		
 		if (Character.isLetter(c)) {
 
 			t = new WordToken(source);
@@ -70,7 +75,7 @@ public class Scanner {
 			
 			t = new StringToken(source);
 			t.extract();
-		}
+		} 
 		else if (COBOLTokenType.SPECIAL_SYMBOLS.containsKey(String.valueOf(c))) {
 			t = new SymbolToken(source);
 			t.extract();
@@ -100,6 +105,18 @@ public class Scanner {
 			source.nextChar();
 		}
 
+	}
+	
+	private void checkAndSkipCommentLine() throws IOException {
+		char input = source.getCurrentChar();
+		if(input == '*' && (source.peek() == '>' || (source.getCharPos() == 6 || source.getCharPos() == 0))) {
+			source.setIsCommentLine(true);
+			while(input != '\n')
+				input = source.nextChar();			
+			skipWhiteSpace();
+			source.setIsCommentLine(false);
+			input = source.getCurrentChar();
+		}
 	}
 
 }

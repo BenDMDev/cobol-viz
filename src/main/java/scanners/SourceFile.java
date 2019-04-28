@@ -14,6 +14,7 @@ public class SourceFile implements MessageEmitter {
 	private int charPos;
 	private int markerPos;
 	private MessageListener listener;
+	private boolean isCommentLine;
 	static char EOL = '\n';
 	static char EOF = 0; 
 
@@ -25,6 +26,7 @@ public class SourceFile implements MessageEmitter {
 		input = in;		
 		numLines = 0;
 		charPos = -2;
+		isCommentLine = false;
 	}
     
 	/**
@@ -52,7 +54,8 @@ public class SourceFile implements MessageEmitter {
 		} else if(charPos == inputBuffer.length()) {
 			
 			charPos = -2;
-			numLines++;
+			if(!isCommentLine)
+				numLines++;
 			return EOL;		
 			
 		} else
@@ -113,6 +116,14 @@ public class SourceFile implements MessageEmitter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public int getCharPos() {
+		return charPos;
+	}
+	
+	public void setIsCommentLine(boolean isComment) {
+		isCommentLine = isComment;
 	}
 
 	@Override

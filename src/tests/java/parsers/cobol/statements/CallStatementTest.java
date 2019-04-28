@@ -51,7 +51,7 @@ public class CallStatementTest {
 	
 	@Test
 	public void testCallException() {
-		String input = "CALL var-1 USING BY CONTENT var-2 var-3\n"
+		String input = "CALL var-1 USING BY CONTENT var-2, var-3\n"
 				+ "ON EXCEPTION\n"
 				+ "MOVE x TO y";
 				 		

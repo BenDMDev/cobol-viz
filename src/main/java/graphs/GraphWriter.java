@@ -32,6 +32,8 @@ public class GraphWriter {
 		
 	}
 	
+	
+	
 	public void generateControlGraph(Graph controlGraph) {
 		outputString = "<graph defaultedgetype=\"directed\" type=\"static\">\n"
 							+ "<nodes>\n";
@@ -100,7 +102,9 @@ public class GraphWriter {
 		for(int i = 0; i < numVer; i++) {
 			for(int j = 0; j < v.length; j++){
 				if(graph.edgeExists(i,j)) {
-					outputString += "<edge id=\"" + edges + "\" source=\"" + i + "\" target=\"" + j + "\"/>\n";
+					int weight = graph.getEdgeWeight(i,j);
+					outputString += "<edge id=\"" + edges + "\" source=\"" + i + "\" target=\"" + j + "\" "
+							+ "weight=\"" + weight + "\" />\n";
 					edges++;
 				}
 			}
