@@ -112,16 +112,16 @@ public class ConditionalParser extends StatementParser {
 		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN_SYMBOL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.LESS, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN_SYMBOL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUALS, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.EQUALS_SYMBOL, root);
 
 		return root;
 	}

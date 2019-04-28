@@ -34,6 +34,7 @@ public class StatementParser extends Parser {
 		case SUBTRACT:
 		case DIVIDE:
 		case MULTIPLY:
+		case COMPUTE:
 			ExpressionParser expression = new ExpressionParser(scanner);
 			expression.addListener(listener);
 			parseTree = expression.parse(inputToken);

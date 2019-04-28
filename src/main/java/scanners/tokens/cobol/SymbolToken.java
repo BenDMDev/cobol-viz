@@ -23,10 +23,12 @@ public class SymbolToken extends Token {
 		case '-':
 		case '/':
 		case '=': 
-		case ',':{
+		case ',':
+		case '(':
+		case ')':{
 			s.append(c);
 			this.type = COBOLTokenType.SPECIAL_SYMBOLS.get(s.toString());
-			source.nextChar();
+			//source.nextChar();
 			break;
 		}
 		case '>': {

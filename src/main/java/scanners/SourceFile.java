@@ -43,6 +43,8 @@ public class SourceFile implements MessageEmitter {
 		if(charPos == -1) {		
 			charPos++;
 			inputBuffer = input.readLine();	
+			if(!isCommentLine)
+				numLines++;
 			
 		}
 		
@@ -54,8 +56,7 @@ public class SourceFile implements MessageEmitter {
 		} else if(charPos == inputBuffer.length()) {
 			
 			charPos = -2;
-			if(!isCommentLine)
-				numLines++;
+		
 			return EOL;		
 			
 		} else

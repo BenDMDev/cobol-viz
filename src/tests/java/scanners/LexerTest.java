@@ -68,7 +68,7 @@ public class LexerTest {
 	
 	@Test
 	public void testSymbols() {
-		BufferedReader in = new BufferedReader(new StringReader(". > >= ** * + - <= ="));
+		BufferedReader in = new BufferedReader(new StringReader(". > >= ** * + - <= = (a )"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
@@ -78,28 +78,37 @@ public class LexerTest {
 			assertEquals(COBOLTokenType.FULL_STOP, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals(">", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.GREATER_THAN, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.GREATER_THAN_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals(">=", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.GREATER_THAN_EQUALS, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("**", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.EXPONENTIATION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.EXPONENTIATION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("*", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.MULTIPLICATION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.MULTIPLICATION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("+", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.ADDITION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.ADDITION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("-", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.SUBTRACTION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.SUBTRACTION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("<=", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.LESS_THAN_EQUALS, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.LESS_THAN_EQUALS_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("=", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.EQUALS, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.EQUALS_SYMBOL, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals("(", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.LEFT_PAREN, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals("a", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals(")", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.RIGHT_PAREN, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			
 			e.printStackTrace();

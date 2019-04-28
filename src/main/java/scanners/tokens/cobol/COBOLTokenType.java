@@ -64,8 +64,8 @@ public enum COBOLTokenType implements TokenType {
 	SUB_QUEUE_3("SUB-QUEUE-3"), WORKING_STORAGE("WORKING-STORAGE"),
 	
 	// Special Symbols
-	ADDITION("+"), SUBTRACTION("-"), MULTIPLICATION("*"), DIVISION_SYMBOL("/"), EXPONENTIATION("**"), GREATER_THAN(">"),
-	LESS_THAN("<"), EQUALS("="), GREATER_THAN_EQUALS(">="), LESS_THAN_EQUALS("<="), COMMA_SYMBOL(","), FULL_STOP("."),
+	ADDITION_SYMBOL("+"), SUBTRACTION_SYMBOL("-"), MULTIPLICATION_SYMBOL("*"), LEFT_PAREN("("), RIGHT_PAREN(")"), DIVISION_SYMBOL("/"), EXPONENTIATION_SYMBOL("**"), GREATER_THAN_SYMBOL(">"),
+	LESS_THAN_SYMBOL("<"), EQUALS_SYMBOL("="), GREATER_THAN_EQUALS(">="), LESS_THAN_EQUALS_SYMBOL("<="), COMMA_SYMBOL(","), FULL_STOP("."),
 	
 	// Literals
 	IDENTIFIER, INTEGER, STRING_LITERAL, REAL, EOF, FIGURATIVE_CONSTANT;
@@ -76,7 +76,7 @@ public enum COBOLTokenType implements TokenType {
 	static final int STATEMENT_PREFIX_LAST = WRITE.ordinal();
 	static final int HYPHENATED_FIRST = ALPHABETIC_LOWER.ordinal();
 	static final int HYPHENATED_LAST = WORKING_STORAGE.ordinal();
-	static final int SYMBOLS_FIRST = ADDITION.ordinal();
+	static final int SYMBOLS_FIRST = ADDITION_SYMBOL.ordinal();
 	static final int SYMBOLS_LAST = FULL_STOP.ordinal();
 	String text;
 	
