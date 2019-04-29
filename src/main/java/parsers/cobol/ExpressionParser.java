@@ -130,6 +130,31 @@ public class ExpressionParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 			type = inputToken.getType();
 		}
+		
+		// Handle GIVING Clause		
+		if (inputToken.getType() == COBOLTokenType.GIVING) {
+			parseGivingClause(inputToken);
+		}
+
+		inputToken = scanner.getCurrentToken();
+		
+				
+		// HANDLE ON SIZE ERROR
+		if (inputToken.getType() == COBOLTokenType.ON || inputToken.getType() == COBOLTokenType.SIZE) {
+			parseOnSizeError(inputToken);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+		}
+
+		inputToken = scanner.getCurrentToken();
+
+		// HANDLE NOT ON SIZE ERROR
+		if (inputToken.getType() == COBOLTokenType.NOT) {
+			parseOnSizeError(inputToken);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+		}
+		
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_SUBTRACT, parseTree, TreeNodeType.KEYWORD);
 
 	}
 
@@ -218,7 +243,34 @@ public class ExpressionParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 			type = inputToken.getType();
 		}
+		
+		// Handle GIVING Clause		
+		if (inputToken.getType() == COBOLTokenType.GIVING) {
+			parseGivingClause(inputToken);
+		}
 
+		inputToken = scanner.getCurrentToken();
+		
+				
+		// HANDLE ON SIZE ERROR
+		if (inputToken.getType() == COBOLTokenType.ON || inputToken.getType() == COBOLTokenType.SIZE) {
+			parseOnSizeError(inputToken);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+		}
+
+		inputToken = scanner.getCurrentToken();
+
+		// HANDLE NOT ON SIZE ERROR
+		if (inputToken.getType() == COBOLTokenType.NOT) {
+			parseOnSizeError(inputToken);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+		}
+		
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_MULTIPLY, parseTree, TreeNodeType.KEYWORD);
+
+		
+		
 	}
 
 	private void parseComputeStatement(Token inputToken) throws IOException {

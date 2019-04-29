@@ -108,6 +108,7 @@ public class Scanner {
 	}
 	
 	private void checkAndSkipCommentLine() throws IOException {
+		
 		char input = source.getCurrentChar();
 		if(input == '*' && (source.peek() == '>' || (source.getCharPos() == 6 || source.getCharPos() == 0))) {
 			source.setIsCommentLine(true);
@@ -115,7 +116,7 @@ public class Scanner {
 				input = source.nextChar();			
 			skipWhiteSpace();
 			source.setIsCommentLine(false);
-			input = source.getCurrentChar();
+			checkAndSkipCommentLine();
 		}
 	}
 

@@ -7,6 +7,9 @@ import main.java.parsers.cobol.statements.AlterStatementParser;
 import main.java.parsers.cobol.statements.CallStatementParser;
 import main.java.parsers.cobol.statements.CancelStatementParser;
 import main.java.parsers.cobol.statements.CloseStatementParser;
+import main.java.parsers.cobol.statements.ContinueStatementParser;
+import main.java.parsers.cobol.statements.CopyStatementParser;
+import main.java.parsers.cobol.statements.DeleteStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
 import main.java.scanners.Scanner;
@@ -72,6 +75,22 @@ public class StatementParser extends Parser {
 		case CANCEL:
 			CancelStatementParser cancel = new CancelStatementParser(scanner);
 			cancel.addListener(listener);
+			parseTree = cancel.parse(inputToken);
+			break;
+		case CONTINUE:
+			ContinueStatementParser continueParser = new ContinueStatementParser(scanner);
+			continueParser.addListener(listener);
+			parseTree = continueParser.parse(inputToken);
+			break;
+		case COPY:
+			CopyStatementParser copyParser = new CopyStatementParser(scanner);
+			copyParser.addListener(listener);
+			parseTree = copyParser.parse(inputToken);
+			break;
+		case DELETE:
+			DeleteStatementParser deleteParser = new DeleteStatementParser(scanner);
+			deleteParser.addListener(listener);
+			parseTree = deleteParser.parse(inputToken);
 			break;
 		default:
 			parseTree = new ParseTreeNode(TreeNodeType.ERROR, inputToken.getTokenValue());
