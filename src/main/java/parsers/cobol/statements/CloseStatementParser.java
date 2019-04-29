@@ -21,9 +21,9 @@ public class CloseStatementParser extends StatementParser {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 		
-		match(inputToken, COBOLTokenType.CLOSE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.CLOSE, parseTree);
 		inputToken = scanner.getCurrentToken();
-		matchRepetition(inputToken, TreeNodeType.IDENTIFIER, parseTree, COBOLTokenType.IDENTIFIER);
+		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 		
 		return parseTree;
 	}

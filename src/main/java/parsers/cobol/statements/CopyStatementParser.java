@@ -24,36 +24,36 @@ public class CopyStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 		
-		match(inputToken, COBOLTokenType.COPY, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.COPY, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.OF, COBOLTokenType.IN);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.OF, COBOLTokenType.IN);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.REPLACING, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.REPLACING, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		TokenType type = inputToken.getType();
 		while(type == COBOLTokenType.IDENTIFIER || inputToken instanceof NumberToken || inputToken instanceof StringToken) {
 			switch((COBOLTokenType) inputToken.getType()) {
 			case IDENTIFIER:
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 				break;
 			case STRING_LITERAL: case INTEGER: case REAL:
-				matchAlternation(inputToken, TreeNodeType.LITERAL, parseTree, COBOLTokenType.STRING_LITERAL, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
+				matchAlternation(inputToken, parseTree, COBOLTokenType.STRING_LITERAL, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
 				break;
 			default:
 				break;
 			}
 			
 			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.BY, parseTree, TreeNodeType.KEYWORD);
+			match(inputToken, COBOLTokenType.BY, parseTree);
 			inputToken = scanner.getCurrentToken();
 			type = inputToken.getType();
 		}

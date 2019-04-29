@@ -22,13 +22,13 @@ public class PerformStatementParser extends StatementParser {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
 		// Match and consume PERFORM
-		match(inputToken, COBOLTokenType.PERFORM, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.PERFORM, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();
 		if(inputToken.getType() == COBOLTokenType.IDENTIFIER) {
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			parseTree.setTreeType(TreeNodeType.REFERENCE);
 		}
 
@@ -59,11 +59,11 @@ public class PerformStatementParser extends StatementParser {
 
 		// Match and consume THROUGH | THRU
 		inputToken = scanner.getCurrentToken();
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.THROUGH, COBOLTokenType.THRU);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.THROUGH, COBOLTokenType.THRU);
 
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 	}
 
 }

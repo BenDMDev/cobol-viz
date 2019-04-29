@@ -21,22 +21,22 @@ public class ReadStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
-		match(inputToken, COBOLTokenType.READ, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.READ, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.NEXT, COBOLTokenType.RECORD, COBOLTokenType.INTO);
+		matchSequence(inputToken, parseTree, COBOLTokenType.NEXT, COBOLTokenType.RECORD, COBOLTokenType.INTO);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.KEY, COBOLTokenType.IS);
+		matchSequence(inputToken, parseTree, COBOLTokenType.KEY, COBOLTokenType.IS);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		
@@ -53,7 +53,7 @@ public class ReadStatementParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 		}
 		
-		match(inputToken, COBOLTokenType.END_READ, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_READ, parseTree);
 		return parseTree;
 	}
 	
@@ -65,7 +65,7 @@ public class ReadStatementParser extends StatementParser {
 
 		node.addChild(conditionNode);
 	
-		matchSequence(inputToken, TreeNodeType.KEYWORD, conditionNode, COBOLTokenType.NOT, COBOLTokenType.INVALID, COBOLTokenType.KEY);
+		matchSequence(inputToken, conditionNode, COBOLTokenType.NOT, COBOLTokenType.INVALID, COBOLTokenType.KEY);
 		inputToken = scanner.getCurrentToken();
 
 
@@ -91,7 +91,7 @@ public class ReadStatementParser extends StatementParser {
 
 		node.addChild(conditionNode);
 	
-		matchSequence(inputToken, TreeNodeType.KEYWORD, conditionNode, COBOLTokenType.AT, COBOLTokenType.END);
+		matchSequence(inputToken, conditionNode, COBOLTokenType.AT, COBOLTokenType.END);
 		inputToken = scanner.getCurrentToken();
 
 

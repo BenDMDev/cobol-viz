@@ -21,13 +21,13 @@ public class DeleteStatementParser extends StatementParser {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 		
-		match(inputToken, COBOLTokenType.DELETE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.DELETE, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.RECORD, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.RECORD, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		if(inputToken.getType() == COBOLTokenType.INVALID) {
@@ -41,7 +41,7 @@ public class DeleteStatementParser extends StatementParser {
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
 		
-		match(inputToken, COBOLTokenType.END_DELETE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_DELETE, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		
@@ -53,11 +53,11 @@ public class DeleteStatementParser extends StatementParser {
 		StatementNode onInvalid = new StatementNode(TreeNodeType.CONDITIONAL_STATEMENT, inputToken.getTokenValue());
 		ParseTreeNode condition = new ParseTreeNode(TreeNodeType.CONDITION, inputToken.getTokenValue());
 		
-		match(inputToken, COBOLTokenType.NOT, condition, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.NOT, condition);
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.INVALID, condition, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.INVALID, condition);
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.KEY, condition, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.KEY, condition);
 		inputToken = scanner.getCurrentToken();
 		
 		onInvalid.addChild(condition);

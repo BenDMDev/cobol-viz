@@ -40,14 +40,14 @@ public class OpenStatementParser extends StatementParser {
 	
 	public void parseOpenClause(Token inputToken) throws IOException {
 		
-		match(inputToken, COBOLTokenType.OPEN, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.OPEN, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.INPUT, COBOLTokenType.OUTPUT,
-				COBOLTokenType.I_O, COBOLTokenType.EXTEND);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.INPUT, COBOLTokenType.OUTPUT, COBOLTokenType.I_O,
+				COBOLTokenType.EXTEND);
 		inputToken = scanner.getCurrentToken();
 		
-		matchRepetition(inputToken, TreeNodeType.IDENTIFIER, parseTree, COBOLTokenType.IDENTIFIER);
+		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 		inputToken = scanner.getCurrentToken();
 	}
 

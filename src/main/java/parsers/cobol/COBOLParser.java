@@ -9,7 +9,6 @@ import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.EOFToken;
 import main.java.trees.ParseTreeNode;
-import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.ProgramNode;
 
 public class COBOLParser extends Parser {
@@ -38,11 +37,11 @@ public class COBOLParser extends Parser {
 			parseTree = new ProgramNode("PROCEDURE DIVISION");
 			
 			
-			match(t, COBOLTokenType.PROCEDURE, parseTree, TreeNodeType.KEYWORD);
+			match(t, COBOLTokenType.PROCEDURE, parseTree);
 
 			
 			t = scanner.getCurrentToken();
-			match(t, COBOLTokenType.DIVISION, parseTree, TreeNodeType.KEYWORD);
+			match(t, COBOLTokenType.DIVISION, parseTree);
 			
 
 			

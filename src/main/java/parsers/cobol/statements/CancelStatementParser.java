@@ -22,18 +22,18 @@ public class CancelStatementParser extends StatementParser {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 		
-		match(inputToken, COBOLTokenType.CANCEL, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.CANCEL, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		boolean validToken = true; 
 		while(validToken) {
 			switch((COBOLTokenType) inputToken.getType()) {
 			case IDENTIFIER:
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 				inputToken = scanner.getCurrentToken();
 				break;
 			case STRING_LITERAL: case INTEGER: case REAL:
-				matchAlternation(inputToken, TreeNodeType.LITERAL, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.STRING_LITERAL, COBOLTokenType.REAL);
+				matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.STRING_LITERAL, COBOLTokenType.REAL);
 				inputToken = scanner.getCurrentToken();
 				break;
 			default:

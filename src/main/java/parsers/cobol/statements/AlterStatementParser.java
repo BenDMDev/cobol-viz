@@ -21,21 +21,20 @@ public class AlterStatementParser extends StatementParser {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
 		// Match and Consume ALTER
-		match(inputToken, COBOLTokenType.ALTER, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.ALTER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
 			// Match and Consume procedure name
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			inputToken = scanner.getCurrentToken();
 
-			matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.TO, COBOLTokenType.PROCEED,
-					COBOLTokenType.TO);
+			matchSequence(inputToken, parseTree, COBOLTokenType.TO, COBOLTokenType.PROCEED, COBOLTokenType.TO);
 
 			inputToken = scanner.getCurrentToken();
 
 			// Match and Consume procedure name
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			inputToken = scanner.getCurrentToken();
 		}
 

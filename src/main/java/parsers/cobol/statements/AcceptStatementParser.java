@@ -23,25 +23,25 @@ public class AcceptStatementParser extends StatementParser {
 		
 		
 		// Consume ACCEPT
-		match(inputToken, COBOLTokenType.ACCEPT, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.ACCEPT, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		// Consume Identifier
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		if (inputToken.getType() == COBOLTokenType.FROM) {
 			// Consume FROM
-			match(inputToken, COBOLTokenType.FROM, parseTree, TreeNodeType.KEYWORD);
+			match(inputToken, COBOLTokenType.FROM, parseTree);
 			inputToken = scanner.getCurrentToken();
 			
 			if (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
 				// Consume Identifier
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			} else {
 				// Consume DATE/DAY/DAY-OF-WEEK/TIME
-				matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.DATE, COBOLTokenType.DAY,
-						COBOLTokenType.DAY_OF_WEEK, COBOLTokenType.TIME);
+				matchAlternation(inputToken, parseTree, COBOLTokenType.DATE, COBOLTokenType.DAY, COBOLTokenType.DAY_OF_WEEK,
+						COBOLTokenType.TIME);
 			}
 		}
 		return parseTree;

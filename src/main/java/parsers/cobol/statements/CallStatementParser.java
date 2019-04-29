@@ -26,27 +26,27 @@ public class CallStatementParser extends StatementParser {
 
 		switch ((COBOLTokenType) inputToken.getType()) {
 		case IDENTIFIER:
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			inputToken = scanner.getCurrentToken();
 			break;
 		case STRING_LITERAL:
-			match(inputToken, COBOLTokenType.STRING_LITERAL, parseTree, TreeNodeType.LITERAL);
+			match(inputToken, COBOLTokenType.STRING_LITERAL, parseTree);
 			inputToken = scanner.getCurrentToken();
 		default:
 			break;
 		}
 
 		
-		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.USING, COBOLTokenType.BY);
+		matchSequence(inputToken, parseTree, COBOLTokenType.USING, COBOLTokenType.BY);
 		inputToken = scanner.getCurrentToken();
 
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.REFERENCE, COBOLTokenType.CONTENT);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.REFERENCE, COBOLTokenType.CONTENT);
 		inputToken = scanner.getCurrentToken();
 
 		while (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.COMMA_SYMBOL, parseTree, TreeNodeType.SPECIAL_SYMBOL);
+			match(inputToken, COBOLTokenType.COMMA_SYMBOL, parseTree);
 			inputToken = scanner.getCurrentToken();
 		}
 
@@ -59,7 +59,7 @@ public class CallStatementParser extends StatementParser {
 			parseOverflow(inputToken);
 
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.END_CALL, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_CALL, parseTree);
 
 		return parseTree;
 
@@ -71,7 +71,7 @@ public class CallStatementParser extends StatementParser {
 		ParseTreeNode condition = new ParseTreeNode(TreeNodeType.CONDITION, "CONDITION");
 		overflow.addChild(condition);
 		
-		matchSequence(inputToken, TreeNodeType.KEYWORD, condition, COBOLTokenType.ON, COBOLTokenType.OVERFLOW);
+		matchSequence(inputToken, condition, COBOLTokenType.ON, COBOLTokenType.OVERFLOW);
 		inputToken = scanner.getCurrentToken();
 
 		ParseTreeNode onOverFlowBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
@@ -96,7 +96,7 @@ public class CallStatementParser extends StatementParser {
 		exception.addChild(condition);
 
 
-		matchSequence(inputToken, TreeNodeType.KEYWORD, condition, COBOLTokenType.NOT, COBOLTokenType.ON, COBOLTokenType.EXCEPTION);
+		matchSequence(inputToken, condition, COBOLTokenType.NOT, COBOLTokenType.ON, COBOLTokenType.EXCEPTION);
 		inputToken = scanner.getCurrentToken();
 		
 		ParseTreeNode onExceptionBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");

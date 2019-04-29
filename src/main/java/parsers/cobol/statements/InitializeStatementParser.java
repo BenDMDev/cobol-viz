@@ -25,26 +25,24 @@ public class InitializeStatementParser extends StatementParser {
 
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
-		match(inputToken, COBOLTokenType.INITIALIZE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.INITIALIZE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		matchRepetition(inputToken, TreeNodeType.IDENTIFIER, parseTree, COBOLTokenType.IDENTIFIER);
+		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 		inputToken = scanner.getCurrentToken();
 
-		match(inputToken, COBOLTokenType.REPLACING, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.REPLACING, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.ALPHABETIC,
-				COBOLTokenType.ALPHANUMERIC, COBOLTokenType.NUMERIC, COBOLTokenType.ALPHANUMERIC_EDITED,
-				COBOLTokenType.NUMERIC_EDITED);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.ALPHABETIC, COBOLTokenType.ALPHANUMERIC,
+				COBOLTokenType.NUMERIC, COBOLTokenType.ALPHANUMERIC_EDITED, COBOLTokenType.NUMERIC_EDITED);
 		inputToken = scanner.getCurrentToken();
 
-		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.DATA, COBOLTokenType.BY);
+		matchSequence(inputToken, parseTree, COBOLTokenType.DATA, COBOLTokenType.BY);
 		inputToken = scanner.getCurrentToken();
 
-		matchRepeatingAlternation(inputToken, parseTree, TOKEN_TO_TREE);
-
-
+		matchRepeatingAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER,
+				COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL);
 
 		return parseTree;
 	}

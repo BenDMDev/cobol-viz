@@ -21,23 +21,23 @@ public class MoveStatementParser extends StatementParser {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
-		match(inputToken, COBOLTokenType.MOVE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.MOVE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.CORRESPONDING, COBOLTokenType.CORR);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.CORRESPONDING, COBOLTokenType.CORR);
 		inputToken = scanner.getCurrentToken();
 
 		
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.FIGURATIVE_CONSTANT, parseTree, TreeNodeType.CONSTANT);
+		match(inputToken, COBOLTokenType.FIGURATIVE_CONSTANT, parseTree);
 	
 
-		match(inputToken, COBOLTokenType.TO, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.TO, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		
-		matchRepetition(inputToken, TreeNodeType.IDENTIFIER, parseTree, COBOLTokenType.IDENTIFIER);
+		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 
 
 		return parseTree;

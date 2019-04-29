@@ -23,7 +23,7 @@ public class DisplayStatementParser extends StatementParser {
 
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
-		match(inputToken, COBOLTokenType.DISPLAY, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.DISPLAY, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		while (inputToken.getType() == COBOLTokenType.IDENTIFIER || inputToken instanceof NumberToken
@@ -31,13 +31,13 @@ public class DisplayStatementParser extends StatementParser {
 
 			switch ((COBOLTokenType) inputToken.getType()) {
 			case IDENTIFIER:
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 				break;
 			case INTEGER:
 			case REAL:
 			case STRING_LITERAL:
-				matchAlternation(inputToken, TreeNodeType.LITERAL, parseTree, COBOLTokenType.INTEGER,
-						COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL);
+				matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+						COBOLTokenType.STRING_LITERAL);
 				break;
 			default:
 				break;
@@ -45,14 +45,13 @@ public class DisplayStatementParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 
 		}
-		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.UPON, COBOLTokenType.CONSOLE);
+		matchSequence(inputToken, parseTree, COBOLTokenType.UPON, COBOLTokenType.CONSOLE);
 		inputToken = scanner.getCurrentToken();
 
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		matchSequence(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.WITH, COBOLTokenType.NO,
-				COBOLTokenType.ADVANCING);
+		matchSequence(inputToken, parseTree, COBOLTokenType.WITH, COBOLTokenType.NO, COBOLTokenType.ADVANCING);
 
 		return parseTree;
 	}

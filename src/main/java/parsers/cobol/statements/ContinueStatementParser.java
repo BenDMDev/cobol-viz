@@ -20,7 +20,7 @@ public class ContinueStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
-		match(inputToken, COBOLTokenType.CONTINUE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.CONTINUE, parseTree);
 		
 		return parseTree;
 	}

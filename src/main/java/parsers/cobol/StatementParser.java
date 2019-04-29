@@ -27,13 +27,6 @@ import main.java.trees.TreeNodeType;
 
 public class StatementParser extends Parser {
 
-	protected static HashMap<TokenType, TreeNodeType> TOKEN_TO_TREE = new HashMap<TokenType, TreeNodeType>();
-	static {
-		TOKEN_TO_TREE.put(COBOLTokenType.IDENTIFIER, TreeNodeType.IDENTIFIER);
-		TOKEN_TO_TREE.put(COBOLTokenType.INTEGER, TreeNodeType.LITERAL);
-		TOKEN_TO_TREE.put(COBOLTokenType.REAL, TreeNodeType.LITERAL);
-		TOKEN_TO_TREE.put(COBOLTokenType.STRING_LITERAL, TreeNodeType.LITERAL);
-	}
 	
 	public StatementParser(Scanner scanner) {
 		super(scanner);
@@ -43,100 +36,103 @@ public class StatementParser extends Parser {
 	@Override
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		int lineNumber = inputToken.getLineNumber();
-		switch ((COBOLTokenType) inputToken.getType()) {
-		case MOVE:
-			MoveStatementParser moveParser = new MoveStatementParser(scanner);
-			moveParser.addListener(listener);
-			parseTree = moveParser.parse(inputToken);
-			break;
-		case ADD:
-		case SUBTRACT:
-		case DIVIDE:
-		case MULTIPLY:
-		case COMPUTE:
-			ExpressionParser expression = new ExpressionParser(scanner);
-			expression.addListener(listener);
-			parseTree = expression.parse(inputToken);
-			break;
-		case IF:
-			ConditionalParser conditional = new ConditionalParser(scanner);
-			conditional.addListener(listener);
-			parseTree = conditional.parse(inputToken);
-			break;
-		case PERFORM:
-			PerformStatementParser perform = new PerformStatementParser(scanner);
-			perform.addListener(listener);
-			parseTree = perform.parse(inputToken);
-			break;
-		case ACCEPT:
-			AcceptStatementParser accept = new AcceptStatementParser(scanner);
-			accept.addListener(listener);
-			parseTree = accept.parse(inputToken);
-			break;
-		case ALTER:
-			AlterStatementParser alter = new AlterStatementParser(scanner);
-			alter.addListener(listener);
-			parseTree = alter.parse(inputToken);
-			break;
-		case CALL:
-			CallStatementParser call = new CallStatementParser(scanner);
-			call.addListener(listener);
-			parseTree = call.parse(inputToken);
-			break;
-		case CLOSE:
-			CloseStatementParser close = new CloseStatementParser(scanner);
-			close.addListener(listener);
-			parseTree = close.parse(inputToken);
-			break;
-		case CANCEL:
-			CancelStatementParser cancel = new CancelStatementParser(scanner);
-			cancel.addListener(listener);
-			parseTree = cancel.parse(inputToken);
-			break;
-		case CONTINUE:
-			ContinueStatementParser continueParser = new ContinueStatementParser(scanner);
-			continueParser.addListener(listener);
-			parseTree = continueParser.parse(inputToken);
-			break;
-		case COPY:
-			CopyStatementParser copyParser = new CopyStatementParser(scanner);
-			copyParser.addListener(listener);
-			parseTree = copyParser.parse(inputToken);
-			break;
-		case DELETE:
-			DeleteStatementParser deleteParser = new DeleteStatementParser(scanner);
-			deleteParser.addListener(listener);
-			parseTree = deleteParser.parse(inputToken);
-			break;
-		case DISPLAY:
-			DisplayStatementParser displayParser = new DisplayStatementParser(scanner);
-			displayParser.addListener(listener);
-			parseTree = displayParser.parse(inputToken);
-			break;
-		case GO:
-			GoToStatementParser goParser = new GoToStatementParser(scanner);
-			goParser.addListener(listener);
-			parseTree = goParser.parse(inputToken);
-			break;
-		case INITIALIZE:
-			InitializeStatementParser initializeParser = new InitializeStatementParser(scanner);
-			initializeParser.addListener(listener);
-			parseTree = initializeParser.parse(inputToken);
-			break;
-		case OPEN:
-			OpenStatementParser openParser = new OpenStatementParser(scanner);
-			openParser.addListener(listener);
-			parseTree = openParser.parse(inputToken);
-			break;
-		default:
-			parseTree = new ParseTreeNode(TreeNodeType.ERROR, inputToken.getTokenValue());
-			break;
-		}
-
+//		switch ((COBOLTokenType) inputToken.getType()) {
+//		case MOVE:
+//			MoveStatementParser moveParser = new MoveStatementParser(scanner);
+//			moveParser.addListener(listener);
+//			parseTree = moveParser.parse(inputToken);
+//			break;
+//		case ADD:
+//		case SUBTRACT:
+//		case DIVIDE:
+//		case MULTIPLY:
+//		case COMPUTE:
+//			ExpressionParser expression = new ExpressionParser(scanner);
+//			expression.addListener(listener);
+//			parseTree = expression.parse(inputToken);
+//			break;
+//		case IF:
+//			ConditionalParser conditional = new ConditionalParser(scanner);
+//			conditional.addListener(listener);
+//			parseTree = conditional.parse(inputToken);
+//			break;
+//		case PERFORM:
+//			PerformStatementParser perform = new PerformStatementParser(scanner);
+//			perform.addListener(listener);
+//			parseTree = perform.parse(inputToken);
+//			break;
+//		case ACCEPT:
+//			AcceptStatementParser accept = new AcceptStatementParser(scanner);
+//			accept.addListener(listener);
+//			parseTree = accept.parse(inputToken);
+//			break;
+//		case ALTER:
+//			AlterStatementParser alter = new AlterStatementParser(scanner);
+//			alter.addListener(listener);
+//			parseTree = alter.parse(inputToken);
+//			break;
+//		case CALL:
+//			CallStatementParser call = new CallStatementParser(scanner);
+//			call.addListener(listener);
+//			parseTree = call.parse(inputToken);
+//			break;
+//		case CLOSE:
+//			CloseStatementParser close = new CloseStatementParser(scanner);
+//			close.addListener(listener);
+//			parseTree = close.parse(inputToken);
+//			break;
+//		case CANCEL:
+//			CancelStatementParser cancel = new CancelStatementParser(scanner);
+//			cancel.addListener(listener);
+//			parseTree = cancel.parse(inputToken);
+//			break;
+//		case CONTINUE:
+//			ContinueStatementParser continueParser = new ContinueStatementParser(scanner);
+//			continueParser.addListener(listener);
+//			parseTree = continueParser.parse(inputToken);
+//			break;
+//		case COPY:
+//			CopyStatementParser copyParser = new CopyStatementParser(scanner);
+//			copyParser.addListener(listener);
+//			parseTree = copyParser.parse(inputToken);
+//			break;
+//		case DELETE:
+//			DeleteStatementParser deleteParser = new DeleteStatementParser(scanner);
+//			deleteParser.addListener(listener);
+//			parseTree = deleteParser.parse(inputToken);
+//			break;
+//		case DISPLAY:
+//			DisplayStatementParser displayParser = new DisplayStatementParser(scanner);
+//			displayParser.addListener(listener);
+//			parseTree = displayParser.parse(inputToken);
+//			break;
+//		case GO:
+//			GoToStatementParser goParser = new GoToStatementParser(scanner);
+//			goParser.addListener(listener);
+//			parseTree = goParser.parse(inputToken);
+//			break;
+//		case INITIALIZE:
+//			InitializeStatementParser initializeParser = new InitializeStatementParser(scanner);
+//			initializeParser.addListener(listener);
+//			parseTree = initializeParser.parse(inputToken);
+//			break;
+//		case OPEN:
+//			OpenStatementParser openParser = new OpenStatementParser(scanner);
+//			openParser.addListener(listener);
+//			parseTree = openParser.parse(inputToken);
+//			break;
+//		default:
+//			parseTree = new ParseTreeNode(TreeNodeType.ERROR, inputToken.getTokenValue());
+//			break;
+//		}
+		
+		Parser parser = parserFactory.createParser(inputToken, scanner);
+		parser.addListener(listener);
+		parseTree = parser.parse(inputToken);
 	
 
-		if (parseTree.getTreeNodeType() == TreeNodeType.ERROR) {
-			sendMessage("MISSING STATEMENT:" + parseTree.getAttribute() + " AT LINE: " + inputToken.getLineNumber());
+		if (parseTree == null) {
+			sendMessage("UNEXPECTED TOKEN:" + inputToken.getTokenValue() + " AT LINE: " + inputToken.getLineNumber());
 			findNextValidToken(inputToken);
 		}
 

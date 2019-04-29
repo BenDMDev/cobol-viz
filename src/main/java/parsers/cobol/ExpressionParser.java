@@ -94,7 +94,7 @@ public class ExpressionParser extends StatementParser {
 		}
 
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.END_ADD, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_ADD, parseTree);
 
 	}
 
@@ -153,7 +153,7 @@ public class ExpressionParser extends StatementParser {
 		}
 
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.END_SUBTRACT, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_SUBTRACT, parseTree);
 
 	}
 
@@ -161,14 +161,14 @@ public class ExpressionParser extends StatementParser {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
 		// Match and consume DIVIDE
-		match(inputToken, COBOLTokenType.DIVIDE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.DIVIDE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL, COBOLTokenType.INTEGER);
 		inputToken = scanner.getCurrentToken();
 
 		// Match and consume INTO | BY
-		matchAlternation(inputToken, TreeNodeType.KEYWORD, parseTree, COBOLTokenType.INTO, COBOLTokenType.BY);
+		matchAlternation(inputToken, parseTree, COBOLTokenType.INTO, COBOLTokenType.BY);
 		inputToken = scanner.getCurrentToken();
 
 		// Match and Consume Identifiers and Optional ROUNDED clause
@@ -191,11 +191,11 @@ public class ExpressionParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 
 		// Match and consume REMAINDER
-		match(inputToken, COBOLTokenType.REMAINDER, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.REMAINDER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		// MATCH identifier
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		// HANDLE ON SIZE ERROR
@@ -213,7 +213,7 @@ public class ExpressionParser extends StatementParser {
 		}
 
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.END_DIVIDE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_DIVIDE, parseTree);
 
 	}
 
@@ -265,7 +265,7 @@ public class ExpressionParser extends StatementParser {
 		}
 
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.END_MULTIPLY, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.END_MULTIPLY, parseTree);
 
 	}
 
@@ -273,21 +273,21 @@ public class ExpressionParser extends StatementParser {
 
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
-		match(inputToken, COBOLTokenType.COMPUTE, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.COMPUTE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		// Match and Consume Identifiers and Optional ROUNDED clause
 		TokenType type = inputToken.getType();
 		while (type == COBOLTokenType.IDENTIFIER) {
 
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.KEYWORD);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree, TreeNodeType.KEYWORD);
+			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
 			inputToken = scanner.getCurrentToken();
 			type = inputToken.getType();
 		}
 
-		match(inputToken, COBOLTokenType.EQUALS_SYMBOL, parseTree, TreeNodeType.SPECIAL_SYMBOL);
+		match(inputToken, COBOLTokenType.EQUALS_SYMBOL, parseTree);
 		inputToken = scanner.getCurrentToken();
 
 		while (isOperand(inputToken) || isOperator(inputToken)) {
@@ -318,8 +318,8 @@ public class ExpressionParser extends StatementParser {
 		ParseTreeNode conditionNode = new ParseTreeNode(TreeNodeType.CONDITION, "CONDITION");
 
 		node.addChild(conditionNode);
-		matchSequence(inputToken, TreeNodeType.KEYWORD, conditionNode, COBOLTokenType.NOT, COBOLTokenType.ROUNDED,
-				COBOLTokenType.ON, COBOLTokenType.SIZE, COBOLTokenType.ERROR);
+		matchSequence(inputToken, conditionNode, COBOLTokenType.NOT, COBOLTokenType.ROUNDED, COBOLTokenType.ON,
+				COBOLTokenType.SIZE, COBOLTokenType.ERROR);
 		inputToken = scanner.getCurrentToken();
 		
 
@@ -359,17 +359,16 @@ public class ExpressionParser extends StatementParser {
 
 		switch ((COBOLTokenType) inputToken.getType()) {
 		case IDENTIFIER:
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 			break;
 		case INTEGER:
 		case REAL:
-			matchAlternation(inputToken, TreeNodeType.LITERAL, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
+			matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
 			break;
 		default:
-			matchAlternation(inputToken, TreeNodeType.SPECIAL_SYMBOL, parseTree, COBOLTokenType.ADDITION_SYMBOL,
-					COBOLTokenType.SUBTRACTION_SYMBOL, COBOLTokenType.MULTIPLICATION_SYMBOL,
-					COBOLTokenType.EXPONENTIATION_SYMBOL, COBOLTokenType.DIVISION_SYMBOL, COBOLTokenType.LEFT_PAREN,
-					COBOLTokenType.RIGHT_PAREN);
+			matchAlternation(inputToken, parseTree, COBOLTokenType.ADDITION_SYMBOL, COBOLTokenType.SUBTRACTION_SYMBOL,
+					COBOLTokenType.MULTIPLICATION_SYMBOL, COBOLTokenType.EXPONENTIATION_SYMBOL,
+					COBOLTokenType.DIVISION_SYMBOL, COBOLTokenType.LEFT_PAREN, COBOLTokenType.RIGHT_PAREN);
 			break;
 		}
 	}

@@ -22,14 +22,14 @@ public class GoToStatementParser extends StatementParser {
 		parseTree = new StatementNode(TreeNodeType.REFERENCE, inputToken.getTokenValue());
 		inputToken = scanner.getCurrentToken();
 		
-		match(inputToken, COBOLTokenType.GO, parseTree, TreeNodeType.KEYWORD);
+		match(inputToken, COBOLTokenType.GO, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
 		if(inputToken.getType() == COBOLTokenType.TO)
 			scanner.scan(); // Skip TO 
 		
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree, TreeNodeType.IDENTIFIER);
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		
 		return parseTree;
 	}
