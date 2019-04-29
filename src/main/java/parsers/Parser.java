@@ -11,6 +11,8 @@ import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.TokenType;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeFactory;
+import main.java.trees.TreeNodeFactoryImpl;
 import main.java.trees.TreeNodeType;
 
 public abstract class Parser implements MessageEmitter {
@@ -18,11 +20,13 @@ public abstract class Parser implements MessageEmitter {
 	protected Scanner scanner;
 	protected ParseTreeNode parseTree;
 	protected MessageListener listener;
+	protected TreeNodeFactory treeNodeFactory;
 	
 
 	public Parser(Scanner scanner) {
 		this.scanner = scanner;
 		parseTree = null;
+		treeNodeFactory = new TreeNodeFactoryImpl();
 		
 	}
 
@@ -55,7 +59,9 @@ public abstract class Parser implements MessageEmitter {
 	public void match(Token input, TokenType expected, ParseTreeNode p, TreeNodeType treeType) throws IOException {
 
 		if (input.getType() == expected) {
-			p.addChild(new ParseTreeNode(treeType, input.getTokenValue()));
+			//p.addChild(new ParseTreeNode(treeType, input.getTokenValue()));
+			ParseTreeNode node = treeNodeFactory.createTreeNode(input);
+			p.addChild(node);
 			scanner.scan();			
 		}
 
@@ -70,16 +76,16 @@ public abstract class Parser implements MessageEmitter {
 	 */
 	public void matchAlternation(Token input, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
 
-		boolean found = false;
 		for (TokenType t : tokenTypes) {
 
-			if (input.getType() == t)
-				found = true;
+			if (input.getType() == t) {
+				ParseTreeNode node = treeNodeFactory.createTreeNode(input);
+				p.addChild(node);
+				scanner.scan();
+			}
+				
 		}
-		if (found) {
-			p.addChild(new ParseTreeNode(input.getTokenValue()));
-			scanner.scan();
-		}
+	
 	}
 
 	/**
@@ -105,7 +111,7 @@ public abstract class Parser implements MessageEmitter {
 	
 	public void matchSequence(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
 		for (TokenType type : tokenTypes) {
-			match(input, type, p, treeType);		
+			match(input, type, p);		
 			input = scanner.getCurrentToken();
 		}
 	}
