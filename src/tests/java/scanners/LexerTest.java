@@ -166,7 +166,7 @@ public class LexerTest {
 			assertEquals(COBOLTokenType.PROCEDURE, l.getCurrentToken().getType());
 			l.scan();						
 			assertEquals(COBOLTokenType.EOF, l.getCurrentToken().getType());
-			assertEquals(1, s.getNumberOfLines());
+			assertEquals(2, s.getNumberOfLines());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -218,20 +218,15 @@ public class LexerTest {
 	
 	//@Test 
 	public void testStringLiteral() {
-		BufferedReader in = new BufferedReader(new StringReader("IF \"LDA-RC\" NOT = 0\n"));
+		BufferedReader in = new BufferedReader(new StringReader("\"CLOSE_C1 IN OBJECT/MODLIB/COBOLAPP\""));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();			
-			assertEquals("IF", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IF, l.getCurrentToken().getType());
-			l.scan();			
-			assertEquals("LDA-RC", l.getCurrentToken().getTokenValue());			
+			assertEquals("\"CLOSE_C1 IN OBJECT/MODLIB/COBOLAPP\"", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.STRING_LITERAL, l.getCurrentToken().getType());
-			l.scan();			
-			assertEquals("NOT", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.NOT, l.getCurrentToken().getType());
+		
 			
 		} catch (IOException e) {
 			

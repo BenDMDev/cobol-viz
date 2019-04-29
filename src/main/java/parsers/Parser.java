@@ -1,10 +1,6 @@
 package main.java.parsers;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javafx.util.Pair;
 import main.java.messages.MessageListener;
 import main.java.messages.MessageEmitter;
 import main.java.scanners.Scanner;
@@ -90,6 +86,13 @@ public abstract class Parser implements MessageEmitter {
 	public void matchRepeatingAlternation(Token input, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
 		while(containsToken(input, tokenTypes)) {		
 			matchAlternation(input, p, tokenTypes);
+			input = scanner.getCurrentToken();
+		}
+	}
+	
+	public void matchRepeatingSequence(Token input, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
+		while(containsToken(input, tokenTypes)) {
+			matchSequence(input, p, tokenTypes);
 			input = scanner.getCurrentToken();
 		}
 	}

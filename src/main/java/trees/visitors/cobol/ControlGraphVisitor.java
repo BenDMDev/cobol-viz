@@ -23,7 +23,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 	
 
 	public ControlGraphVisitor() {
-		graph = new Graph(100);
+		graph = new Graph(1000);
 		entry = new ControlGraphVertex("ENTRY");
 		exit = new ControlGraphVertex("EXIT");
 		graph.addVertices(entry);
@@ -151,7 +151,7 @@ public class ControlGraphVisitor implements TreeVisitor {
 		lastSeen = holder;
 
 		// HANDLE ELSE BLOCK
-		if (root.getChildren().size() == 3) {
+		if (root.getChildren().size() >= 3) {
 			nodes = root.getChildren().get(2).getChildren();
 			for (ParseTreeNode p : nodes) {
 				visit((StatementNode) p);

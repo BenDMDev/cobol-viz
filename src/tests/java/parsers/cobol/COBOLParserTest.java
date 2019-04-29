@@ -8,9 +8,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import main.java.graphs.Graph;
-import main.java.graphs.Vertex;
-import main.java.graphs.cobol.CallGraphVertex;
-import main.java.graphs.cobol.ControlGraphVertex;
 import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;

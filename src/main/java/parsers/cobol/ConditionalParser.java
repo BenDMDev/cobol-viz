@@ -35,10 +35,12 @@ public class ConditionalParser extends StatementParser {
 
 		// Get next Token - RHS of IF condition
 		inputToken = scanner.getCurrentToken();
-
 		matchAlternation(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
 				COBOLTokenType.STRING_LITERAL);
 
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.THEN, condition);
+		
 		parseTree.addChild(condition);
 		inputToken = scanner.getCurrentToken();
 

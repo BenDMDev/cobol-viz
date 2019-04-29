@@ -10,24 +10,24 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import main.java.parsers.cobol.StatementParser;
-import main.java.parsers.cobol.statements.MoveStatementParser;
+import main.java.parsers.cobol.statements.ReleaseStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 
-public class MoveStatementTest {
+public class ReleaseStatementTest {
 
 	@Test
-	public void testSimpleMove() {
-		String input = "MOVE \"jones\" TO MIN-SALARY";
- 		
+	public void testParse() {
+		String input = "RELEASE my-file FROM my-id";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 
-		StatementParser sp = new MoveStatementParser(l);
+		StatementParser sp = new ReleaseStatementParser(l);
 		try {
 			l.scan();
 			
@@ -37,12 +37,18 @@ public class MoveStatementTest {
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
 			assertEquals(4, children.size());
-			assertEquals("jones", children.get(1).getAttribute());
+			assertEquals("RELEASE", children.get(0).getAttribute());
+			assertEquals(TreeNodeType.KEYWORD, children.get(0).getTreeNodeType());
+			assertEquals("my-file", children.get(1).getAttribute());
+			assertEquals(TreeNodeType.IDENTIFIER, children.get(1).getTreeNodeType());
+			assertEquals("my-id", children.get(3).getAttribute());
+			assertEquals(TreeNodeType.IDENTIFIER, children.get(3).getTreeNodeType());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 }

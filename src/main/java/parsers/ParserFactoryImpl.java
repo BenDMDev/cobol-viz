@@ -16,11 +16,11 @@ import main.java.parsers.cobol.statements.InitializeStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.parsers.cobol.statements.OpenStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
+import main.java.parsers.cobol.statements.ReleaseStatementParser;
+import main.java.parsers.cobol.statements.ReturnStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
-import main.java.trees.ParseTreeNode;
-import main.java.trees.TreeNodeType;
 
 public class ParserFactoryImpl implements ParserFactory {
 
@@ -63,7 +63,11 @@ public class ParserFactoryImpl implements ParserFactory {
 		case INITIALIZE:
 			return new InitializeStatementParser(scanner);
 		case OPEN:
-			return new OpenStatementParser(scanner);		
+			return new OpenStatementParser(scanner);
+		case RELEASE:
+			return new ReleaseStatementParser(scanner);
+		case RETURN:
+			return new ReturnStatementParser(scanner);
 		default:
 			return null;
 		}

@@ -66,16 +66,9 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.TO, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume Identifiers and Optional ROUNDED clause
-		type = inputToken.getType();
-		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
-					COBOLTokenType.INTEGER);
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
+		inputToken = scanner.getCurrentToken();
 
 		if (inputToken.getType() == COBOLTokenType.GIVING) {
 			parseGivingClause(inputToken);
@@ -119,17 +112,9 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.FROM, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume Identifiers and Optional ROUNDED clause
-		type = inputToken.getType();
-		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-
-			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
-					COBOLTokenType.INTEGER);
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
+		inputToken = scanner.getCurrentToken();
 
 		// Handle GIVING Clause
 		if (inputToken.getType() == COBOLTokenType.GIVING) {
@@ -171,17 +156,9 @@ public class ExpressionParser extends StatementParser {
 		matchAlternation(inputToken, parseTree, COBOLTokenType.INTO, COBOLTokenType.BY);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume Identifiers and Optional ROUNDED clause
-		TokenType type = inputToken.getType();
-		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-
-			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
-					COBOLTokenType.INTEGER);
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
+		inputToken = scanner.getCurrentToken();
 
 		// Handle GIVING Clause
 		if (inputToken.getType() == COBOLTokenType.GIVING) {
@@ -231,17 +208,9 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.BY, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume Identifiers and Optional ROUNDED clause
-		TokenType type = inputToken.getType();
-		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-
-			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
-					COBOLTokenType.INTEGER);
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
+		inputToken = scanner.getCurrentToken();
 
 		// Handle GIVING Clause
 		if (inputToken.getType() == COBOLTokenType.GIVING) {
@@ -276,16 +245,8 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.COMPUTE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume Identifiers and Optional ROUNDED clause
-		TokenType type = inputToken.getType();
-		while (type == COBOLTokenType.IDENTIFIER) {
-
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.ROUNDED);
+		inputToken = scanner.getCurrentToken();
 
 		match(inputToken, COBOLTokenType.EQUALS_SYMBOL, parseTree);
 		inputToken = scanner.getCurrentToken();
@@ -321,7 +282,6 @@ public class ExpressionParser extends StatementParser {
 		matchSequence(inputToken, conditionNode, COBOLTokenType.NOT, COBOLTokenType.ROUNDED, COBOLTokenType.ON,
 				COBOLTokenType.SIZE, COBOLTokenType.ERROR);
 		inputToken = scanner.getCurrentToken();
-		
 
 		ParseTreeNode onErrorBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		node.addChild(onErrorBody);
@@ -341,36 +301,23 @@ public class ExpressionParser extends StatementParser {
 		// CONSUME GIVING
 		match(inputToken, COBOLTokenType.GIVING, parseTree);
 		inputToken = scanner.getCurrentToken();
-		// Match and Consume Identifiers and Optional ROUNDED clause
-		TokenType type = inputToken.getType();
-		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-
-			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
-					COBOLTokenType.INTEGER);
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.ROUNDED, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
+		
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
 
 	}
 
 	private void parseArithmeticExpression(Token inputToken) throws IOException {
 
-		switch ((COBOLTokenType) inputToken.getType()) {
-		case IDENTIFIER:
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
-			break;
-		case INTEGER:
-		case REAL:
-			matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
-			break;
-		default:
-			matchAlternation(inputToken, parseTree, COBOLTokenType.ADDITION_SYMBOL, COBOLTokenType.SUBTRACTION_SYMBOL,
-					COBOLTokenType.MULTIPLICATION_SYMBOL, COBOLTokenType.EXPONENTIATION_SYMBOL,
-					COBOLTokenType.DIVISION_SYMBOL, COBOLTokenType.LEFT_PAREN, COBOLTokenType.RIGHT_PAREN);
-			break;
-		}
+		TokenType[] validOperands = {
+				COBOLTokenType.IDENTIFIER,
+				COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+				COBOLTokenType.ADDITION_SYMBOL, COBOLTokenType.SUBTRACTION_SYMBOL,
+				COBOLTokenType.MULTIPLICATION_SYMBOL, COBOLTokenType.EXPONENTIATION_SYMBOL,
+				COBOLTokenType.DIVISION_SYMBOL, COBOLTokenType.LEFT_PAREN, COBOLTokenType.RIGHT_PAREN
+		};
+		matchAlternation(inputToken, parseTree, validOperands);
+
 	}
 
 	private boolean isOperand(Token inputToken) {
