@@ -10,6 +10,7 @@ import main.java.parsers.cobol.statements.CloseStatementParser;
 import main.java.parsers.cobol.statements.ContinueStatementParser;
 import main.java.parsers.cobol.statements.CopyStatementParser;
 import main.java.parsers.cobol.statements.DeleteStatementParser;
+import main.java.parsers.cobol.statements.DisplayStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
 import main.java.scanners.Scanner;
@@ -91,6 +92,11 @@ public class StatementParser extends Parser {
 			DeleteStatementParser deleteParser = new DeleteStatementParser(scanner);
 			deleteParser.addListener(listener);
 			parseTree = deleteParser.parse(inputToken);
+			break;
+		case DISPLAY:
+			DisplayStatementParser displayParser = new DisplayStatementParser(scanner);
+			displayParser.addListener(listener);
+			parseTree = displayParser.parse(inputToken);
 			break;
 		default:
 			parseTree = new ParseTreeNode(TreeNodeType.ERROR, inputToken.getTokenValue());
