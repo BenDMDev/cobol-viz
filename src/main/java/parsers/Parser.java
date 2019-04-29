@@ -1,7 +1,10 @@
 package main.java.parsers;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
+import javafx.util.Pair;
 import main.java.messages.MessageListener;
 import main.java.messages.MessageEmitter;
 import main.java.scanners.Scanner;
@@ -90,18 +93,14 @@ public abstract class Parser implements MessageEmitter {
 	public void matchAlternation(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType... tokenTypes)
 			throws IOException {
 
-		boolean found = false;
-		
+				
 		for (TokenType t : tokenTypes) {
-
 			if (input.getType() == t) {
-				found = true;				
+				p.addChild(new ParseTreeNode(treeType, input.getTokenValue()));
+				scanner.scan();			
 			}
 		}
-		if (found) {
-			p.addChild(new ParseTreeNode(treeType, input.getTokenValue()));
-			scanner.scan();
-		}
+		
 	}
 	
 	public void matchSequence(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType... tokenTypes) throws IOException {
@@ -114,6 +113,13 @@ public abstract class Parser implements MessageEmitter {
 	public void matchRepetition(Token input, TreeNodeType treeType, ParseTreeNode p, TokenType type) throws IOException {
 		while(input.getType() == type) {
 			match(input, type, p, treeType);
+			input = scanner.getCurrentToken();
+		}
+	}
+	
+	public void matchRepeatingAlternation(Token input, ParseTreeNode p, Map<TokenType, TreeNodeType> typePairs) throws IOException {
+		while(typePairs.containsKey(input.getType())) {
+			match(input, input.getType(),p, typePairs.get(input.getType()));
 			input = scanner.getCurrentToken();
 		}
 	}

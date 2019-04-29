@@ -1,6 +1,8 @@
 package main.java.parsers.cobol;
 
 import java.io.IOException;
+import java.util.HashMap;
+
 import main.java.parsers.Parser;
 import main.java.parsers.cobol.statements.AcceptStatementParser;
 import main.java.parsers.cobol.statements.AlterStatementParser;
@@ -11,18 +13,31 @@ import main.java.parsers.cobol.statements.ContinueStatementParser;
 import main.java.parsers.cobol.statements.CopyStatementParser;
 import main.java.parsers.cobol.statements.DeleteStatementParser;
 import main.java.parsers.cobol.statements.DisplayStatementParser;
+import main.java.parsers.cobol.statements.GoToStatementParser;
+import main.java.parsers.cobol.statements.InitializeStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
+import main.java.parsers.cobol.statements.OpenStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
+import main.java.scanners.tokens.TokenType;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 
 public class StatementParser extends Parser {
 
+	protected static HashMap<TokenType, TreeNodeType> TOKEN_TO_TREE = new HashMap<TokenType, TreeNodeType>();
+	static {
+		TOKEN_TO_TREE.put(COBOLTokenType.IDENTIFIER, TreeNodeType.IDENTIFIER);
+		TOKEN_TO_TREE.put(COBOLTokenType.INTEGER, TreeNodeType.LITERAL);
+		TOKEN_TO_TREE.put(COBOLTokenType.REAL, TreeNodeType.LITERAL);
+		TOKEN_TO_TREE.put(COBOLTokenType.STRING_LITERAL, TreeNodeType.LITERAL);
+	}
+	
 	public StatementParser(Scanner scanner) {
 		super(scanner);
+		
 	}
 
 	@Override
@@ -97,6 +112,21 @@ public class StatementParser extends Parser {
 			DisplayStatementParser displayParser = new DisplayStatementParser(scanner);
 			displayParser.addListener(listener);
 			parseTree = displayParser.parse(inputToken);
+			break;
+		case GO:
+			GoToStatementParser goParser = new GoToStatementParser(scanner);
+			goParser.addListener(listener);
+			parseTree = goParser.parse(inputToken);
+			break;
+		case INITIALIZE:
+			InitializeStatementParser initializeParser = new InitializeStatementParser(scanner);
+			initializeParser.addListener(listener);
+			parseTree = initializeParser.parse(inputToken);
+			break;
+		case OPEN:
+			OpenStatementParser openParser = new OpenStatementParser(scanner);
+			openParser.addListener(listener);
+			parseTree = openParser.parse(inputToken);
 			break;
 		default:
 			parseTree = new ParseTreeNode(TreeNodeType.ERROR, inputToken.getTokenValue());

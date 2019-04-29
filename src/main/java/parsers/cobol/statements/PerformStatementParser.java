@@ -19,7 +19,7 @@ public class PerformStatementParser extends StatementParser {
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 
-		parseTree = new StatementNode(inputToken.getTokenValue());
+		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
 		// Match and consume PERFORM
 		match(inputToken, COBOLTokenType.PERFORM, parseTree, TreeNodeType.KEYWORD);
