@@ -14,12 +14,15 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		TokenType type = inputToken.getType();
 		if(type == COBOLTokenType.IDENTIFIER) {
 			return new ParseTreeNode(TreeNodeType.IDENTIFIER, inputToken.getTokenValue());
-		} else if (inputToken instanceof NumberToken || inputToken instanceof StringToken)
+		} else if (inputToken instanceof NumberToken || inputToken instanceof StringToken) {
 			return new ParseTreeNode(TreeNodeType.LITERAL, inputToken.getTokenValue());
-		else if(COBOLTokenType.SPECIAL_SYMBOLS.containsKey(inputToken.getTokenValue()))
+		}
+		else if(COBOLTokenType.SPECIAL_SYMBOLS.containsKey(inputToken.getTokenValue())) {
 			return new ParseTreeNode(TreeNodeType.SPECIAL_SYMBOL, inputToken.getTokenValue());
-		else 
+		} 
+		else {
 			return new ParseTreeNode(TreeNodeType.KEYWORD, inputToken.getTokenValue());
+		}
 		
 	}
 
