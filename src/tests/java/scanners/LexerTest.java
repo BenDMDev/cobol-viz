@@ -17,7 +17,7 @@ public class LexerTest {
 
 	@Test
 	public void testWordScan() {
-		BufferedReader in = new BufferedReader(new StringReader("ACCEPT DIVISION. \n PROGRAM-ID, HELLO 45685"));
+		BufferedReader in = new BufferedReader(new StringReader("ACCEPT DIVISION. \n PROGRAM-ID, HELLO ALL"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
@@ -40,6 +40,9 @@ public class LexerTest {
 			l.scan();
 			assertEquals("HELLO", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			l.scan();
+			assertEquals("ALL", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.ALL, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			
 			e.printStackTrace();

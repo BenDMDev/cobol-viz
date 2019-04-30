@@ -18,7 +18,6 @@ public class WordToken extends Token {
 		CONSTANTS.add("ZEROES");
 		CONSTANTS.add("SPACES");
 		CONSTANTS.add("QUOTES");
-		CONSTANTS.add("ALL");
 	}
 
 	public WordToken(SourceFile source) {
