@@ -18,6 +18,9 @@ import main.java.parsers.cobol.statements.OpenStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
 import main.java.parsers.cobol.statements.ReleaseStatementParser;
 import main.java.parsers.cobol.statements.ReturnStatementParser;
+import main.java.parsers.cobol.statements.RewriteStatementParser;
+import main.java.parsers.cobol.statements.SetStatementParser;
+import main.java.parsers.cobol.statements.SortStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
@@ -68,6 +71,12 @@ public class ParserFactoryImpl implements ParserFactory {
 			return new ReleaseStatementParser(scanner);
 		case RETURN:
 			return new ReturnStatementParser(scanner);
+		case REWRITE:
+			return new RewriteStatementParser(scanner);
+		case SET:
+			return new SetStatementParser(scanner);
+		case SORT:
+			return new SortStatementParser(scanner);
 		default:
 			return null;
 		}

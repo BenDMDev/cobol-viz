@@ -21,7 +21,7 @@ public class COBOLParserTest {
 
 		BufferedReader in = null;
 		try {
-			in = new BufferedReader(new FileReader(new File("src/resources/test.cbl")));
+			in = new BufferedReader(new FileReader(new File("src/resources/simpleExample.txt")));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -34,14 +34,15 @@ public class COBOLParserTest {
 			l.scan();
 
 			ParseTree tree = new ParseTree();
-			tree.setRoot(cbp.parse(l.getCurrentToken()));			
+			tree.setRoot(cbp.parse(l.getCurrentToken()));
+			tree.printParseTree();
 			CallGraphVisitor tv = new CallGraphVisitor();
 			tree.accept(tv);
 			Graph g = tv.getGraph();
 			g.printMatrix();
 			
 			
-			tree.printParseTree();
+			
 			s.close();
 			
 		

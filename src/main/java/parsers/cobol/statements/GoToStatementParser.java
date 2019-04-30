@@ -25,11 +25,17 @@ public class GoToStatementParser extends StatementParser {
 		match(inputToken, COBOLTokenType.GO, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
-		if(inputToken.getType() == COBOLTokenType.TO)
-			scanner.scan(); // Skip TO 
+		match(inputToken, COBOLTokenType.TO, parseTree);
+		inputToken = scanner.getCurrentToken();
+		
 		
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
+		if(inputToken.getType() == COBOLTokenType.IDENTIFIER) {
+			ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
+			scanner.scan();
+			parseTree.addChild(referenceVal);
+		}
+		//match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		
 		return parseTree;
 	}

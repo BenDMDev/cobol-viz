@@ -116,24 +116,36 @@ public class CallGraphVisitor implements TreeVisitor {
 
 		int beginIndex = 0;
 		int endIndex = 0;
-		for (int i = 0; i < COBOLParser.REFERENCES.size(); i++) {
-			String ref = COBOLParser.REFERENCES.get(i);
-			String labelLHS = statement.getChildren().get(1).getAttribute();
-			if (labelLHS.equals(ref)) {
-				beginIndex = i;
-			}
-			if (statement.getChildren().size() >= 4) {
-				String labelRHS = statement.getChildren().get(3).getAttribute();
-				if (labelRHS.equals(ref)) {
-					endIndex = i;
+//		
+//		for (int i = 0; i < COBOLParser.REFERENCES.size(); i++) {
+//			String ref = COBOLParser.REFERENCES.get(i);
+//			String labelLHS = statement.getChildren().get(1).getAttribute();
+//			if (labelLHS.equals(ref)) {
+//				beginIndex = i;
+//			}
+//			if (statement.getChildren().size() >= 4) {
+//				String labelRHS = statement.getChildren().get(3).getAttribute();
+//				if (labelRHS.equals(ref)) {
+//					endIndex = i;
+//				}
+//			} else {
+//				endIndex = beginIndex;
+//			}
+//
+//		}
+		int indexList[] = new int[COBOLParser.REFERENCES.size()];
+		int curPos = -1;
+		for(ParseTreeNode n : statement.getChildren()) {
+			if(n.getTreeNodeType() == TreeNodeType.REFERENCE_VALUE) {
+				int index = getReferenceIndex(n.getAttribute());
+				if(index >= 0) {
+					curPos++;
+					indexList[curPos] = index;					
 				}
-			} else {
-				endIndex = beginIndex;
 			}
-
 		}
-
-		addPerformVertices(beginIndex, endIndex);
+		if(curPos >= 0)
+			addPerformVertices(indexList[0],indexList[curPos]);
 
 	}
 
@@ -148,7 +160,7 @@ public class CallGraphVisitor implements TreeVisitor {
 
 			}
 
-			g.addWeightedEdge(lastSeen.getIndex(), v.getIndex(), 2);
+			g.addWeightedEdge(lastSeen.getIndex(), v.getIndex(), 1);
 
 		}
 
@@ -168,5 +180,15 @@ public class CallGraphVisitor implements TreeVisitor {
 		
 	}
 
+	
+	private int getReferenceIndex(String ref) {
+		int index = -1;
+		for(int i = 0; i < COBOLParser.REFERENCES.size(); i++){
+			if(COBOLParser.REFERENCES.get(i).equals(ref))
+				index = i;
+		} 
+		
+		return index;
+	}
 
 }

@@ -28,8 +28,11 @@ public class PerformStatementParser extends StatementParser {
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();
 		if (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
+			
 			parseTree.setTreeType(TreeNodeType.REFERENCE);
+			ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
+			scanner.scan();
+			parseTree.addChild(referenceVal);
 		}
 
 		inputToken = scanner.getCurrentToken();
@@ -65,7 +68,13 @@ public class PerformStatementParser extends StatementParser {
 
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();
-		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
+		if (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
+			
+			parseTree.setTreeType(TreeNodeType.REFERENCE);
+			ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
+			scanner.scan();
+			parseTree.addChild(referenceVal);
+		}
 	}
 
 	private void parseUntilCondition(Token inputToken) throws IOException {
