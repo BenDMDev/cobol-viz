@@ -97,27 +97,6 @@ public class PerformStatementParser extends StatementParser {
 
 	}
 
-	private ParseTreeNode parseCondition(Token inputToken, ParseTreeNode root) throws IOException {
 
-		match(inputToken, COBOLTokenType.IS, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.NOT, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.GREATER, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN_SYMBOL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.LESS, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN_SYMBOL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUALS_SYMBOL, root);
-
-		return root;
-	}
 
 }

@@ -84,6 +84,7 @@ public class ExpressionParser extends StatementParser {
 
 		if (inputToken.getType() == COBOLTokenType.NOT) {
 			parseOnSizeError(inputToken);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
 
 		inputToken = scanner.getCurrentToken();
@@ -252,7 +253,7 @@ public class ExpressionParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 
 		while (isOperand(inputToken) || isOperator(inputToken)) {
-			parseArithmeticExpression(inputToken);
+			parseArithmeticExpression(parseTree, inputToken);
 			inputToken = scanner.getCurrentToken();
 		}
 
@@ -307,31 +308,4 @@ public class ExpressionParser extends StatementParser {
 
 	}
 
-	private void parseArithmeticExpression(Token inputToken) throws IOException {
-
-		TokenType[] validOperands = {
-				COBOLTokenType.IDENTIFIER,
-				COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-				COBOLTokenType.ADDITION_SYMBOL, COBOLTokenType.SUBTRACTION_SYMBOL,
-				COBOLTokenType.MULTIPLICATION_SYMBOL, COBOLTokenType.EXPONENTIATION_SYMBOL,
-				COBOLTokenType.DIVISION_SYMBOL, COBOLTokenType.LEFT_PAREN, COBOLTokenType.RIGHT_PAREN
-		};
-		matchAlternation(inputToken, parseTree, validOperands);
-
-	}
-
-	private boolean isOperand(Token inputToken) {
-		TokenType type = inputToken.getType();
-		if (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
-			return true;
-		} else
-			return false;
-	}
-
-	private boolean isOperator(Token inputToken) {
-		if (COBOLTokenType.SPECIAL_SYMBOLS.containsKey(inputToken.getTokenValue())) {
-			return true;
-		} else
-			return false;
-	}
 }

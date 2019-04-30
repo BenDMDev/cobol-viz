@@ -31,7 +31,7 @@ public class MoveStatementParser extends StatementParser {
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL);
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.FIGURATIVE_CONSTANT, parseTree);
-	
+		inputToken = scanner.getCurrentToken();
 
 		match(inputToken, COBOLTokenType.TO, parseTree);
 		inputToken = scanner.getCurrentToken();

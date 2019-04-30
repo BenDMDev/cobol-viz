@@ -43,6 +43,7 @@ public class GraphLoader {
 	private boolean showLabels;
 	private boolean curvedEdges;
 	private double edgeRadius;
+	private double nodeOpacity;
 	private Color backgroundColour;
 	private Color edgeColour;
 	private Color labelColour;
@@ -55,6 +56,7 @@ public class GraphLoader {
 
 	public GraphLoader() {
 		edgeOpacity = 100.0;
+		nodeOpacity = 100.0;
 		showLabels = false;
 		edgeThickness = 5.0;
 		curvedEdges = false;
@@ -90,7 +92,7 @@ public class GraphLoader {
 
 		// Append imported data to GraphAPI
 		importController.process(container, new DefaultProcessor(), activeWorkspace);
-		if (ranked == 0) {
+		if (ranked == RANKED) {
 			GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
 			DirectedGraph graph = graphModel.getDirectedGraph();
 
@@ -118,7 +120,8 @@ public class GraphLoader {
 			centralityTransformer.setMinSize(10);
 			centralityTransformer.setMaxSize(50);
 			appearanceController.transform(centralityRanking);
-		}
+		} 
+			
 
 		// New Processing target, get the PApplet
 		G2DTarget target = (G2DTarget) previewController.getRenderTarget(RenderTarget.G2D_TARGET);
@@ -145,6 +148,7 @@ public class GraphLoader {
 		PreviewModel previewModel = previewController.getModel();
 		previewModel.getProperties().putValue(PreviewProperty.DIRECTED, true);
 		previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, showLabels);
+		previewModel.getProperties().putValue(PreviewProperty.NODE_OPACITY, nodeOpacity);
 		previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, edgeOpacity);
 		previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, edgeThickness);
 		previewModel.getProperties().putValue(PreviewProperty.EDGE_RADIUS, edgeRadius);

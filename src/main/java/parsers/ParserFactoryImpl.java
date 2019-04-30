@@ -13,6 +13,7 @@ import main.java.parsers.cobol.statements.DeleteStatementParser;
 import main.java.parsers.cobol.statements.DisplayStatementParser;
 import main.java.parsers.cobol.statements.GoToStatementParser;
 import main.java.parsers.cobol.statements.InitializeStatementParser;
+import main.java.parsers.cobol.statements.InspectStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.parsers.cobol.statements.OpenStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
@@ -24,6 +25,8 @@ import main.java.parsers.cobol.statements.SortStatementParser;
 import main.java.parsers.cobol.statements.StartStatementParser;
 import main.java.parsers.cobol.statements.StopStatementParser;
 import main.java.parsers.cobol.statements.StringStatementParser;
+import main.java.parsers.cobol.statements.UnstringStatementParser;
+import main.java.parsers.cobol.statements.WriteStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
@@ -68,6 +71,8 @@ public class ParserFactoryImpl implements ParserFactory {
 			return new GoToStatementParser(scanner);
 		case INITIALIZE:
 			return new InitializeStatementParser(scanner);
+		case INSPECT:
+			return new InspectStatementParser(scanner);
 		case OPEN:
 			return new OpenStatementParser(scanner);
 		case RELEASE:
@@ -86,6 +91,10 @@ public class ParserFactoryImpl implements ParserFactory {
 			return new StopStatementParser(scanner);
 		case STRING:
 			return new StringStatementParser(scanner);
+		case UNSTRING:
+			return new UnstringStatementParser(scanner);
+		case WRITE:
+			return new WriteStatementParser(scanner);
 		default:
 			return null;
 		}

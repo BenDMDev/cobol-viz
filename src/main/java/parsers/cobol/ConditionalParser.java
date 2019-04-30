@@ -3,6 +3,7 @@ package main.java.parsers.cobol;
 import java.io.IOException;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
+import main.java.scanners.tokens.TokenType;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
@@ -25,22 +26,20 @@ public class ConditionalParser extends StatementParser {
 		match(inputToken, COBOLTokenType.IF, condition);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume LHS of IF
-		matchAlternation(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-				COBOLTokenType.STRING_LITERAL);
-		inputToken = scanner.getCurrentToken();
-
 		// Parse Condition Body of IF
 		parseCondition(inputToken, condition);
-
-		// Get next Token - RHS of IF condition
 		inputToken = scanner.getCurrentToken();
-		matchAlternation(inputToken, condition, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-				COBOLTokenType.STRING_LITERAL);
+
+		while (inputToken.getType() == COBOLTokenType.AND || inputToken.getType() == COBOLTokenType.OR) {
+			matchAlternation(inputToken, condition, COBOLTokenType.AND, COBOLTokenType.OR);
+			inputToken = scanner.getCurrentToken();
+			parseCondition(inputToken, condition);
+			inputToken = scanner.getCurrentToken();
+		}
 
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.THEN, condition);
-		
+
 		parseTree.addChild(condition);
 		inputToken = scanner.getCurrentToken();
 
@@ -71,7 +70,7 @@ public class ConditionalParser extends StatementParser {
 		// Handle ELSE
 		if (inputToken.getType() == COBOLTokenType.ELSE) {
 			// match(inputToken, COBOLTokenType.ELSE, parseTree);
-			
+
 			scanner.scan();
 			inputToken = scanner.getCurrentToken();
 
@@ -105,27 +104,78 @@ public class ConditionalParser extends StatementParser {
 
 	}
 
-	private ParseTreeNode parseCondition(Token inputToken, ParseTreeNode root) throws IOException {
-
-		match(inputToken, COBOLTokenType.IS, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.NOT, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.GREATER, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN_SYMBOL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.LESS, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN_SYMBOL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
-		match(scanner.getCurrentToken(), COBOLTokenType.EQUALS_SYMBOL, root);
-
-		return root;
-	}
+//	private ParseTreeNode parseCondition(Token inputToken, ParseTreeNode root) throws IOException {
+//
+//		matchRepetition(inputToken, root, COBOLTokenType.LEFT_PAREN);
+//		matchAlternation(scanner.getCurrentToken(), root, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER,
+//				COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL);
+//		parseArithmeticExpression(root, scanner.getCurrentToken());
+//		match(scanner.getCurrentToken(), COBOLTokenType.IS, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.NOT, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.GREATER, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN_SYMBOL, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.LESS, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN_SYMBOL, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
+//		match(scanner.getCurrentToken(), COBOLTokenType.EQUALS_SYMBOL, root);
+//
+//		matchAlternation(scanner.getCurrentToken(), root, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER,
+//				COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL);
+//
+//		matchRepetition(scanner.getCurrentToken(), root, COBOLTokenType.RIGHT_PAREN);
+//
+//		return root;
+//	}
+//
+//	private void parseArithmeticExpression(ParseTreeNode root, Token inputToken) throws IOException {
+//
+//		TokenType[] validOperands = { COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
+//				COBOLTokenType.ADDITION_SYMBOL, COBOLTokenType.SUBTRACTION_SYMBOL, COBOLTokenType.MULTIPLICATION_SYMBOL,
+//				COBOLTokenType.EXPONENTIATION_SYMBOL, COBOLTokenType.DIVISION_SYMBOL, COBOLTokenType.LEFT_PAREN,
+//				COBOLTokenType.RIGHT_PAREN };
+//		
+//		while (isOperand(inputToken) || isOperator(inputToken)) {
+//			matchAlternation(inputToken, parseTree, validOperands);
+//			inputToken = scanner.getCurrentToken();
+//		}
+//
+//		
+//
+//	}
+//
+//	private boolean isOperator(Token inputToken) {
+//
+//		switch ((COBOLTokenType) inputToken.getType()) {
+//		case ADDITION_SYMBOL:
+//		case SUBTRACTION_SYMBOL:
+//		case MULTIPLICATION_SYMBOL:
+//		case EXPONENTIATION_SYMBOL:
+//		case DIVISION_SYMBOL:
+//		case LEFT_PAREN:
+//		case RIGHT_PAREN:
+//			return true;
+//		default:
+//			return false;
+//		}
+//
+//	}
+//	
+//	private boolean isOperand(Token inputToken) {
+//		TokenType type = inputToken.getType();
+//		if (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
+//			return true;
+//		} else
+//			return false;
+//	}
+//	
 
 }

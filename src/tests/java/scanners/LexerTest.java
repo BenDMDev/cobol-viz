@@ -49,7 +49,7 @@ public class LexerTest {
 	
 	@Test
 	public void testNumberScan() {
-		BufferedReader in = new BufferedReader(new StringReader("45685 56.54"));
+		BufferedReader in = new BufferedReader(new StringReader("45685 56.54 ZERO"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
@@ -60,6 +60,9 @@ public class LexerTest {
 			l.scan();							
 			assertEquals("56.54", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.REAL, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals("ZERO", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.FIGURATIVE_CONSTANT, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
