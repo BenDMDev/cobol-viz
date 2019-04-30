@@ -20,20 +20,18 @@ public class ParagraphParser extends Parser {
 
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
-		parseTree = new ParagraphNode(TreeNodeType.PROCEDURE, t.getTokenValue());
-		parseTree.setLineNumber(t.getLineNumber());
+		
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-			COBOLParser.REFERENCES.add(t.getTokenValue());
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-
-			scanner.scan(); // Consume Paragraph identifier
+			parseTree = new ParagraphNode(TreeNodeType.PROCEDURE, t.getTokenValue());
+			
+			COBOLParser.REFERENCES.add(t.getTokenValue());	
+			matchSequence(t, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.FULL_STOP);
 			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			scanner.scan(); // Consume '.' terminator
-			t = scanner.getCurrentToken();
-
+		} else {
+			parseTree = new ParagraphNode(TreeNodeType.PROCEDURE, "");
 		}
 	
+		parseTree.setLineNumber(t.getLineNumber());
 		parseSentences(t);
 	
 

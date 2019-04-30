@@ -21,6 +21,9 @@ import main.java.parsers.cobol.statements.ReturnStatementParser;
 import main.java.parsers.cobol.statements.RewriteStatementParser;
 import main.java.parsers.cobol.statements.SetStatementParser;
 import main.java.parsers.cobol.statements.SortStatementParser;
+import main.java.parsers.cobol.statements.StartStatementParser;
+import main.java.parsers.cobol.statements.StopStatementParser;
+import main.java.parsers.cobol.statements.StringStatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
@@ -77,6 +80,12 @@ public class ParserFactoryImpl implements ParserFactory {
 			return new SetStatementParser(scanner);
 		case SORT:
 			return new SortStatementParser(scanner);
+		case START:
+			return new StartStatementParser(scanner);
+		case STOP:
+			return new StopStatementParser(scanner);
+		case STRING:
+			return new StringStatementParser(scanner);
 		default:
 			return null;
 		}

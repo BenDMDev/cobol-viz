@@ -7,6 +7,7 @@ import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.SectionNode;
 
 public class SectionParser extends Parser {
@@ -19,17 +20,11 @@ public class SectionParser extends Parser {
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
 		
-		parseTree = new SectionNode("SECTION");
+		parseTree = new SectionNode(TreeNodeType.PROCEDURE_BLOCK, "SECTION");
 				
 		if(t.getType() == COBOLTokenType.IDENTIFIER && scanner.lookAhead().getType() == COBOLTokenType.SECTION) {
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			scanner.scan(); // Consume section label
-			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			scanner.scan(); // Consume SECTION keyword
-			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			scanner.scan(); // Consume terminator
+			
+			matchSequence(t, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.SECTION, COBOLTokenType.FULL_STOP);
 			t = scanner.getCurrentToken();
 		}
 		

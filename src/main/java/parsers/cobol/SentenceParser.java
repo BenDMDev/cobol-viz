@@ -7,6 +7,7 @@ import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.SentenceNode;
 
 public class SentenceParser extends Parser {
@@ -19,7 +20,7 @@ public class SentenceParser extends Parser {
 	@Override
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 				
-		parseTree = new SentenceNode ("SENTENCE");		
+		parseTree = new SentenceNode (TreeNodeType.STATEMENT_BLOCK, "SENTENCE");		
 		while(inputToken.getType() != COBOLTokenType.FULL_STOP) {
 			StatementParser sp = new StatementParser(scanner);	
 			sp.addListener(listener);
@@ -32,8 +33,9 @@ public class SentenceParser extends Parser {
 			sendMessage("ERROR MISSING TERMINATOR AT " + inputToken.getLineNumber());
 			findNextValidToken(inputToken);
 		} else {
-			parseTree.addChild(new ParseTreeNode(inputToken.getTokenValue()));
-			scanner.scan();
+			// parseTree.addChild(treeNodeFactory.createTreeNode(inputToken));
+			match(inputToken, COBOLTokenType.FULL_STOP, parseTree);
+			// scanner.scan();
 		}
 		
 		return parseTree;

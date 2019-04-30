@@ -20,21 +20,17 @@ public class CallGraphVisitor implements TreeVisitor {
 	private int lineEnd;
 
 	public CallGraphVisitor() {
-		g = new Graph(50);
+		g = new Graph(100);
 		lastSeen = null;
 	}
 
 	@Override
 	public void visit(ParseTreeNode treeNode) {
 
-		if (treeNode instanceof StatementNode) {
-		
-		} else if (treeNode instanceof SectionNode) {
+		if (treeNode instanceof SectionNode) {
 			visit((SectionNode) treeNode);
 		} else if (treeNode instanceof ParagraphNode) {
 			visit((ParagraphNode) treeNode);
-		} else if (treeNode instanceof SentenceNode) {
-			
 		}
 
 	}
@@ -43,18 +39,17 @@ public class CallGraphVisitor implements TreeVisitor {
 		lineEnd = statement.getLineNumber();
 
 		if (statement.getTreeNodeType() == TreeNodeType.REFERENCE) {
-			processPerformStatement(statement);
-		} 
-		
-		if(statement.getTreeNodeType() == TreeNodeType.CONDITIONAL_STATEMENT) {
+			processReferenceStatement(statement);
+		}
+
+		if (statement.getTreeNodeType() == TreeNodeType.CONDITIONAL_STATEMENT) {
 			processConditionalStatement(statement);
 		}
-		
-		
+
 		for (ParseTreeNode n : statement.getChildren()) {
 			if (n instanceof StatementNode) {
 				visit((StatementNode) n);
-			} 			
+			}
 		}
 
 	}
@@ -64,11 +59,14 @@ public class CallGraphVisitor implements TreeVisitor {
 	}
 
 	public void visit(ParagraphNode paragraph) {
+
 		ControlGraphVisitor controlVisitor = new ControlGraphVisitor();
 		paragraph.accept(controlVisitor);
 		controlGraph = controlVisitor.getGraph();
+
 		CallGraphVertex vertex = (CallGraphVertex) g.getVertex(paragraph.getAttribute());
 		lineBegin = lineEnd = paragraph.getLineNumber();
+
 		if (vertex == null) {
 			vertex = new CallGraphVertex(paragraph.getAttribute());
 			g.addVertices(vertex);
@@ -79,26 +77,30 @@ public class CallGraphVisitor implements TreeVisitor {
 				g.addEdge(lastSeen.getIndex(), vertex.getIndex());
 				lastSeen = vertex;
 			}
-			for (ParseTreeNode n : paragraph.getChildren()) {
-				if (n instanceof SentenceNode)
-					visit((SentenceNode) n);
-			}
+			visitChildren(paragraph);
+
 			int diff = lineEnd - lineBegin;
 			lastSeen.setNumberOfLines(diff);
 
 		} else {
 			CallGraphVertex holder = lastSeen;
 			lastSeen = vertex;
-			for (ParseTreeNode n : paragraph.getChildren()) {
-				if (n instanceof SentenceNode)
-					visit((SentenceNode) n);
-			}
+
+			visitChildren(paragraph);
+
 			int diff = lineEnd - lineBegin;
 			lastSeen.setNumberOfLines(diff);
 			lastSeen.setGraph(controlGraph);
 			lastSeen = holder;
 		}
 
+	}
+
+	private void visitChildren(ParagraphNode paragraph) {
+		for (ParseTreeNode n : paragraph.getChildren()) {
+			if (n instanceof SentenceNode)
+				visit((SentenceNode) n);
+		}
 	}
 
 	public void visit(SentenceNode sentence) {
@@ -112,44 +114,28 @@ public class CallGraphVisitor implements TreeVisitor {
 		return g;
 	}
 
-	private void processPerformStatement(StatementNode statement) {
+	private void processReferenceStatement(StatementNode statement) {
 
-		int beginIndex = 0;
-		int endIndex = 0;
-//		
-//		for (int i = 0; i < COBOLParser.REFERENCES.size(); i++) {
-//			String ref = COBOLParser.REFERENCES.get(i);
-//			String labelLHS = statement.getChildren().get(1).getAttribute();
-//			if (labelLHS.equals(ref)) {
-//				beginIndex = i;
-//			}
-//			if (statement.getChildren().size() >= 4) {
-//				String labelRHS = statement.getChildren().get(3).getAttribute();
-//				if (labelRHS.equals(ref)) {
-//					endIndex = i;
-//				}
-//			} else {
-//				endIndex = beginIndex;
-//			}
-//
-//		}
 		int indexList[] = new int[COBOLParser.REFERENCES.size()];
 		int curPos = -1;
-		for(ParseTreeNode n : statement.getChildren()) {
-			if(n.getTreeNodeType() == TreeNodeType.REFERENCE_VALUE) {
+		for (ParseTreeNode n : statement.getChildren()) {
+			if (n.getTreeNodeType() == TreeNodeType.REFERENCE_VALUE) {
 				int index = getReferenceIndex(n.getAttribute());
-				if(index >= 0) {
+				if (index >= 0) {
 					curPos++;
-					indexList[curPos] = index;					
+					indexList[curPos] = index;
 				}
 			}
 		}
-		if(curPos >= 0)
-			addPerformVertices(indexList[0],indexList[curPos]);
+		if (curPos >= 0) {
+			if (indexList[curPos] >= indexList[0])
+				addReferencedVertex(indexList[0], indexList[curPos]);
+			
+		}
 
 	}
 
-	private void addPerformVertices(int begin, int end) {
+	private void addReferencedVertex(int begin, int end) {
 
 		for (int i = begin; i <= end; i++) {
 			CallGraphVertex v = (CallGraphVertex) g.getVertex(COBOLParser.REFERENCES.get(i));
@@ -165,29 +151,27 @@ public class CallGraphVisitor implements TreeVisitor {
 		}
 
 	}
-	
-	
+
 	private void processConditionalStatement(StatementNode statement) {
-		
-		for(ParseTreeNode n : statement.getChildren()) {
-			if(n.getTreeNodeType() == TreeNodeType.CONDITION_BODY) {
-				for(ParseTreeNode c : n.getChildren()) {
-					if(c instanceof StatementNode)
+
+		for (ParseTreeNode n : statement.getChildren()) {
+			if (n.getTreeNodeType() == TreeNodeType.CONDITION_BODY) {
+				for (ParseTreeNode c : n.getChildren()) {
+					if (c instanceof StatementNode)
 						visit((StatementNode) c);
 				}
 			}
 		}
-		
+
 	}
 
-	
 	private int getReferenceIndex(String ref) {
 		int index = -1;
-		for(int i = 0; i < COBOLParser.REFERENCES.size(); i++){
-			if(COBOLParser.REFERENCES.get(i).equals(ref))
+		for (int i = 0; i < COBOLParser.REFERENCES.size(); i++) {
+			if (COBOLParser.REFERENCES.get(i).equals(ref))
 				index = i;
-		} 
-		
+		}
+
 		return index;
 	}
 
