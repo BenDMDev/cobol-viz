@@ -5,6 +5,7 @@ import java.io.IOException;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.EOFToken;
+import main.java.scanners.tokens.cobol.ErrorToken;
 import main.java.scanners.tokens.cobol.NumberToken;
 import main.java.scanners.tokens.cobol.StringToken;
 import main.java.scanners.tokens.cobol.SymbolToken;
@@ -57,6 +58,7 @@ public class Scanner {
 		
 		checkAndSkipCommentLine();
 		
+		
 		char c = source.getCurrentChar();
 		Token t = null;		
 			
@@ -82,7 +84,11 @@ public class Scanner {
 		} else if (c == 0) {
 			t = new EOFToken(source);
 
+		} else {
+			t = new ErrorToken(source);
+			t.extract();
 		}
+		
 		return t;
 	}
 	

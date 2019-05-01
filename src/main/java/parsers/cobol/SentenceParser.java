@@ -25,7 +25,7 @@ public class SentenceParser extends Parser {
 			StatementParser sp = new StatementParser(scanner);	
 			sp.addListener(listener);
 			parseTree.addChild(sp.parse(inputToken));	
-			System.out.println(inputToken.getTokenValue());
+			System.out.println(inputToken.getTokenValue() + ":" + inputToken.getLineNumber());
 			inputToken = scanner.getCurrentToken();	
 		}
 		

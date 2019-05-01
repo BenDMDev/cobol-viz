@@ -62,12 +62,15 @@ public class StatementParser extends Parser {
 		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN_EQUALS, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.GREATER_THAN_SYMBOL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.LESS, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.THAN, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.OR, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN_EQUALS_SYMBOL, root);
+		matchSequence(scanner.getCurrentToken(), root, COBOLTokenType.LESS_THAN_SYMBOL, COBOLTokenType.GREATER_THAN_SYMBOL);
 		match(scanner.getCurrentToken(), COBOLTokenType.LESS_THAN_SYMBOL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);

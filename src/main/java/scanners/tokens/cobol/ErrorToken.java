@@ -5,21 +5,18 @@ import java.io.IOException;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
 
-public class EOFToken extends Token {
+public class ErrorToken extends Token {
 
-	public EOFToken(SourceFile source) {
-		super(source);		
-		this.type = COBOLTokenType.EOF;
-		this.value = "EOF";
-		lineNumber = source.getNumberOfLines();
+	public ErrorToken(SourceFile source) {
+		super(source);
+		
 	}
 
 	@Override
 	public void extract() throws IOException {
-		
+		this.type = COBOLTokenType.ERROR;
+		this.value = "Error";
 		
 	}
-	
-	
 
 }

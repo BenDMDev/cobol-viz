@@ -20,8 +20,7 @@ public class ExitStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 		
-		matchSequence(inputToken, parseTree, COBOLTokenType.EXIT, COBOLTokenType.PROGRAM);
-	
+		matchSequence(inputToken, parseTree, COBOLTokenType.EXIT, COBOLTokenType.PROGRAM, COBOLTokenType.IDENTIFIER);
 		
 		
 		return parseTree;

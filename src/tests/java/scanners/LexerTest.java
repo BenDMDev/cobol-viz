@@ -17,14 +17,14 @@ public class LexerTest {
 
 	@Test
 	public void testWordScan() {
-		BufferedReader in = new BufferedReader(new StringReader("END-IF DIVISION. \n PROGRAM-ID, HELLO(MY-VAL) ALL"));
+		BufferedReader in = new BufferedReader(new StringReader("country-record(1:1) DIVISION. \n PROGRAM-ID, HELLO(MY-VAL) ALL"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();				
-			assertEquals("END-IF", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.END_IF, l.getCurrentToken().getType());
+			assertEquals("country-record(1:1)", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("DIVISION", l.getCurrentToken().getTokenValue());
 			assertEquals(COBOLTokenType.DIVISION, l.getCurrentToken().getType());
@@ -124,15 +124,20 @@ public class LexerTest {
 	
 	@Test
 	public void testEOF() {
-		BufferedReader in = new BufferedReader(new StringReader("test"));
+		BufferedReader in = new BufferedReader(new StringReader("if sort-city-country-code <> current-country-code\n"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();				
-			assertEquals("test", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.TEST, l.getCurrentToken().getType());
-			l.scan();						
+			assertEquals("if", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IF, l.getCurrentToken().getType());
+			l.scan();
+			l.scan();	
+			l.scan();	
+			l.scan();	
+			l.scan();	
+			l.scan();	
 			assertEquals(COBOLTokenType.EOF, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			

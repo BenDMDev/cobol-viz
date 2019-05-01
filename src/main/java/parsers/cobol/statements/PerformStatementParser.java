@@ -29,50 +29,77 @@ public class PerformStatementParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 		if (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
 
-			parseTree.setTreeType(TreeNodeType.REFERENCE);
-			ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
-			scanner.scan();
-			parseTree.addChild(referenceVal);
+			parseOutOfLinePerform(inputToken);
+			inputToken = scanner.getCurrentToken();
+
+		} else {
+
+			if (scanner.lookAhead().getType() == COBOLTokenType.TIMES) {
+				matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER);
+				inputToken = scanner.getCurrentToken();
+				match(inputToken, COBOLTokenType.TIMES, parseTree);
+				inputToken = scanner.getCurrentToken();
+			} else if (inputToken.getType() == COBOLTokenType.WITH || inputToken.getType() == COBOLTokenType.TEST) {
+				parseWithTestClause(inputToken);
+				inputToken = scanner.getCurrentToken();
+			} else if (inputToken.getType() == COBOLTokenType.UNTIL) {
+				parseUntilCondition(inputToken);
+				inputToken = scanner.getCurrentToken();
+			}
+
+			if (inputToken.getType() == COBOLTokenType.VARYING) {
+				parseVaryingClause(inputToken);
+				inputToken = scanner.getCurrentToken();
+			}
+
+//			inputToken = scanner.getCurrentToken();
+//			if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
+//
+//				inputToken = scanner.getCurrentToken();
+//				parseStatements(inputToken);
+//			}
 		}
+
+		match(inputToken, COBOLTokenType.END_PERFORM, parseTree);
+		inputToken = scanner.getCurrentToken();
+
+		return parseTree;
+
+	}
+
+	private void parseOutOfLinePerform(Token inputToken) throws IOException {
+
+		parseTree.setTreeType(TreeNodeType.REFERENCE);
+		ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
+		scanner.scan();
+		parseTree.addChild(referenceVal);
 
 		inputToken = scanner.getCurrentToken();
 
 		if (inputToken.getType() == COBOLTokenType.THROUGH || inputToken.getType() == COBOLTokenType.THRU) {
 			parsePerformThrough(scanner.getCurrentToken());
 
-		} else if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
-			inputToken = scanner.getCurrentToken();
-			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
-			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
-				StatementParser parser = new StatementParser(scanner);
-				parser.addListener(listener);
-				parseTree.addChild(parser.parse(inputToken));
-				inputToken = scanner.getCurrentToken();
-			}
 		}
+
 		
-		if(scanner.lookAhead().getType() == COBOLTokenType.TIMES) {
+		
+		if (scanner.lookAhead().getType() == COBOLTokenType.TIMES) {
 			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER);
 			inputToken = scanner.getCurrentToken();
 			match(inputToken, COBOLTokenType.TIMES, parseTree);
 			inputToken = scanner.getCurrentToken();
-		} else 	if (inputToken.getType() == COBOLTokenType.WITH || inputToken.getType() == COBOLTokenType.TEST) {
+		} else if (inputToken.getType() == COBOLTokenType.WITH || inputToken.getType() == COBOLTokenType.TEST) {
 			parseWithTestClause(inputToken);
 			inputToken = scanner.getCurrentToken();
 		} else if (inputToken.getType() == COBOLTokenType.UNTIL) {
 			parseUntilCondition(inputToken);
 			inputToken = scanner.getCurrentToken();
 		}
-		
-		if(inputToken.getType() == COBOLTokenType.VARYING) {
+
+		if (inputToken.getType() == COBOLTokenType.VARYING) {
 			parseVaryingClause(inputToken);
 			inputToken = scanner.getCurrentToken();
 		}
-		
-		match(inputToken, COBOLTokenType.END_PERFORM, parseTree);
-		inputToken = scanner.getCurrentToken();
-		
-		return parseTree;
 
 	}
 
@@ -94,12 +121,27 @@ public class PerformStatementParser extends StatementParser {
 	}
 
 	private void parseUntilCondition(Token inputToken) throws IOException {
+		
 		StatementNode loopCondition = new StatementNode(TreeNodeType.LOOP, "LOOP BODY");
 		match(inputToken, COBOLTokenType.UNTIL, loopCondition);
 		inputToken = scanner.getCurrentToken();
 
 		parseCondition(inputToken, loopCondition);
-		
+		inputToken = scanner.getCurrentToken();
+
+		while (inputToken.getType() == COBOLTokenType.AND || inputToken.getType() == COBOLTokenType.OR) {
+			matchAlternation(inputToken, loopCondition, COBOLTokenType.AND, COBOLTokenType.OR);
+			inputToken = scanner.getCurrentToken();
+			parseCondition(inputToken, loopCondition);
+			inputToken = scanner.getCurrentToken();
+		}
+
+		inputToken = scanner.getCurrentToken();
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
+			System.out.println(inputToken.getTokenValue());
+			parseStatements(inputToken);
+		}
+
 		parseTree.addChild(loopCondition);
 
 	}
@@ -123,21 +165,35 @@ public class PerformStatementParser extends StatementParser {
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.FIGURATIVE_CONSTANT);
 		inputToken = scanner.getCurrentToken();
-		
+
 		match(inputToken, COBOLTokenType.BY, parseTree);
 		inputToken = scanner.getCurrentToken();
-		
+
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.FIGURATIVE_CONSTANT);
-		
+
 		inputToken = scanner.getCurrentToken();
-		if(inputToken.getType() == COBOLTokenType.UNTIL) {
+		if (inputToken.getType() == COBOLTokenType.UNTIL) {
 			parseUntilCondition(inputToken);
 			inputToken = scanner.getCurrentToken();
 		}
-				
-		
+
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
+			parseStatements(inputToken);
+		}
+
 	}
-	
+
+	private void parseStatements(Token inputToken) throws IOException {
+
+		parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+		while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
+			StatementParser parser = new StatementParser(scanner);
+			parser.addListener(listener);
+			parseTree.addChild(parser.parse(inputToken));
+			inputToken = scanner.getCurrentToken();			
+		}
+
+	}
 
 }

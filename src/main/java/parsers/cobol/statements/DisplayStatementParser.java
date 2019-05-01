@@ -26,7 +26,7 @@ public class DisplayStatementParser extends StatementParser {
 		match(inputToken, COBOLTokenType.DISPLAY, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		while (inputToken.getType() == COBOLTokenType.IDENTIFIER || inputToken instanceof NumberToken
+		while (inputToken.getType() == COBOLTokenType.IDENTIFIER || inputToken.getType() == COBOLTokenType.FIGURATIVE_CONSTANT ||inputToken instanceof NumberToken
 				|| inputToken instanceof StringToken) {
 
 			switch ((COBOLTokenType) inputToken.getType()) {
@@ -36,8 +36,9 @@ public class DisplayStatementParser extends StatementParser {
 			case INTEGER:
 			case REAL:
 			case STRING_LITERAL:
+			case FIGURATIVE_CONSTANT:
 				matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-						COBOLTokenType.STRING_LITERAL);
+						COBOLTokenType.STRING_LITERAL, COBOLTokenType.FIGURATIVE_CONSTANT);
 				break;
 			default:
 				break;
@@ -52,6 +53,9 @@ public class DisplayStatementParser extends StatementParser {
 		inputToken = scanner.getCurrentToken();
 
 		matchSequence(inputToken, parseTree, COBOLTokenType.WITH, COBOLTokenType.NO, COBOLTokenType.ADVANCING);
+		
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_DISPLAY, parseTree);
 
 		return parseTree;
 	}

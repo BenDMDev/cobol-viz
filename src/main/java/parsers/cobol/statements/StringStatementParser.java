@@ -25,7 +25,7 @@ public class StringStatementParser extends StatementParser {
 		match(inputToken, COBOLTokenType.STRING, parseTree);
 		inputToken = scanner.getCurrentToken();
 		matchRepeatingAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL, COBOLTokenType.INTEGER,
-				COBOLTokenType.REAL, COBOLTokenType.DELIMITED, COBOLTokenType.BY, COBOLTokenType.SIZE);
+				COBOLTokenType.REAL, COBOLTokenType.DELIMITED, COBOLTokenType.BY, COBOLTokenType.SIZE, COBOLTokenType.SPACE);
 		
 		inputToken = scanner.getCurrentToken();
 		matchSequence(inputToken, parseTree, COBOLTokenType.INTO, COBOLTokenType.IDENTIFIER);

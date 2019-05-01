@@ -20,7 +20,8 @@ public class MoveStatementTest {
 
 	@Test
 	public void testSimpleMove() {
-		String input = "MOVE \"jones\" TO MIN-SALARY max-salary";
+		String input = "move start-latitude(node-idx) to report-latitude\n"
+						+ "move start-longitude(node-idx) to report-longitude\n";
  		
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
@@ -36,8 +37,8 @@ public class MoveStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(5, children.size());
-			assertEquals("jones", children.get(1).getAttribute());
+			assertEquals(4, children.size());
+			assertEquals("start-latitude(node-idx)", children.get(1).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

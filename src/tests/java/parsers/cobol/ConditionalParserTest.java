@@ -18,7 +18,7 @@ public class ConditionalParserTest {
 
 	@Test
 	public void testParseEndIf() {
-		String input = "IF EMPNO > 9999\n" +
+		String input = "IF EMPNO >= 9999\n" +
 						"ADD 10 TO five\n" +
 						"ELSE\n" +
 			"MOVE five TO ten\n" +
@@ -47,7 +47,7 @@ public class ConditionalParserTest {
 	
 	@Test
 	public void testParseNoEndIf() {
-		String input = "IF x > y\n"
+		String input = "if country-record(1:1) > '#'\n"
 				+ "MOVE ten TO ten.\n";
 				
 

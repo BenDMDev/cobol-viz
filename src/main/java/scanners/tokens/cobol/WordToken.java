@@ -13,12 +13,16 @@ public class WordToken extends Token {
 	static final HashSet<String> CONSTANTS = new HashSet<String>();
 	static {
 		CONSTANTS.add("HIGH-VALUES".toLowerCase());
+		CONSTANTS.add("HIGH-VALUE".toLowerCase());
 		CONSTANTS.add("LOW-VALUES".toLowerCase());
+		CONSTANTS.add("LOW-VALUE".toLowerCase());
 		CONSTANTS.add("ZERO".toLowerCase());
 		CONSTANTS.add("ZEROS".toLowerCase());
 		CONSTANTS.add("ZEROES".toLowerCase());
 		CONSTANTS.add("SPACES".toLowerCase());
+		CONSTANTS.add("SPACE".toLowerCase());
 		CONSTANTS.add("QUOTES".toLowerCase());
+		CONSTANTS.add("QUOTE".toLowerCase());
 		CONSTANTS.add("ALL".toLowerCase());
 	}
 
@@ -31,7 +35,7 @@ public class WordToken extends Token {
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
 		charPos = source.getCharPos();
-		while (Character.isLetter(c) || c == '-' || Character.isDigit(c) || c == '(' || c == ')') {
+		while (Character.isLetter(c) || c == '-' || Character.isDigit(c) || c == '(' || c == ')' || c == ':') {
 			s.append(c);
 			c = source.nextChar();
 

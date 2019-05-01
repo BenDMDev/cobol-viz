@@ -11,6 +11,7 @@ import main.java.parsers.cobol.statements.ContinueStatementParser;
 import main.java.parsers.cobol.statements.CopyStatementParser;
 import main.java.parsers.cobol.statements.DeleteStatementParser;
 import main.java.parsers.cobol.statements.DisplayStatementParser;
+import main.java.parsers.cobol.statements.ExitStatementParser;
 import main.java.parsers.cobol.statements.GoToStatementParser;
 import main.java.parsers.cobol.statements.InitializeStatementParser;
 import main.java.parsers.cobol.statements.InspectStatementParser;
@@ -68,6 +69,8 @@ public class ParserFactoryImpl implements ParserFactory {
 			return new DeleteStatementParser(scanner);
 		case DISPLAY:
 			return new DisplayStatementParser(scanner);
+		case EXIT:
+			return new ExitStatementParser(scanner);
 		case GO:
 			return new GoToStatementParser(scanner);
 		case INITIALIZE:

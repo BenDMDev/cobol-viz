@@ -20,8 +20,7 @@ public class DisplayStatementTest {
 
 	@Test
 	public void testParse() {
-		String input = "DISPLAY var-1 var-2 UPON var-2\n"
-				+ "WITH NO ADVANCING";
+		String input = "display 'database open' end-display";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -36,8 +35,8 @@ public class DisplayStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(8, children.size());
-			assertEquals("UPON", children.get(3).getAttribute());
+			assertEquals(3, children.size());
+			assertEquals("end-display", children.get(2).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -21,8 +21,11 @@ public class PerformStatementTest {
 
 	@Test
 	public void testParse() {
-		String input = "PERFORM print-products UNTIL X > 10.\n" +
-						"print-products.";
+		String input = 	"perform until end-sort-file = 'y'\n" +
+						"if sort-city-country-code <> current-country-code\n" +
+                   		"move end-country to perform-val\n" +
+                   	    "perform begin-country end-perform\n" +
+						"end-if";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

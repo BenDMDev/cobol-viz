@@ -34,6 +34,9 @@ public class ReturnStatementParser extends StatementParser {
 			parseAtEndClause(inputToken);
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
+		
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_RETURN, parseTree);
 
 		return parseTree;
 	}
@@ -52,10 +55,12 @@ public class ReturnStatementParser extends StatementParser {
 		node.addChild(onErrorBody);
 		// CONSUME STATEMENT
 		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
+			while((COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase()))) {
 			StatementParser statementParser = new StatementParser(scanner);
 			statementParser.addListener(listener);
 			onErrorBody.addChild(statementParser.parse(inputToken));
 			inputToken = scanner.getCurrentToken();
+			}
 		}
 
 		parseTree.addChild(node);
