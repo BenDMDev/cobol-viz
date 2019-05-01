@@ -33,9 +33,9 @@ public class SentenceParser extends Parser {
 			sendMessage("ERROR MISSING TERMINATOR AT " + inputToken.getLineNumber());
 			findNextValidToken(inputToken);
 		} else {
-			// parseTree.addChild(treeNodeFactory.createTreeNode(inputToken));
+			
 			match(inputToken, COBOLTokenType.FULL_STOP, parseTree);
-			// scanner.scan();
+			
 		}
 		
 		return parseTree;

@@ -22,11 +22,7 @@ public class ReadStatementTest {
 
 	@Test
 	public void testParse() {
-		String input = "READ my-file NEXT RECORD INTO my-var\n"
-				+ "AT END\n"
-				+ " MOVE x TO y\n"
-				+ "NOT INVALID KEY\n"
-				+ "ADD x TO z";
+		String input = "READ PRODUCT-FILE RECORD INTO PRODUCT-RECORD AT END MOVE 1 TO END-OF-FILE-MARKER.\n PROCESS-RECORDS";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

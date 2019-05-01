@@ -21,7 +21,7 @@ public class COBOLParserTest {
 
 		BufferedReader in = null;
 		try {
-			in = new BufferedReader(new FileReader(new File("src/resources/test.cbl")));
+			in = new BufferedReader(new FileReader(new File("src/resources/sample_2.cbl")));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

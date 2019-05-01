@@ -17,6 +17,7 @@ import main.java.parsers.cobol.statements.InspectStatementParser;
 import main.java.parsers.cobol.statements.MoveStatementParser;
 import main.java.parsers.cobol.statements.OpenStatementParser;
 import main.java.parsers.cobol.statements.PerformStatementParser;
+import main.java.parsers.cobol.statements.ReadStatementParser;
 import main.java.parsers.cobol.statements.ReleaseStatementParser;
 import main.java.parsers.cobol.statements.ReturnStatementParser;
 import main.java.parsers.cobol.statements.RewriteStatementParser;
@@ -77,6 +78,8 @@ public class ParserFactoryImpl implements ParserFactory {
 			return new OpenStatementParser(scanner);
 		case RELEASE:
 			return new ReleaseStatementParser(scanner);
+		case READ:
+			return new ReadStatementParser(scanner);
 		case RETURN:
 			return new ReturnStatementParser(scanner);
 		case REWRITE:

@@ -26,7 +26,7 @@ public class StatementParser extends Parser {
 	
 
 		if (parser == null) {
-			sendMessage("UNEXPECTED TOKEN:" + inputToken.getTokenValue() + " AT LINE: " + inputToken.getLineNumber());
+			sendMessage("UNEXPECTED TOKEN: " + inputToken.getTokenValue() + " AT LINE: " + inputToken.getLineNumber());
 			parseTree = new ParseTreeNode(TreeNodeType.ERROR, "ERROR NODE");
 			findNextValidToken(inputToken);
 		} else {

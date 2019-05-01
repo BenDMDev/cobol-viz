@@ -22,9 +22,7 @@ public class WriteStatementTest {
 
 	@Test
 	public void testParse() {
-		String input = "WRITE rec-one FROM my-id\n"
-				+ "BEFORE ADVANCING 10 LINES\n"
-				+"AT END-OF-PAGE DISPLAY \"END\"";
+		String input = "WRITE REPORT-RECORD FROM SECOND-HEADING-LINE AFTER ADVANCING 1 LINE.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
