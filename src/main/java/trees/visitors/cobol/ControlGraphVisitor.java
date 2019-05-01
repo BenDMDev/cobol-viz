@@ -59,6 +59,8 @@ public class ControlGraphVisitor implements TreeVisitor {
 			processConditional(node);
 		} else if(node.getTreeNodeType() == TreeNodeType.COMPOUND_STATEMENT){
 			processCompoundStatement(node);
+		} else if(node.getTreeNodeType() == TreeNodeType.LOOP){
+			processLoopStatement(node);
 		} else {
 			processStatement(node);
 		}
@@ -163,6 +165,22 @@ public class ControlGraphVisitor implements TreeVisitor {
 
 		lastSeen = end;
 
+	}
+	
+	private void processLoopStatement(ParseTreeNode root) {		
+
+		StringBuilder builder = new StringBuilder();
+		for (ParseTreeNode p : root.getChildren()) {
+			builder.append(p.getAttribute() + " ");
+		}
+		
+		
+		ControlGraphVertex rootVer = new ControlGraphVertex(builder.toString());
+		graph.addVertices(rootVer);
+		graph.addEdge(lastSeen.getIndex(),rootVer.getIndex());
+		graph.addEdge(rootVer.getIndex(), lastSeen.getIndex());
+		
+		
 	}
 
 	public Graph getGraph() {

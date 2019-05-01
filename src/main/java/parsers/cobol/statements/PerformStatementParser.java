@@ -28,7 +28,7 @@ public class PerformStatementParser extends StatementParser {
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();
 		if (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
-			
+
 			parseTree.setTreeType(TreeNodeType.REFERENCE);
 			ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
 			scanner.scan();
@@ -50,12 +50,28 @@ public class PerformStatementParser extends StatementParser {
 				inputToken = scanner.getCurrentToken();
 			}
 		}
-
-		inputToken = scanner.getCurrentToken();
-		if (inputToken.getType() == COBOLTokenType.UNTIL) {
+		
+		if(scanner.lookAhead().getType() == COBOLTokenType.TIMES) {
+			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER);
+			inputToken = scanner.getCurrentToken();
+			match(inputToken, COBOLTokenType.TIMES, parseTree);
+			inputToken = scanner.getCurrentToken();
+		} else 	if (inputToken.getType() == COBOLTokenType.WITH || inputToken.getType() == COBOLTokenType.TEST) {
+			parseWithTestClause(inputToken);
+			inputToken = scanner.getCurrentToken();
+		} else if (inputToken.getType() == COBOLTokenType.UNTIL) {
 			parseUntilCondition(inputToken);
+			inputToken = scanner.getCurrentToken();
 		}
-
+		
+		if(inputToken.getType() == COBOLTokenType.VARYING) {
+			parseVaryingClause(inputToken);
+			inputToken = scanner.getCurrentToken();
+		}
+		
+		match(inputToken, COBOLTokenType.END_PERFORM, parseTree);
+		inputToken = scanner.getCurrentToken();
+		
 		return parseTree;
 
 	}
@@ -69,7 +85,7 @@ public class PerformStatementParser extends StatementParser {
 		// Match and consume procedure name
 		inputToken = scanner.getCurrentToken();
 		if (inputToken.getType() == COBOLTokenType.IDENTIFIER) {
-			
+
 			parseTree.setTreeType(TreeNodeType.REFERENCE);
 			ParseTreeNode referenceVal = new ParseTreeNode(TreeNodeType.REFERENCE_VALUE, inputToken.getTokenValue());
 			scanner.scan();
@@ -78,25 +94,50 @@ public class PerformStatementParser extends StatementParser {
 	}
 
 	private void parseUntilCondition(Token inputToken) throws IOException {
-
-		match(inputToken, COBOLTokenType.UNTIL, parseTree);
+		StatementNode loopCondition = new StatementNode(TreeNodeType.LOOP, "LOOP BODY");
+		match(inputToken, COBOLTokenType.UNTIL, loopCondition);
 		inputToken = scanner.getCurrentToken();
 
-		// Match and Consume LHS of IF
-		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-				COBOLTokenType.STRING_LITERAL);
-		inputToken = scanner.getCurrentToken();
-
-		// Parse Condition Body of IF
-		parseCondition(inputToken, parseTree);
-
-		// Get next Token - RHS of IF condition
-		inputToken = scanner.getCurrentToken();
-		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-				COBOLTokenType.STRING_LITERAL);
+		parseCondition(inputToken, loopCondition);
+		
+		parseTree.addChild(loopCondition);
 
 	}
 
+	private void parseWithTestClause(Token inputToken) throws IOException {
+		matchSequence(inputToken, parseTree, COBOLTokenType.WITH, COBOLTokenType.TEST, COBOLTokenType.BEFORE,
+				COBOLTokenType.AFTER);
+		inputToken = scanner.getCurrentToken();
+		parseUntilCondition(inputToken);
 
+	}
+
+	private void parseVaryingClause(Token inputToken) throws IOException {
+		match(inputToken, COBOLTokenType.VARYING, parseTree);
+		inputToken = scanner.getCurrentToken();
+
+		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.FROM, parseTree);
+		inputToken = scanner.getCurrentToken();
+		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.FIGURATIVE_CONSTANT);
+		inputToken = scanner.getCurrentToken();
+		
+		match(inputToken, COBOLTokenType.BY, parseTree);
+		inputToken = scanner.getCurrentToken();
+		
+		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.FIGURATIVE_CONSTANT);
+		
+		inputToken = scanner.getCurrentToken();
+		if(inputToken.getType() == COBOLTokenType.UNTIL) {
+			parseUntilCondition(inputToken);
+			inputToken = scanner.getCurrentToken();
+		}
+				
+		
+	}
+	
 
 }

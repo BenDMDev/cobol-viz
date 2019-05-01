@@ -21,7 +21,8 @@ public class PerformStatementTest {
 
 	@Test
 	public void testParse() {
-		String input = "PERFORM proc-1 UNTIL 5 > 0";
+		String input = "PERFORM print-products UNTIL X > 10.\n" +
+						"print-products.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -36,8 +37,8 @@ public class PerformStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children = (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(6, children.size());
-			assertEquals("proc-1", children.get(1).getAttribute());
+			assertEquals(3, children.size());
+			assertEquals("print-products", children.get(1).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
