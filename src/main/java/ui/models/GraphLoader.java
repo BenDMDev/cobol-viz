@@ -32,10 +32,14 @@ import org.gephi.preview.types.EdgeColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.GraphDistance;
-import org.openide.nodes.Node;
+// import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.gephi.graph.api.Node;
 
-public class GraphLoader {
+import main.java.messages.MessageEmitter;
+import main.java.messages.MessageListener;
+
+public class GraphLoader implements MessageListener, MessageEmitter {
 	public final static int RANKED = 0;
 	public final static int UNRANKED = 1;
 	private double edgeOpacity;
@@ -47,6 +51,7 @@ public class GraphLoader {
 	private Color backgroundColour;
 	private Color edgeColour;
 	private Color labelColour;
+	private MessageListener listener;
 
 	private Map<String, Workspace> renderedGraphs;
 	private PreviewController previewController;
@@ -126,6 +131,7 @@ public class GraphLoader {
 		// New Processing target, get the PApplet
 		G2DTarget target = (G2DTarget) previewController.getRenderTarget(RenderTarget.G2D_TARGET);
 		previewSketch = new PreviewSketch(target);
+		previewSketch.addListener(this);
 		reload();
 
 		// Add the applet to a JFrame and display
@@ -240,6 +246,65 @@ public class GraphLoader {
 		}
 		layout.endAlgo();
 		reload();
+	}
+	
+	
+	public void findSelectedNode(float x, float y) {
+		Workspace workspace = projectController.getCurrentWorkspace();
+		for (Node node : Lookup.getDefault().lookup(GraphController.class).getGraphModel(workspace).getGraph().getNodes()) {
+			float xdiff =  x - node.x();
+	        float ydiff = -node.y() - y;//Note that y axis is inverse for node coordinates
+	        float radius = node.size();
+
+	        boolean clicked = xdiff * xdiff + ydiff * ydiff <= radius * radius;
+	        if(clicked)
+	        	listenForNodeClicks(node.getLabel());
+            }
+	}
+        
+		
+	
+
+	@Override
+	public void listen(String input) {
+		listener.listen(input);
+		
+	}
+
+	@Override
+	public void addListener(MessageListener listener) {
+		this.listener = listener;
+		
+	}
+
+	@Override
+	public void removeListener(MessageListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		listener.listen(message);
+		
+	}
+
+	@Override
+	public void sendMessage(float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void listen(float x, float y) {
+		findSelectedNode(x, y);
+		
+	}
+
+	@Override
+	public void listenForNodeClicks(String nodeLabel) {
+		listener.listenForNodeClicks(nodeLabel);
+		
 	}
 
 }

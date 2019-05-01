@@ -145,4 +145,10 @@ public class SourceFile implements MessageEmitter {
 		
 	}
 
+	@Override
+	public void sendMessage(float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

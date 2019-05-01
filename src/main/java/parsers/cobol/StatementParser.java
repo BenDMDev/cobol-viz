@@ -41,7 +41,7 @@ public class StatementParser extends Parser {
 	}
 
 	private void findNextValidToken(Token inputToken) throws IOException {
-		while (!COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())
+		while (!COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())
 				&& inputToken.getType() != COBOLTokenType.FULL_STOP) {
 			scanner.scan();
 			inputToken = scanner.getCurrentToken();

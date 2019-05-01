@@ -55,7 +55,7 @@ public class ConditionalParser extends StatementParser {
 			ParseTreeNode conditionBodyIF = new ParseTreeNode("IF STATEMENTS");
 			conditionBodyIF.setTreeType(TreeNodeType.CONDITION_BODY);
 			// Parse Statement(s) of IF body
-			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 				StatementParser parser = new StatementParser(scanner);
 				parser.addListener(listener);
 				conditionBodyIF.addChild(parser.parse(inputToken));
@@ -85,7 +85,7 @@ public class ConditionalParser extends StatementParser {
 				ParseTreeNode conditionBodyElse = new ParseTreeNode("ELSE STATEMENTS");
 				conditionBodyElse.setTreeType(TreeNodeType.CONDITION_BODY);
 				parseTree.addChild(conditionBodyElse);
-				while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+				while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 
 					StatementParser parser = new StatementParser(scanner);
 					parser.addListener(listener);

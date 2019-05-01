@@ -31,10 +31,13 @@ public class ParagraphParser extends Parser {
 			parseTree = new ParagraphNode(TreeNodeType.PROCEDURE, "");
 		}
 	
+		int firstLine = t.getLineNumber();
 		parseTree.setLineNumber(t.getLineNumber());
 		parseSentences(t);
-	
-
+		int lastLine = scanner.getCurrentToken().getLineNumber();
+		((ParagraphNode) parseTree).setNumberOfLines(lastLine - firstLine);
+		
+		
 		return parseTree;
 	}
 

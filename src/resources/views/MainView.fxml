@@ -175,15 +175,41 @@
                   </TabPane>
               </items>
             </SplitPane>
-            <TabPane prefHeight="200.0" prefWidth="200.0">
-              <tabs>
-                <Tab closable="false" text="Console">
-                     <content>
-                        <TextArea fx:id="console" editable="false" prefHeight="154.0" prefWidth="598.0" />
-                     </content>
-                </Tab>
-              </tabs>
-            </TabPane>
+            <SplitPane dividerPositions="0.8" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <TabPane prefHeight="200.0" prefWidth="200.0">
+                    <tabs>
+                      <Tab closable="false" text="Console">
+                           <content>
+                              <TextArea fx:id="console" editable="false" prefHeight="154.0" prefWidth="598.0" />
+                           </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+                  <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
+                    <items>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Graph Stats">
+                                 <content>
+                                    <TextArea fx:id="graphStatsTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab fx:id="nodeStatsTab" text="Node Stats">
+                                 <content>
+                                    <TextArea fx:id="nodeStatsTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                    </items>
+                  </SplitPane>
+              </items>
+            </SplitPane>
          </items>
          <BorderPane.margin>
             <Insets />

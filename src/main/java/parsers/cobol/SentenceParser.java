@@ -24,7 +24,8 @@ public class SentenceParser extends Parser {
 		while(inputToken.getType() != COBOLTokenType.FULL_STOP) {
 			StatementParser sp = new StatementParser(scanner);	
 			sp.addListener(listener);
-			parseTree.addChild(sp.parse(inputToken));			
+			parseTree.addChild(sp.parse(inputToken));	
+			System.out.println(inputToken.getTokenValue());
 			inputToken = scanner.getCurrentToken();	
 		}
 		

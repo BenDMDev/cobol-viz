@@ -270,6 +270,9 @@ public class ExpressionParser extends StatementParser {
 			parseOnSizeError(inputToken);
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
+		
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_COMPUTE, parseTree);
 
 	}
 
@@ -287,7 +290,7 @@ public class ExpressionParser extends StatementParser {
 		ParseTreeNode onErrorBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		node.addChild(onErrorBody);
 		// CONSUME STATEMENT
-		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			statementParser.addListener(listener);
 			onErrorBody.addChild(statementParser.parse(inputToken));

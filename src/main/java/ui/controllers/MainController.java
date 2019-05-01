@@ -47,6 +47,7 @@ public class MainController implements MessageListener {
 	final FileChooser fileChooser = new FileChooser();
 	final DirectoryChooser dirChooser = new DirectoryChooser();
 	final GraphLoader graphLoader = new GraphLoader();
+
 	private Project currentProject;
 
 	// Main view
@@ -54,11 +55,11 @@ public class MainController implements MessageListener {
 	private BorderPane mainPane;
 	@FXML
 	private TabPane previewTabs;
-	@FXML 
+	@FXML
 	private Tab previewOptionsTab;
 	@FXML
 	private TextArea console;
-	
+
 	// Buttons and Menu Items
 	@FXML
 	private MenuItem importSourceMenuItem;
@@ -66,7 +67,7 @@ public class MainController implements MessageListener {
 	private MenuItem importGraphMenuItem;
 	@FXML
 	private Button parseSourceButton;
-	
+
 	// Preview Options Tab
 	@FXML
 	private CheckBox showLabelsChkBox;
@@ -74,7 +75,7 @@ public class MainController implements MessageListener {
 	private Slider edgeOpacitySlider;
 	@FXML
 	private TreeView<String> projectNavigator;
-	@FXML 
+	@FXML
 	private TextField edgeThicknessField;
 	@FXML
 	private CheckBox curvedEdgesChkBox;
@@ -86,8 +87,12 @@ public class MainController implements MessageListener {
 	private ColorPicker edgeColourPicker;
 	@FXML
 	private ColorPicker labelColourPicker;
-	
-	
+
+	@FXML
+	private TextArea graphStatsTextArea;
+	@FXML
+	private TextArea nodeStatsTextArea;
+
 	// Static Tree Nodes in TreeView
 	private TreeItem<String> projectRootNode;
 	private TreeItem<String> sourceRootNode;
@@ -105,8 +110,8 @@ public class MainController implements MessageListener {
 
 		}
 	}
-	
-	@FXML 
+
+	@FXML
 	private void importGraphFile() {
 		File file = fileChooser.showOpenDialog(null);
 
@@ -173,8 +178,9 @@ public class MainController implements MessageListener {
 			initProjectNavigation(currentProject.getProjectName());
 			enableImportMenuItems();
 			currentProject.addListener(this);
+			graphLoader.addListener(this);
 		});
-		
+
 		createTabPaneListeners();
 
 	}
@@ -187,14 +193,14 @@ public class MainController implements MessageListener {
 		graphLoader.setCurvedEdges(curvedEdgesChkBox.selectedProperty().getValue());
 		graphLoader.setEdgeRadius(Double.parseDouble(edgeRadiusField.getText()));
 		Color color = backgroundColourPicker.getValue();
-		graphLoader.setBackgroundColour(color.getRed(), color.getGreen(), color.getBlue());	
+		graphLoader.setBackgroundColour(color.getRed(), color.getGreen(), color.getBlue());
 		color = edgeColourPicker.getValue();
-		graphLoader.setEdgeColor(color.getRed(), color.getGreen(), color.getBlue());		
+		graphLoader.setEdgeColor(color.getRed(), color.getGreen(), color.getBlue());
 		color = labelColourPicker.getValue();
 		graphLoader.setLabelColor(color.getRed(), color.getGreen(), color.getBlue());
 		graphLoader.reload();
 	}
-	
+
 	@FXML
 	private void runLayout() {
 		graphLoader.runLayout();
@@ -205,7 +211,7 @@ public class MainController implements MessageListener {
 	}
 
 	private void createGraphPreviewContent(String fileName, int ranked) {
-		
+
 		JPanel frame = graphLoader.initProject(currentProject.getOutputFile(fileName), ranked);
 		SwingNode swing = new SwingNode();
 		createSwingContent(swing, frame);
@@ -213,8 +219,6 @@ public class MainController implements MessageListener {
 		previewOptionsTab.setDisable(false);
 		updateGraphPreviewOptionsTab();
 	}
-	
-
 
 	private void createSwingContent(final SwingNode swingNode, JPanel frame) {
 		SwingUtilities.invokeLater(() -> {
@@ -223,17 +227,17 @@ public class MainController implements MessageListener {
 			// preview.resetZoom();
 		});
 	}
-	
+
 	private void updateGraphPreviewOptionsTab() {
 		edgeThicknessField.setText(Double.toString(graphLoader.getEdgeThickness()));
 		edgeRadiusField.setText(Double.toString(graphLoader.getEdgeRadius()));
 		edgeOpacitySlider.adjustValue(graphLoader.getEdgeOpacity());
 		int[] rgb = graphLoader.getBackgroundColour();
-		backgroundColourPicker.setValue(Color.rgb(rgb[0], rgb[1],rgb[2]));
+		backgroundColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
 		rgb = graphLoader.getEdgeColour();
-		edgeColourPicker.setValue(Color.rgb(rgb[0], rgb[1],rgb[2]));
+		edgeColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
 		rgb = graphLoader.getLabelColour();
-		labelColourPicker.setValue(Color.rgb(rgb[0], rgb[1],rgb[2]));
+		labelColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
 	}
 
 	private void addGraphPreviewTab(SwingNode node, String fileName) {
@@ -241,7 +245,7 @@ public class MainController implements MessageListener {
 		AnchorPane anchor = new AnchorPane();
 		anchor.getChildren().clear();
 		anchor.getChildren().add(node);
-		//Tab tab = previewTabs.getTabs().get(0);
+		// Tab tab = previewTabs.getTabs().get(0);
 		Tab tab = new Tab();
 		tab.setText(fileName);
 		tab.setId(fileName);
@@ -270,7 +274,7 @@ public class MainController implements MessageListener {
 		previewTabs.getSelectionModel().select(tab);
 
 	}
-	
+
 	private void enableImportMenuItems() {
 		importSourceMenuItem.setDisable(false);
 		importGraphMenuItem.setDisable(false);
@@ -321,12 +325,13 @@ public class MainController implements MessageListener {
 		TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
 		if (item != null) {
 			if (item.getParent() == graphRootNode) {
-				Tab activeTab = getActiveTab(item.getValue());			
-				if(activeTab != null) {
+				Tab activeTab = getActiveTab(item.getValue());
+				if (activeTab != null) {
 					previewTabs.getSelectionModel().select(activeTab);
 				}
 				graphLoader.switchWorkSpace(item.getValue());
 				graphLoader.reload();
+				updateGraphStatsView();
 
 			} else if (item.getParent() == sourceRootNode) {
 				addSourcePreviewTab(item.getValue());
@@ -334,24 +339,52 @@ public class MainController implements MessageListener {
 		}
 
 	}
-	
+
+	private void updateNodeStatsView(String graphLabel) {
+
+		String activeGraph = previewTabs.getSelectionModel().getSelectedItem().getId();
+		GraphDataModel model = currentProject.getModel(activeGraph);
+
+		nodeStatsTextArea.clear();
+		nodeStatsTextArea.appendText("Node: " + graphLabel +"\n" );
+		nodeStatsTextArea.appendText("Lines of Code: " + model.getLinesOfCode(graphLabel) + "\n");
+		nodeStatsTextArea.appendText("Cyclomatic Complexity: " + model.getCyclomaticComplexity(graphLabel) + "\n");
+		nodeStatsTextArea.appendText("In Degree: " + model.getInDegree(graphLabel) + "\n");
+		nodeStatsTextArea.appendText("Out Degree: " + model.getOutDegree(graphLabel) + "\n");
+
+	}
+
+	private void updateGraphStatsView() {
+
+		String activeGraph = previewTabs.getSelectionModel().getSelectedItem().getId();
+		GraphDataModel model = currentProject.getModel(activeGraph);
+
+		graphStatsTextArea.clear();
+		graphStatsTextArea.appendText("Number Of Nodes " + model.getGraph().getNumberOfVertices() + "\n");
+		graphStatsTextArea.appendText("Number Of Eges " +  model.getGraph().getNumberOfEdges() + "\n");
+		graphStatsTextArea.appendText("Total Lines Of Code " + model.getTotalLinesOfCode() + "\n");
+		
+
+	}
+
 	private void createTabPaneListeners() {
-		previewTabs.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Tab>() {
+		previewTabs.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-				if(newValue.getId().contains(".gexf")) {
+				if (newValue.getId().contains(".gexf")) {
 					graphLoader.switchWorkSpace(newValue.getId());
 					graphLoader.reload();
-				}				
+					updateGraphStatsView();
+				}
 			}
-			
+
 		});
 	}
-	
+
 	private Tab getActiveTab(String id) {
 		Tab activeTab = null;
-		for(Tab t : previewTabs.getTabs()) {
+		for (Tab t : previewTabs.getTabs()) {
 			if (t.getId().equals(id))
 				activeTab = t;
 		}
@@ -361,6 +394,19 @@ public class MainController implements MessageListener {
 	@Override
 	public void listen(String input) {
 		console.appendText(input + "\n");
+
+	}
+
+	@Override
+	public void listen(float x, float y) {
+		console.appendText("X Pos: " + x + "Y Pos: " + y + "\n");
+
+	}
+
+	@Override
+	public void listenForNodeClicks(String nodeLabel) {
+
+		updateNodeStatsView(nodeLabel);
 
 	}
 

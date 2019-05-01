@@ -12,12 +12,14 @@ public class WordToken extends Token {
 
 	static final HashSet<String> CONSTANTS = new HashSet<String>();
 	static {
-		CONSTANTS.add("HIGH-VALUES");
-		CONSTANTS.add("LOW-VALUES");
-		CONSTANTS.add("ZERO");
-		CONSTANTS.add("ZEROES");
-		CONSTANTS.add("SPACES");
-		CONSTANTS.add("QUOTES");
+		CONSTANTS.add("HIGH-VALUES".toLowerCase());
+		CONSTANTS.add("LOW-VALUES".toLowerCase());
+		CONSTANTS.add("ZERO".toLowerCase());
+		CONSTANTS.add("ZEROS".toLowerCase());
+		CONSTANTS.add("ZEROES".toLowerCase());
+		CONSTANTS.add("SPACES".toLowerCase());
+		CONSTANTS.add("QUOTES".toLowerCase());
+		CONSTANTS.add("ALL".toLowerCase());
 	}
 
 	public WordToken(SourceFile source) {
@@ -29,7 +31,7 @@ public class WordToken extends Token {
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
 		charPos = source.getCharPos();
-		while (Character.isLetter(c) || c == '-' || Character.isDigit(c)) {
+		while (Character.isLetter(c) || c == '-' || Character.isDigit(c) || c == '(' || c == ')') {
 			s.append(c);
 			c = source.nextChar();
 
@@ -37,14 +39,14 @@ public class WordToken extends Token {
 
 		this.value = s.toString();
 
-		if (CONSTANTS.contains(value)) {
+		if (CONSTANTS.contains(value.toLowerCase())) {
 			this.type = COBOLTokenType.FIGURATIVE_CONSTANT;
-		} else if (COBOLTokenType.RESERVED.contains(value)) {
-			this.type = COBOLTokenType.valueOf(value);
-		} else if (COBOLTokenType.RESERVED_HYPHENS.containsKey(value)) {
-			this.type = COBOLTokenType.RESERVED_HYPHENS.get(value);
-		} else if (COBOLTokenType.STATEMENT_PREFIXES.contains(value)) {
-			this.type = COBOLTokenType.valueOf(value);
+		} else if (COBOLTokenType.RESERVED.contains(value.toLowerCase())) {
+			this.type = COBOLTokenType.valueOf(value.toUpperCase());
+		} else if (COBOLTokenType.RESERVED_HYPHENS.containsKey(value.toLowerCase())) {
+			this.type = COBOLTokenType.RESERVED_HYPHENS.get(value.toLowerCase());
+		} else if (COBOLTokenType.STATEMENT_PREFIXES.contains(value.toLowerCase())) {
+			this.type = COBOLTokenType.valueOf(value.toUpperCase());
 		} else {
 			type = COBOLTokenType.IDENTIFIER;
 		}

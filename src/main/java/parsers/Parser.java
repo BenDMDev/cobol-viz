@@ -27,6 +27,7 @@ public abstract class Parser implements MessageEmitter {
 		
 	}
 
+	
 	public abstract ParseTreeNode parse(Token t) throws IOException;
 
 
@@ -125,6 +126,12 @@ public abstract class Parser implements MessageEmitter {
 			listener.listen(message);
 		else 
 			System.out.println(message);
+		
+	}
+	
+	@Override
+	public void sendMessage(float x, float y) {
+		// TODO Auto-generated method stub
 		
 	}
 

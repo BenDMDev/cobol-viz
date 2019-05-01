@@ -24,17 +24,8 @@ public class CallStatementParser extends StatementParser {
 		match(inputToken, COBOLTokenType.CALL, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		switch ((COBOLTokenType) inputToken.getType()) {
-		case IDENTIFIER:
-			match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
-			inputToken = scanner.getCurrentToken();
-			break;
-		case STRING_LITERAL:
-			match(inputToken, COBOLTokenType.STRING_LITERAL, parseTree);
-			inputToken = scanner.getCurrentToken();
-		default:
-			break;
-		}
+		matchRepeatingAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL, COBOLTokenType.FIGURATIVE_CONSTANT);
+		inputToken = scanner.getCurrentToken();
 
 		
 		matchSequence(inputToken, parseTree, COBOLTokenType.USING, COBOLTokenType.BY);
@@ -78,7 +69,7 @@ public class CallStatementParser extends StatementParser {
 		overflow.addChild(onOverFlowBody);
 		
 		// CONSUME STATEMENT
-		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			onOverFlowBody.addChild(statementParser.parse(inputToken));
 			inputToken = scanner.getCurrentToken();
@@ -103,7 +94,7 @@ public class CallStatementParser extends StatementParser {
 		exception.addChild(onExceptionBody);
 		
 		// CONSUME STATEMENT
-		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			onExceptionBody.addChild(statementParser.parse(inputToken));
 			inputToken = scanner.getCurrentToken();

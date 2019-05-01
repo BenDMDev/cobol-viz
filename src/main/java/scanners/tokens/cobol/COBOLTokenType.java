@@ -13,7 +13,7 @@ public enum COBOLTokenType implements TokenType {
 	BEFORE, BINARY, BLANK, BLOCK, BOTTOM, BY, CD, CF, CH, CHARACTER,
 	CHARACTERS,	CLASS, COBOL, CODE, COLLATING, COLUMN, COMMA, COMMON,COMMUNICATION,
 	COMP, COMPUTATIONAL,  CONFIGURATION, CONTAINS, CONTENT,  CONTROL,
-	CONTROLS, CONSOLE, CONVERTING, COPY, CORR, CORRESPONDING, COUNT,	CURRENCY,DATA, DATE, 
+	CONTROLS, CONSOLE, CONVERTING, COPY, CORR, CORRESPONDING, COUNT, CURRENCY,DATA, DATE, 
 	DAY, DE, DEBUGGING, DECLARATIVES, DELIMITED, DELIMITER, DEPENDING, DESCENDING,
 	DESTINATION, DETAIL, DISABLE, DIVISION, DOWN, DUPLICATES, DYNAMIC,
 	EGI, ELSE, EMI, ENABLE, END, ENTER,	ENVIRONMENT, EOP, EQUAL, ERROR,	ESI,
@@ -49,7 +49,7 @@ public enum COBOLTokenType implements TokenType {
 	DATE_COMPILED("DATE-COMPILED"),	DATE_WRITTEN("DATE-WRITTEN"), DAY_OF_WEEK("DAY-OF-WEEK"),
 	DEBUG_CONTENTS("DEBUG-CONTENTS"), DEBUG_ITEM("DEBUG-ITEM"),	DEBUG_LINE("DEBUG-LINE"),
 	DEBUG_NAME("DEBUG-NAME"), DEBUG_SUB_1("DEBUG-SUB-1"), DEBUG_SUB_2("DEBUG-SUB-2"),
-	DEBUG_SUB_3("DEBUG-SUB-3"),	DECIMAL_POINT("DECIMAL-POINT"), END_ADD("END-ADD"),
+	DEBUG_SUB_3("DEBUG-SUB-3"),	DECIMAL_POINT("DECIMAL-POINT"), END_ADD("END-ADD"), END_ACCEPT("END-ACCEPT"),
 	END_CALL("END-CALL"), END_COMPUTE("END-COMPUTE"), END_DELETE("END-DELETE"),	END_DIVIDE("END-DIVIDE"),
 	END_EVALUATE("END-EVALUATE"), END_IF("END-IF"), END_MULTIPLY("END-MULTIPLY"), END_OF_PAGE("END-OF-PAGE"),
 	END_PERFORM("END-PERFORM"),	END_READ("END-READ"), END_RECEIVE("END-RECEIVE"), END_RETURN("END-RETURN"),
@@ -84,7 +84,7 @@ public enum COBOLTokenType implements TokenType {
 	 * Default constructor
 	 */
 	COBOLTokenType() {
-		this.text = this.toString();
+		this.text = this.toString().toLowerCase();
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public enum COBOLTokenType implements TokenType {
 	static {
 		COBOLTokenType val[] = COBOLTokenType.values();
 		for(int i = RESERVED_FIRST; i <= RESERVED_LAST; i++) {
-			RESERVED.add(val[i].toString());
+			RESERVED.add(val[i].getText().toLowerCase());
 		}
 	}
 	
@@ -118,7 +118,7 @@ public enum COBOLTokenType implements TokenType {
 	static {
 		COBOLTokenType val[] = COBOLTokenType.values();
 		for(int i = STATEMENT_PREFIX_FIRST; i <= STATEMENT_PREFIX_LAST; i++) {
-			STATEMENT_PREFIXES.add(val[i].toString());
+			STATEMENT_PREFIXES.add(val[i].getText().toLowerCase());
 		}
 	}
 	
@@ -130,7 +130,7 @@ public enum COBOLTokenType implements TokenType {
 	static {
 		COBOLTokenType val[] = COBOLTokenType.values();
 		for(int i = HYPHENATED_FIRST; i <= HYPHENATED_LAST; i ++) {
-			RESERVED_HYPHENS.put(val[i].getText(), val[i]);
+			RESERVED_HYPHENS.put(val[i].getText().toLowerCase(), val[i]);
 		}		
 	}
 	

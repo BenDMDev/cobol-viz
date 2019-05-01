@@ -44,6 +44,8 @@ public class AcceptStatementParser extends StatementParser {
 						COBOLTokenType.TIME);
 			}
 		}
+		inputToken = scanner.getCurrentToken();
+		match(inputToken, COBOLTokenType.END_ACCEPT, parseTree);
 		return parseTree;
 	}
 

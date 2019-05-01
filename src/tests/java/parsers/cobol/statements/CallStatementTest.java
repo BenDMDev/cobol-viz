@@ -50,7 +50,7 @@ public class CallStatementTest {
 	
 	@Test
 	public void testCallSimpleTwo() {
-		String input = "CALL \"OEXEC\" USING CURSOR-1.";		 		
+		String input = "call 'printrunreport' using print-run-control end-call";		 		
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -65,8 +65,8 @@ public class CallStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children = (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(4, children.size());
-			assertEquals("CURSOR-1", children.get(3).getAttribute());
+			assertEquals(5, children.size());
+			assertEquals("printrunreport", children.get(1).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

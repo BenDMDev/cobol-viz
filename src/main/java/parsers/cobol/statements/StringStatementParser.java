@@ -64,7 +64,7 @@ public class StringStatementParser extends StatementParser {
 		
 		ParseTreeNode onOverflowBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		conditional.addChild(onOverflowBody);
-		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			statementParser.addListener(listener);
 			onOverflowBody.addChild(statementParser.parse(inputToken));

@@ -40,10 +40,10 @@ public class PerformStatementParser extends StatementParser {
 		if (inputToken.getType() == COBOLTokenType.THROUGH || inputToken.getType() == COBOLTokenType.THRU) {
 			parsePerformThrough(scanner.getCurrentToken());
 
-		} else if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		} else if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			inputToken = scanner.getCurrentToken();
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
-			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+			while (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 				StatementParser parser = new StatementParser(scanner);
 				parser.addListener(listener);
 				parseTree.addChild(parser.parse(inputToken));

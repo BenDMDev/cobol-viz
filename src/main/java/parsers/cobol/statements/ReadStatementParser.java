@@ -73,7 +73,7 @@ public class ReadStatementParser extends StatementParser {
 		ParseTreeNode onErrorBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		node.addChild(onErrorBody);
 		// CONSUME STATEMENT
-		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			statementParser.addListener(listener);
 			onErrorBody.addChild(statementParser.parse(inputToken));
@@ -99,7 +99,7 @@ public class ReadStatementParser extends StatementParser {
 		ParseTreeNode onErrorBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		node.addChild(onErrorBody);
 		// CONSUME STATEMENT
-		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue())) {
+		if (COBOLTokenType.STATEMENT_PREFIXES.contains(inputToken.getTokenValue().toLowerCase())) {
 			StatementParser statementParser = new StatementParser(scanner);
 			statementParser.addListener(listener);
 			onErrorBody.addChild(statementParser.parse(inputToken));

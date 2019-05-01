@@ -71,8 +71,8 @@ public class CallGraphVisitor implements TreeVisitor {
 		controlGraph = controlVisitor.getGraph();
 
 		CallGraphVertex vertex = (CallGraphVertex) g.getVertex(paragraph.getAttribute());
-		lineBegin = lineEnd = paragraph.getLineNumber();
-		
+	    lineBegin = lineEnd = paragraph.getLineNumber();
+	
 		if (vertex == null) {
 			vertex = new CallGraphVertex(paragraph.getAttribute());
 			g.addVertices(vertex);
@@ -88,8 +88,8 @@ public class CallGraphVisitor implements TreeVisitor {
 			}
 			visitChildren(paragraph);
 
-			int diff = lineEnd - lineBegin;
-			lastSeen.setNumberOfLines(diff);
+			 int diff = lineEnd - lineBegin;
+			lastSeen.setNumberOfLines(paragraph.getNumberOfLines());
 
 		} else {
 			CallGraphVertex holder = lastSeen;
@@ -98,7 +98,7 @@ public class CallGraphVisitor implements TreeVisitor {
 			visitChildren(paragraph);
 
 			int diff = lineEnd - lineBegin;
-			lastSeen.setNumberOfLines(diff);
+			lastSeen.setNumberOfLines(paragraph.getNumberOfLines());
 			lastSeen.setGraph(controlGraph);
 			lastSeen = holder;
 		}
