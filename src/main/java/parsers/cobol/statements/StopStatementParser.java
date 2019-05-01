@@ -20,7 +20,7 @@ public class StopStatementParser extends StatementParser {
 	
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
-		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
+		parseTree = new StatementNode(TreeNodeType.END, inputToken.getTokenValue());
 		
 		match(inputToken, COBOLTokenType.STOP, parseTree);
 		inputToken = scanner.getCurrentToken();

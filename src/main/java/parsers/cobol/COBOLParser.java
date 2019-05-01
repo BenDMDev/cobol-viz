@@ -2,6 +2,7 @@ package main.java.parsers.cobol;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import main.java.parsers.Parser;
 import main.java.scanners.Scanner;
@@ -15,6 +16,7 @@ import main.java.trees.cobol.ProgramNode;
 public class COBOLParser extends Parser {
 
 	public static ArrayList<String> REFERENCES = new ArrayList<String>();
+	public static HashMap<String, String> SECTION_REFERENCES = new HashMap<String, String>();
 
 	public COBOLParser(Scanner scanner) {
 		super(scanner);

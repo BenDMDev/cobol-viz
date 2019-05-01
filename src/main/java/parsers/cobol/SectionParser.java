@@ -21,11 +21,13 @@ public class SectionParser extends Parser {
 	public ParseTreeNode parse(Token t) throws IOException {
 		
 		parseTree = new SectionNode(TreeNodeType.PROCEDURE_BLOCK, "SECTION");
+		String sectionRef = "";
 				
 		if(t.getType() == COBOLTokenType.IDENTIFIER && scanner.lookAhead().getType() == COBOLTokenType.SECTION) {
-			
+			sectionRef = t.getTokenValue();
 			matchSequence(t, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.SECTION, COBOLTokenType.FULL_STOP);
 			t = scanner.getCurrentToken();
+			
 		}
 		
 		ParagraphParser paragraphParser = new ParagraphParser(scanner);
@@ -39,7 +41,10 @@ public class SectionParser extends Parser {
 			
 			
 		}
-		
+		if(parseTree.getChildren().size() > 3) {
+			COBOLParser.SECTION_REFERENCES.put(sectionRef, parseTree.getChildren().get(3).getAttribute());
+			System.out.println(sectionRef +  " : " + COBOLParser.SECTION_REFERENCES.get(sectionRef));
+		}
 		
 		return parseTree;
 	}

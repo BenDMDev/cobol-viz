@@ -72,7 +72,12 @@ public class StatementParser extends Parser {
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUAL, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.TO, root);
 		match(scanner.getCurrentToken(), COBOLTokenType.EQUALS_SYMBOL, root);
-
+		match(scanner.getCurrentToken(), COBOLTokenType.NUMERIC, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.ALPHANUMERIC, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.ALPHABETIC, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.ALPHABETIC_LOWER, root);
+		match(scanner.getCurrentToken(), COBOLTokenType.ALPHABETIC_UPPER, root);
+		
 		matchAlternation(scanner.getCurrentToken(), root, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER,
 				COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL, COBOLTokenType.FIGURATIVE_CONSTANT);
 
