@@ -17,14 +17,14 @@ public class LexerTest {
 
 	@Test
 	public void testWordScan() {
-		BufferedReader in = new BufferedReader(new StringReader("IDENTIFICATION DIVISION. \n PROGRAM-ID HELLO 45685"));
+		BufferedReader in = new BufferedReader(new StringReader("country-record(1:1) DIVISION. \n PROGRAM-ID, HELLO(MY-VAL) ALL"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();				
-			assertEquals("IDENTIFICATION", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IDENTIFICATION, l.getCurrentToken().getType());
+			assertEquals("country-record(1:1)", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("DIVISION", l.getCurrentToken().getTokenValue());
 			assertEquals(COBOLTokenType.DIVISION, l.getCurrentToken().getType());
@@ -34,9 +34,15 @@ public class LexerTest {
 			l.scan();						
 			assertEquals("PROGRAM-ID", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.PROGRAM_ID, l.getCurrentToken().getType());
-			l.scan();				
-			assertEquals("HELLO", l.getCurrentToken().getTokenValue());			
+			l.scan();
+			assertEquals(",", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.COMMA_SYMBOL, l.getCurrentToken().getType());
+			l.scan();
+			assertEquals("HELLO(MY-VAL)", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			l.scan();
+			assertEquals("ALL", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.FIGURATIVE_CONSTANT, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -46,7 +52,7 @@ public class LexerTest {
 	
 	@Test
 	public void testNumberScan() {
-		BufferedReader in = new BufferedReader(new StringReader("45685 56.54"));
+		BufferedReader in = new BufferedReader(new StringReader("45685 56.54 ZERO"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
@@ -57,6 +63,9 @@ public class LexerTest {
 			l.scan();							
 			assertEquals("56.54", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.REAL, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals("ZERO", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.FIGURATIVE_CONSTANT, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -65,7 +74,7 @@ public class LexerTest {
 	
 	@Test
 	public void testSymbols() {
-		BufferedReader in = new BufferedReader(new StringReader(". > >= ** * + - <= ="));
+		BufferedReader in = new BufferedReader(new StringReader(". > >= ** * + - <= = (a )"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
@@ -75,28 +84,37 @@ public class LexerTest {
 			assertEquals(COBOLTokenType.FULL_STOP, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals(">", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.GREATER_THAN, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.GREATER_THAN_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals(">=", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.GREATER_THAN_EQUALS, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("**", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.EXPONENTIATION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.EXPONENTIATION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("*", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.MULTIPLICATION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.MULTIPLICATION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("+", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.ADDITION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.ADDITION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("-", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.SUBTRACTION, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.SUBTRACTION_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("<=", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.LESS_THAN_EQUALS, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.LESS_THAN_EQUALS_SYMBOL, l.getCurrentToken().getType());
 			l.scan();							
 			assertEquals("=", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.EQUALS, l.getCurrentToken().getType());
+			assertEquals(COBOLTokenType.EQUALS_SYMBOL, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals("(", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.LEFT_PAREN, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals("a", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			l.scan();							
+			assertEquals(")", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.RIGHT_PAREN, l.getCurrentToken().getType());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -106,14 +124,38 @@ public class LexerTest {
 	
 	@Test
 	public void testEOF() {
-		BufferedReader in = new BufferedReader(new StringReader("test"));
+		BufferedReader in = new BufferedReader(new StringReader("if sort-city-country-code <> current-country-code\n"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();				
-			assertEquals("test", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			assertEquals("if", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.IF, l.getCurrentToken().getType());
+			l.scan();
+			l.scan();	
+			l.scan();	
+			l.scan();	
+			l.scan();	
+			l.scan();	
+			assertEquals(COBOLTokenType.EOF, l.getCurrentToken().getType());
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Test
+	public void testCommentLine() {
+		BufferedReader in = new BufferedReader(new StringReader("* Comment\n PROCEDURE"));
+		SourceFile s = new SourceFile(in);
+		Scanner l = new Scanner(s);
+		
+		try {
+			l.scan();				
+			assertEquals("PROCEDURE", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.PROCEDURE, l.getCurrentToken().getType());
 			l.scan();						
 			assertEquals(COBOLTokenType.EOF, l.getCurrentToken().getType());
 		} catch (IOException e) {
@@ -124,21 +166,18 @@ public class LexerTest {
 	}
 	
 	@Test
-	public void testLookAhead() {
-		BufferedReader in = new BufferedReader(new StringReader("test DIVISION"));
+	public void testCommentLineCountIgnored() {
+		BufferedReader in = new BufferedReader(new StringReader("* Comment\n PROCEDURE"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();				
-			assertEquals("test", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
-			Token t = l.lookAhead();
-			t = l.lookAhead();
-			t = l.lookAhead();
-			assertEquals(COBOLTokenType.DIVISION, t.getType());
-			assertEquals("test", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IDENTIFIER, l.getCurrentToken().getType());
+			assertEquals("PROCEDURE", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.PROCEDURE, l.getCurrentToken().getType());
+			l.scan();						
+			assertEquals(COBOLTokenType.EOF, l.getCurrentToken().getType());
+			assertEquals(2, s.getNumberOfLines());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -148,6 +187,30 @@ public class LexerTest {
 	
 	
 	@Test
+	public void testLookAhead() {
+		BufferedReader in = new BufferedReader(new StringReader("test DIVISION"));
+		SourceFile s = new SourceFile(in);
+		Scanner l = new Scanner(s);
+		
+		try {
+			l.scan();				
+			assertEquals("test", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.TEST, l.getCurrentToken().getType());
+			Token t = l.lookAhead();
+			t = l.lookAhead();
+			t = l.lookAhead();
+			assertEquals(COBOLTokenType.DIVISION, t.getType());
+			assertEquals("test", l.getCurrentToken().getTokenValue());			
+			assertEquals(COBOLTokenType.TEST, l.getCurrentToken().getType());
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	//@Test
 	public void testNameWithNumbers() {
 		BufferedReader in = new BufferedReader(new StringReader("test9-name-0"));
 		SourceFile s = new SourceFile(in);
@@ -164,22 +227,17 @@ public class LexerTest {
 		}
 	}
 	
-	@Test 
+	//@Test 
 	public void testStringLiteral() {
-		BufferedReader in = new BufferedReader(new StringReader("IF \"LDA-RC\" NOT = 0\n"));
+		BufferedReader in = new BufferedReader(new StringReader("\'CLOSE_C1 IN OBJECT/MODLIB/COBOLAPP\'"));
 		SourceFile s = new SourceFile(in);
 		Scanner l = new Scanner(s);
 		
 		try {
 			l.scan();			
-			assertEquals("IF", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.IF, l.getCurrentToken().getType());
-			l.scan();			
-			assertEquals("LDA-RC", l.getCurrentToken().getTokenValue());			
+			assertEquals("\"CLOSE_C1 IN OBJECT/MODLIB/COBOLAPP\"", l.getCurrentToken().getTokenValue());			
 			assertEquals(COBOLTokenType.STRING_LITERAL, l.getCurrentToken().getType());
-			l.scan();			
-			assertEquals("NOT", l.getCurrentToken().getTokenValue());			
-			assertEquals(COBOLTokenType.NOT, l.getCurrentToken().getType());
+		
 			
 		} catch (IOException e) {
 			

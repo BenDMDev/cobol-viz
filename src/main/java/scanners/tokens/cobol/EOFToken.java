@@ -10,6 +10,8 @@ public class EOFToken extends Token {
 	public EOFToken(SourceFile source) {
 		super(source);		
 		this.type = COBOLTokenType.EOF;
+		this.value = "EOF";
+		lineNumber = source.getNumberOfLines();
 	}
 
 	@Override

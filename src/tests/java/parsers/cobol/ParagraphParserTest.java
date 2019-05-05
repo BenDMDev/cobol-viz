@@ -48,7 +48,8 @@ public class ParagraphParserTest {
 		String input = "MOVE x TO Y\n"
 				   + "ADD x TO z\n"
 			       + "IF x > y.\n" 
-				   + "MOVE two TO three.\n"
+				   + "MOVE two TO three\n"
+			       + "END-IF.\n"
 			       + "para-name.";
 				   
 

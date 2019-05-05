@@ -22,11 +22,14 @@ import org.gephi.preview.api.PreviewMouseEvent;
 import org.gephi.preview.api.Vector;
 import org.openide.util.Lookup;
 
+import main.java.messages.MessageEmitter;
+import main.java.messages.MessageListener;
+
 /**
  *
  * @author mbastian
  */
-public class PreviewSketch extends JPanel implements MouseListener, MouseWheelListener, MouseMotionListener {
+public class PreviewSketch extends JPanel implements MouseListener, MouseWheelListener, MouseMotionListener, MessageEmitter {
 
     /**
 	 * 
@@ -44,6 +47,9 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
     private Timer wheelTimer;
     private boolean inited;
     private final boolean isRetina;
+    
+    // GraphLoader
+    private MessageListener listener;
 
     public PreviewSketch(G2DTarget target) {
         this.target = target;
@@ -83,7 +89,7 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
             
         }
         Vector pos = screenPositionToModelPosition(new Vector(e.getX(), e.getY()));
-        System.out.println(pos.getX() + " : " + pos.getY());
+        sendMessage(pos.x, pos.y);
     }
 
     public void mousePressed(MouseEvent e) {
@@ -162,6 +168,10 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
         target.reset();
         refreshLoop.refreshSketch();
     }
+    
+    public void refresh() {
+    	refreshLoop.refreshSketch();
+    }
 
     private Vector screenPositionToModelPosition(Vector screenPos) {
         Vector center = new Vector(getWidth() / 2f, getHeight() / 2f);
@@ -235,4 +245,28 @@ public class PreviewSketch extends JPanel implements MouseListener, MouseWheelLi
             running.set(false);
         }
     }
+
+	@Override
+	public void addListener(MessageListener listener) {
+		this.listener = listener;
+		
+	}
+
+	@Override
+	public void removeListener(MessageListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		listener.listen(message);
+		
+	}
+
+	@Override
+	public void sendMessage(float x, float y) {
+		listener.listen(x, y);
+		
+	}
 }

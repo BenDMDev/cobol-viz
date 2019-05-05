@@ -66,7 +66,10 @@ public class StatementParserTest {
 	
 	@Test
 	public void testParseAddStatement() {
-		String input = "ADD 10 zw 2.2 TO one two ROUNDED three.";
+		String input = "ADD CORRESPONDING 10 zw 2.2 TO one two ROUNDED three\n"
+				+ "GIVING my-val ROUNDED\n"
+				+ "ON SIZE ERROR\n" +
+				 "MOVE x TO m-val.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -94,7 +97,8 @@ public class StatementParserTest {
 				+ "MOVE ten TO five\n"
 				+ "ELSE \n" 
 				+ "ADD ten TO five\n"
-				+ "MOVE five TO six.";
+				+ "MOVE five TO six.\n";
+				
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

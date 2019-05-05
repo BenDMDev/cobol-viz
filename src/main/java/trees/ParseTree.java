@@ -23,7 +23,10 @@ public class ParseTree {
 	}
 	
 	private void print(ParseTreeNode treeNode) {
-		System.out.println(treeNode.getType());
+		
+		System.out.println(treeNode.getTreeNodeType() + " : " + treeNode.getAttribute());
+		
+		
 		for (ParseTreeNode childNode : treeNode.getChildren()) {
 			print(childNode);
 		}

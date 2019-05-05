@@ -16,7 +16,7 @@ public class StringToken extends Token {
 		
 		StringBuilder s = new StringBuilder();
 		char c = source.nextChar();
-					
+		charPos = source.getCharPos();			
 		while(c != '\"' && c != '\'') {
 			
 			s.append(c);
@@ -26,6 +26,7 @@ public class StringToken extends Token {
 		this.value = s.toString();
 		
 		this.type = COBOLTokenType.STRING_LITERAL;
+		lineNumber = source.getNumberOfLines();
 	}
 
 }

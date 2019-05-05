@@ -8,6 +8,7 @@ import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.EOFToken;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.ParagraphNode;
 
 public class ParagraphParser extends Parser {
@@ -19,22 +20,24 @@ public class ParagraphParser extends Parser {
 
 	@Override
 	public ParseTreeNode parse(Token t) throws IOException {
-		parseTree = new ParagraphNode("PARAGRAPH", t.getTokenValue());
+		
 		if (t.getType() == COBOLTokenType.IDENTIFIER) {
-			COBOLParser.REFERENCES.add(t.getTokenValue());
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-
-			scanner.scan(); // Consume Paragraph identifier
+			parseTree = new ParagraphNode(TreeNodeType.PROCEDURE, t.getTokenValue());
+			
+			COBOLParser.REFERENCES.add(t.getTokenValue());	
+			matchSequence(t, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.FULL_STOP);
 			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
-			scanner.scan(); // Consume '.' terminator
-			t = scanner.getCurrentToken();
-
+		} else {
+			parseTree = new ParagraphNode(TreeNodeType.PROCEDURE, "");
 		}
 	
+		int firstLine = t.getLineNumber();
+		parseTree.setLineNumber(t.getLineNumber());
 		parseSentences(t);
-	
-
+		int lastLine = scanner.getCurrentToken().getLineNumber();
+		((ParagraphNode) parseTree).setNumberOfLines(lastLine - firstLine);
+		
+		
 		return parseTree;
 	}
 
@@ -43,6 +46,7 @@ public class ParagraphParser extends Parser {
 		while (t.getType() != COBOLTokenType.IDENTIFIER
 				&& !(t.getType() == COBOLTokenType.END || t instanceof EOFToken)) {
 			SentenceParser senParse = new SentenceParser(scanner);
+			senParse.addListener(listener);
 			parseTree.addChild(senParse.parse(t));
 			t = scanner.getCurrentToken();
 		}

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane fx:id="mainPane" prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.ui.controllers.MainController">
+   <top>
+      <MenuBar fx:id="fileMenu" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Project">
+            <items>
+                  <MenuItem fx:id="newProject" mnemonicParsing="false" onAction="#createProject" text="New Project" />
+              <MenuItem disable="true" mnemonicParsing="false" text="Close Project" />
+                  <MenuItem fx:id="openProjectMenuItem" mnemonicParsing="false" text="Open Project" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Import">
+            <items>
+                  <MenuItem fx:id="importSourceMenuItem" disable="true" mnemonicParsing="false" onAction="#importSourceFile" text="Import Source" />
+              <MenuItem fx:id="importGraphMenuItem" disable="true" mnemonicParsing="false" onAction="#importGraphFile" text="Import Graph" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <SplitPane dividerPositions="0.1, 0.8" orientation="VERTICAL" prefHeight="338.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <items>
+            <ButtonBar maxHeight="30.0" nodeOrientation="RIGHT_TO_LEFT">
+              <buttons>
+                <Button fx:id="parseSourceButton" disable="true" mnemonicParsing="false" onAction="#parseSourceFile" text="Parse">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </Button>
+              </buttons>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </ButtonBar>
+            <SplitPane dividerPositions="0.15, 0.8" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <TabPane prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text="Navigation">
+                           <content>
+                              <TreeView fx:id="projectNavigator" />
+                           </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+                  <TabPane fx:id="previewTabs" />
+                  <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab fx:id="previewOptionsTab" disable="true" text="Preview Options">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <GridPane layoutX="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Button fx:id="updateGraph" mnemonicParsing="false" onAction="#updateGraph" text="Update" GridPane.rowIndex="10" />
+                                          <CheckBox fx:id="showLabelsChkBox" alignment="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Show Edge Labels: " GridPane.columnSpan="2" GridPane.halignment="LEFT">
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets></CheckBox>
+                                          <Label text="Edge Opacity:" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin></Label>
+                                          <Slider fx:id="edgeOpacitySlider" nodeOrientation="LEFT_TO_RIGHT" showTickLabels="true" showTickMarks="true" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="3">
+                                             <children>
+                                                <Label alignment="CENTER" text="Edge Thickness: " />
+                                                <TextField fx:id="edgeThicknessField" alignment="CENTER" maxWidth="100.0" prefWidth="50.0" promptText="0">
+                                                   <HBox.margin>
+                                                      <Insets left="5.0" />
+                                                   </HBox.margin>
+                                                </TextField>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="4">
+                                             <children>
+                                                <Label alignment="CENTER" text="Edge Radius: " />
+                                                <TextField fx:id="edgeRadiusField" alignment="CENTER" maxWidth="100.0" prefWidth="50.0" promptText="0">
+                                                   <HBox.margin>
+                                                      <Insets left="21.0" />
+                                                   </HBox.margin>
+                                                </TextField>
+                                             </children>
+                                          </HBox>
+                                          <CheckBox fx:id="curvedEdgesChkBox" alignment="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Curved Edges" GridPane.rowIndex="5">
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                          </CheckBox>
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="6">
+                                             <children>
+                                                <Label text="Background Color" />
+                                                <ColorPicker fx:id="backgroundColourPicker" prefWidth="100.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="7">
+                                             <children>
+                                                <Label text="Edge Color">
+                                                   <HBox.margin>
+                                                      <Insets right="36.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ColorPicker fx:id="edgeColourPicker" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="8">
+                                             <children>
+                                                <Label text="Label Colour">
+                                                   <HBox.margin>
+                                                      <Insets right="36.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ColorPicker fx:id="labelColourPicker" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                             </children>
+                                          </HBox>
+                                          <Button fx:id="layoutButtonm" mnemonicParsing="false" onAction="#runLayout" text="Run Layout" GridPane.rowIndex="11" />
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="9">
+                                             <children>
+                                                <Label text="Rank By">
+                                                   <HBox.margin>
+                                                      <Insets right="36.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ChoiceBox fx:id="rankOptionsBox" prefWidth="150.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                                 <padding>
+                                    <Insets left="10.0" right="10.0" />
+                                 </padding>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+              </items>
+            </SplitPane>
+            <SplitPane dividerPositions="0.8" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <TabPane prefHeight="200.0" prefWidth="200.0">
+                    <tabs>
+                      <Tab closable="false" text="Console">
+                           <content>
+                              <TextArea fx:id="console" editable="false" prefHeight="154.0" prefWidth="598.0" />
+                           </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+                  <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
+                    <items>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Graph Stats">
+                                 <content>
+                                    <TextArea fx:id="graphStatsTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab fx:id="nodeStatsTab" text="Node Stats">
+                                 <content>
+                                    <TextArea fx:id="nodeStatsTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                    </items>
+                  </SplitPane>
+              </items>
+            </SplitPane>
+         </items>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </SplitPane>
+   </center>
+</BorderPane>

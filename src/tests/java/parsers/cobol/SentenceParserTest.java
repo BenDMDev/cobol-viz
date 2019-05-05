@@ -20,7 +20,9 @@ public class SentenceParserTest {
 		String input =  "MOVE x TO z\n"						
 						+ "IF x GREATER THAN sy\n" 
 						+ "MOVE y TO z\n"
-						+ "ADD x TO two.";
+						+ "ELSE\n"
+						+ "ADD x TO two\n" 
+						+ "END-IF.";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);

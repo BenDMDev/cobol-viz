@@ -2,6 +2,7 @@ package main.java.parsers.cobol;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import main.java.parsers.Parser;
 import main.java.scanners.Scanner;
@@ -9,18 +10,22 @@ import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.EOFToken;
 import main.java.trees.ParseTreeNode;
+import main.java.trees.TreeNodeType;
+import main.java.trees.cobol.ProgramNode;
 
 public class COBOLParser extends Parser {
 
 	public static ArrayList<String> REFERENCES = new ArrayList<String>();
-	
+	public static HashMap<String, String> SECTION_REFERENCES = new HashMap<String, String>();
+
 	public COBOLParser(Scanner scanner) {
 		super(scanner);
 	}
 
 	public ParseTreeNode parse(Token t) throws IOException {
 
-				
+		long startTime = System.currentTimeMillis();
+
 		switch ((COBOLTokenType) t.getType()) {
 		case IDENTIFICATION:
 			break;
@@ -29,32 +34,36 @@ public class COBOLParser extends Parser {
 		case DATA:
 			break;
 		case PROCEDURE:
-			
-			
-			parseTree = new ParseTreeNode("PROCEDURE DIVISION");
-			
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
 
-			scanner.scan();
-			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+			parseTree = new ProgramNode(TreeNodeType.PROGRAM, "PROCEDURE DIVISION");
 
-			scanner.scan();
-			t = scanner.getCurrentToken();
-			parseTree.addChild(new ParseTreeNode(t.getTokenValue()));
+		
+				match(t, COBOLTokenType.PROCEDURE, parseTree);
 
-			SectionParser sp = new SectionParser(scanner);
-			scanner.scan();
-			t = scanner.getCurrentToken();		
-			while (t.getType() != COBOLTokenType.EOF) {
-				parseTree.addChild(sp.parse(t));
 				t = scanner.getCurrentToken();
-			}
-						
+				match(t, COBOLTokenType.DIVISION, parseTree);
+
+				t = scanner.getCurrentToken();
+				match(t, COBOLTokenType.FULL_STOP, parseTree);
+
+				SectionParser sp = new SectionParser(scanner);
+				sp.addListener(listener);
+				t = scanner.getCurrentToken();
+				while (t.getType() != COBOLTokenType.EOF) {
+					parseTree.addChild(sp.parse(t));
+					t = scanner.getCurrentToken();
+				}
+
+				if (t instanceof EOFToken) {
+					if (listener != null) {
+						sendMessage("Parse Complete");
+						float timeTaken = (System.currentTimeMillis() - startTime) / 1000f;
+						sendMessage("Time Taken: " + timeTaken);
+					}
+
+				}
 			
-			if(t instanceof EOFToken)		
-				System.out.println("Parse Success");
-			
+
 			break;
 		default:
 			break;
@@ -62,5 +71,7 @@ public class COBOLParser extends Parser {
 		return parseTree;
 
 	}
+
+	
 
 }

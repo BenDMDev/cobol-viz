@@ -17,17 +17,20 @@ public class NumberToken extends Token {
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
 		this.type = COBOLTokenType.INTEGER;
-		
+		charPos = source.getCharPos();
 		while(Character.isDigit(c)) {
 			s.append(c);
-			if(source.peek() == '.') {
+			c = source.nextChar();	
+			if(c == '.' && Character.isDigit(source.peek()) && type != COBOLTokenType.REAL) {
 				this.type = COBOLTokenType.REAL;
-				s.append(source.nextChar());
+				s.append(c);
+				c = source.nextChar();
 			}
-			c = source.nextChar();			
+					
 		}	
 		
 		this.value = s.toString();
+		lineNumber = source.getNumberOfLines();
 		
 		
 	}

@@ -12,7 +12,7 @@ import main.java.parsers.cobol.COBOLParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
-import main.java.trees.visitors.cobol.COBOLVisitor;
+import main.java.trees.visitors.cobol.CallGraphVisitor;
 
 public class COBOLParserTest {
 
@@ -21,7 +21,7 @@ public class COBOLParserTest {
 
 		BufferedReader in = null;
 		try {
-			in = new BufferedReader(new FileReader(new File("src/resources/test.txt")));
+			in = new BufferedReader(new FileReader(new File("src/resources/sample_3.cbl")));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -34,12 +34,15 @@ public class COBOLParserTest {
 			l.scan();
 
 			ParseTree tree = new ParseTree();
-			tree.setRoot(cbp.parse(l.getCurrentToken()));			
-			COBOLVisitor tv = new COBOLVisitor();
+			tree.setRoot(cbp.parse(l.getCurrentToken()));
+			tree.printParseTree();
+			CallGraphVisitor tv = new CallGraphVisitor();
 			tree.accept(tv);
 			Graph g = tv.getGraph();
 			g.printMatrix();
-			tree.printParseTree();
+			
+			
+			
 			s.close();
 			
 		

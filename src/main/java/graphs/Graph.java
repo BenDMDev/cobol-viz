@@ -29,9 +29,23 @@ public class Graph {
 	}
 	
 	public void addEdge(int from, int to) {
+		if(!edgeExists(from, to)) {
 		adjacencyMatrix[from][to] = 1;
 		numEdges++;
+		}
 		
+	}
+	
+	public void addWeightedEdge(int from, int to, int weight) {
+		if(!edgeExists(from, to)) {
+		adjacencyMatrix[from][to] = weight;
+		numEdges++;
+		}
+		
+	}
+	
+	public int getEdgeWeight(int from, int to) {
+		return adjacencyMatrix[from][to];
 	}
 	
 	public void printMatrix() {
@@ -68,7 +82,7 @@ public class Graph {
 	}
 	
 	public boolean edgeExists(int from, int to) {
-		return adjacencyMatrix[from][to] == 1;
+		return adjacencyMatrix[from][to] > 0;
 	}
 	
 	public int inDegree(int vertex) {

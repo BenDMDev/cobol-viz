@@ -16,16 +16,19 @@ public class SymbolToken extends Token {
 
 		StringBuilder s = new StringBuilder();
 		char c = source.getCurrentChar();
-
+		charPos = source.getCharPos();
 		switch (c) {
 		case '.':
 		case '+':
 		case '-':
 		case '/':
-		case '=': {
+		case '=': 
+		case ',':
+		case '(':
+		case ')':{
 			s.append(c);
 			this.type = COBOLTokenType.SPECIAL_SYMBOLS.get(s.toString());
-			source.nextChar();
+			//source.nextChar();
 			break;
 		}
 		case '>': {
@@ -56,6 +59,7 @@ public class SymbolToken extends Token {
 		}
 
 		this.value = s.toString();
+		lineNumber = source.getNumberOfLines();
 		source.nextChar();
 	}
 
