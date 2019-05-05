@@ -56,9 +56,9 @@ public class COBOLParser extends Parser {
 
 				if (t instanceof EOFToken) {
 					if (listener != null) {
-						sendMessage("PARSE SUCCESS");
+						sendMessage("Parse Complete");
 						float timeTaken = (System.currentTimeMillis() - startTime) / 1000f;
-						sendMessage("PARSE TIME: " + timeTaken);
+						sendMessage("Time Taken: " + timeTaken);
 					}
 
 				}

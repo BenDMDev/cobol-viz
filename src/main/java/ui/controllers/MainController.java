@@ -11,6 +11,8 @@ import javax.swing.SwingUtilities;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuItem;
@@ -47,6 +50,8 @@ public class MainController implements MessageListener {
 	final FileChooser fileChooser = new FileChooser();
 	final DirectoryChooser dirChooser = new DirectoryChooser();
 	final GraphLoader graphLoader = new GraphLoader();
+	
+	
 
 	private Project currentProject;
 
@@ -87,7 +92,11 @@ public class MainController implements MessageListener {
 	private ColorPicker edgeColourPicker;
 	@FXML
 	private ColorPicker labelColourPicker;
-
+	@FXML
+	private ChoiceBox<String>  rankOptionsBox;
+	
+	
+	
 	@FXML
 	private TextArea graphStatsTextArea;
 	@FXML
@@ -140,6 +149,7 @@ public class MainController implements MessageListener {
 		}
 		graphRootNode.getChildren().add(graphNode);
 		createGraphPreviewContent(outputFileName, GraphLoader.RANKED);
+		
 	}
 
 	@FXML
@@ -187,6 +197,8 @@ public class MainController implements MessageListener {
 
 	@FXML
 	private void updateGraph() {
+
+		graphLoader.setRankingOptions(rankOptionsBox.getValue().toString());
 		graphLoader.setEdgeOpacity(edgeOpacitySlider.getValue());
 		graphLoader.setShowLabels(showLabelsChkBox.selectedProperty().get());
 		graphLoader.setEdgeThickness(Double.parseDouble(edgeThicknessField.getText()));
@@ -216,9 +228,17 @@ public class MainController implements MessageListener {
 		SwingNode swing = new SwingNode();
 		createSwingContent(swing, frame);
 		addGraphPreviewTab(swing, fileName);
-		previewOptionsTab.setDisable(false);
+		
+		if(previewOptionsTab.isDisabled()) {
+			previewOptionsTab.setDisable(false);
+			addRankChoiceOptions();
+		}
+		
 		updateGraphPreviewOptionsTab();
 	}
+	
+
+	
 
 	private void createSwingContent(final SwingNode swingNode, JPanel frame) {
 		SwingUtilities.invokeLater(() -> {
@@ -228,7 +248,17 @@ public class MainController implements MessageListener {
 		});
 	}
 
+	private void addRankChoiceOptions() {
+		rankOptionsBox.getItems().add("LOC");
+		rankOptionsBox.getItems().add("IN DEGREE");
+		rankOptionsBox.getItems().add("OUT DEGREE");
+		rankOptionsBox.getItems().add("COMPLEXITY");
+		rankOptionsBox.getItems().add("CENTRALITY");
+		
+	}
+	
 	private void updateGraphPreviewOptionsTab() {
+		
 		edgeThicknessField.setText(Double.toString(graphLoader.getEdgeThickness()));
 		edgeRadiusField.setText(Double.toString(graphLoader.getEdgeRadius()));
 		edgeOpacitySlider.adjustValue(graphLoader.getEdgeOpacity());
@@ -238,6 +268,7 @@ public class MainController implements MessageListener {
 		edgeColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
 		rgb = graphLoader.getLabelColour();
 		labelColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
+		
 	}
 
 	private void addGraphPreviewTab(SwingNode node, String fileName) {
@@ -245,7 +276,6 @@ public class MainController implements MessageListener {
 		AnchorPane anchor = new AnchorPane();
 		anchor.getChildren().clear();
 		anchor.getChildren().add(node);
-		// Tab tab = previewTabs.getTabs().get(0);
 		Tab tab = new Tab();
 		tab.setText(fileName);
 		tab.setId(fileName);
@@ -283,10 +313,11 @@ public class MainController implements MessageListener {
 	private void loadFileToTextArea(TextArea area, File file) {
 		try {
 			Scanner scanner = new Scanner(file);
-
+			int lineNum = 0;
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				area.appendText(line + "\n");
+				area.appendText(lineNum + ": " + line + "\n");
+				lineNum++;
 			}
 
 			scanner.close();

@@ -3,7 +3,9 @@ package main.java.ui.models;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -15,6 +17,7 @@ import org.gephi.appearance.plugin.RankingElementColorTransformer;
 import org.gephi.appearance.plugin.RankingNodeSizeTransformer;
 import org.gephi.graph.api.Column;
 import org.gephi.graph.api.DirectedGraph;
+import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
 import org.gephi.io.importer.api.Container;
@@ -36,6 +39,8 @@ import org.gephi.statistics.plugin.GraphDistance;
 import org.openide.util.Lookup;
 import org.gephi.graph.api.Node;
 
+import main.java.graphs.Graph;
+import main.java.graphs.Vertex;
 import main.java.messages.MessageEmitter;
 import main.java.messages.MessageListener;
 
@@ -97,36 +102,6 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 
 		// Append imported data to GraphAPI
 		importController.process(container, new DefaultProcessor(), activeWorkspace);
-		if (ranked == RANKED) {
-			GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
-			DirectedGraph graph = graphModel.getDirectedGraph();
-
-			Column outDegreeCol = graphModel.getNodeTable().getColumn("out");
-			Function degreeRanking = appearanceModel.getNodeFunction(graph, outDegreeCol,
-					RankingElementColorTransformer.class);
-			RankingElementColorTransformer degreeTransformer = (RankingElementColorTransformer) degreeRanking
-					.getTransformer();
-			degreeTransformer.setColors(new Color[] { new Color(0xFEF0D9), new Color(0xB30000) });
-			degreeTransformer.setColorPositions(new float[] { 0f, 1f });
-			appearanceController.transform(degreeRanking);
-			//
-			// // Get Centrality
-			// GraphDistance distance = new GraphDistance();
-			// distance.setDirected(true);
-			// distance.execute(graphModel);
-			//
-			// Rank size by centrality
-			Column centralityColumn = graphModel.getNodeTable().getColumn("loc");
-
-			Function centralityRanking = appearanceModel.getNodeFunction(graph, centralityColumn,
-					RankingNodeSizeTransformer.class);
-			RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) centralityRanking
-					.getTransformer();
-			centralityTransformer.setMinSize(10);
-			centralityTransformer.setMaxSize(50);
-			appearanceController.transform(centralityRanking);
-		} 
-			
 
 		// New Processing target, get the PApplet
 		G2DTarget target = (G2DTarget) previewController.getRenderTarget(RenderTarget.G2D_TARGET);
@@ -141,6 +116,55 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 		frame.setVisible(true);
 		renderedGraphs.put(file.getName(), activeWorkspace);
 		return frame;
+
+	}
+
+		
+	
+	public void setRankingOptions(String option) {
+
+		String col = "";
+		if (option.equals("LOC")) {
+			col = "loc";
+		} else if (option.equals("IN DEGREE")) {
+			col = "in";
+		} else if (option.equals("OUT DEGREE")) {
+			col = "out";
+		} else if (option.equals("COMPLEXITY")) {
+			col = "complex";
+		}
+
+		AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+		AppearanceModel appearanceModel = appearanceController.getModel();
+
+		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
+		DirectedGraph graph = graphModel.getDirectedGraph();
+
+		if (!col.equals("")) {
+
+			Column selectedCol = graphModel.getNodeTable().getColumn(col);
+
+			Function ranking = appearanceModel.getNodeFunction(graph, selectedCol, RankingNodeSizeTransformer.class);
+			RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) ranking.getTransformer();
+			centralityTransformer.setMinSize(20);
+			centralityTransformer.setMaxSize(200);
+			appearanceController.transform(ranking);
+		} else {
+			// Get Centrality
+			GraphDistance distance = new GraphDistance();
+			distance.setDirected(true);
+			distance.execute(graphModel);
+
+			// Rank size by centrality
+			Column centralityColumn = graphModel.getNodeTable().getColumn(GraphDistance.BETWEENNESS);
+			Function centralityRanking = appearanceModel.getNodeFunction(graph, centralityColumn,
+					RankingNodeSizeTransformer.class);
+			RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) centralityRanking
+					.getTransformer();
+			centralityTransformer.setMinSize(20);
+			centralityTransformer.setMaxSize(200);
+			appearanceController.transform(centralityRanking);
+		}
 
 	}
 
@@ -247,64 +271,61 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 		layout.endAlgo();
 		reload();
 	}
-	
-	
+
 	public void findSelectedNode(float x, float y) {
 		Workspace workspace = projectController.getCurrentWorkspace();
-		for (Node node : Lookup.getDefault().lookup(GraphController.class).getGraphModel(workspace).getGraph().getNodes()) {
-			float xdiff =  x - node.x();
-	        float ydiff = -node.y() - y;//Note that y axis is inverse for node coordinates
-	        float radius = node.size();
+		for (Node node : Lookup.getDefault().lookup(GraphController.class).getGraphModel(workspace).getGraph()
+				.getNodes()) {
+			float xdiff = x - node.x();
+			float ydiff = -node.y() - y;
+			float radius = node.size();
 
-	        boolean clicked = xdiff * xdiff + ydiff * ydiff <= radius * radius;
-	        if(clicked)
-	        	listenForNodeClicks(node.getLabel());
-            }
+			boolean clicked = xdiff * xdiff + ydiff * ydiff <= radius * radius;
+			if (clicked)
+				listenForNodeClicks(node.getLabel());
+		}
 	}
-        
-		
-	
 
 	@Override
 	public void listen(String input) {
 		listener.listen(input);
-		
+
 	}
 
 	@Override
 	public void addListener(MessageListener listener) {
 		this.listener = listener;
-		
+
 	}
 
 	@Override
 	public void removeListener(MessageListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void sendMessage(String message) {
 		listener.listen(message);
-		
+
 	}
 
 	@Override
 	public void sendMessage(float x, float y) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void listen(float x, float y) {
 		findSelectedNode(x, y);
-		
+
 	}
 
 	@Override
 	public void listenForNodeClicks(String nodeLabel) {
 		listener.listenForNodeClicks(nodeLabel);
-		
+
 	}
 
 }

@@ -76,7 +76,8 @@ public class GraphWriter {
 				+ "<attribute id=\"loc\" title=\"linesOfCode\" type=\"int\" />"
 				+ "<attribute id=\"in\" title=\"inDegree\" type=\"int\" />"
 				+ "<attribute id=\"out\" title=\"outDegree\" type=\"int\" />"
-				+ "</attributes >"	
+				+ "<attribute id=\"complex\" title=\"complexity\" type=\"int\" />" 
+				+ "</attributes >" 	
 				+ "<nodes>\n";
 		
 		
@@ -91,7 +92,9 @@ public class GraphWriter {
 						+ "<attvalue for=\"in\" value=\"" +
 						graph.inDegree(i) + "\"/> \n"
 						+ "<attvalue for=\"out\" value=\"" +
-						graph.outDegree(i) + "\"/> \n"
+						graph.outDegree(i) + "\"/> \n" +
+						"<attvalue for=\"complex\" value=\"" +
+						((CallGraphVertex)v[i]).getCyclomaticComplexity() + "\"/> \n"
 						+"</attvalues>\n"
 						+"</node>";
 		}
