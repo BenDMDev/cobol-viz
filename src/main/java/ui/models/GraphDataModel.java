@@ -1,27 +1,39 @@
 package main.java.ui.models;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import main.java.graphs.Graph;
-import main.java.graphs.Vertex;
 import main.java.graphs.cobol.CallGraphVertex;
-import main.java.trees.ParseTree;
+
 
 public class GraphDataModel {
 
 	private Graph graph;
-	private ParseTree tree;
+	
+
 
 	public GraphDataModel(Graph g) {
 		graph = g;
 	}
+	
+	public GraphDataModel(Graph g, File source) {
+		graph = g;	
+	}
 
+
+	
 	public Graph getGraph() {
 		return graph;
 	}
+	
+
+	
 
 	public int getLinesOfCode(String graphLabel) {
 
-		CallGraphVertex v = (CallGraphVertex) graph.getVertex(graphLabel);
-
+		CallGraphVertex v = (CallGraphVertex) graph.getVertex(graphLabel);		
 		return v.getNumberOfLines();
 
 	}

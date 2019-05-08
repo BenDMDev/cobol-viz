@@ -32,18 +32,13 @@
             <items>
                   <MenuItem fx:id="newProject" mnemonicParsing="false" onAction="#createProject" text="New Project" />
               <MenuItem disable="true" mnemonicParsing="false" text="Close Project" />
-                  <MenuItem fx:id="openProjectMenuItem" mnemonicParsing="false" text="Open Project" />
+                  <MenuItem fx:id="openProjectMenuItem" mnemonicParsing="false" onAction="#openProject" text="Open Project" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Import">
             <items>
                   <MenuItem fx:id="importSourceMenuItem" disable="true" mnemonicParsing="false" onAction="#importSourceFile" text="Import Source" />
               <MenuItem fx:id="importGraphMenuItem" disable="true" mnemonicParsing="false" onAction="#importGraphFile" text="Import Graph" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
             </items>
           </Menu>
         </menus>
@@ -100,9 +95,10 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button fx:id="updateGraph" mnemonicParsing="false" onAction="#updateGraph" text="Update" GridPane.rowIndex="10" />
+                                          <Button fx:id="updateGraph" mnemonicParsing="false" onAction="#updateGraph" text="Update" GridPane.rowIndex="11" />
                                           <CheckBox fx:id="showLabelsChkBox" alignment="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Show Edge Labels: " GridPane.columnSpan="2" GridPane.halignment="LEFT">
                                              <opaqueInsets>
                                                 <Insets />
@@ -163,15 +159,25 @@
                                                 <ColorPicker fx:id="labelColourPicker" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                              </children>
                                           </HBox>
-                                          <Button fx:id="layoutButtonm" mnemonicParsing="false" onAction="#runLayout" text="Run Layout" GridPane.rowIndex="11" />
+                                          <Button fx:id="layoutButtonm" mnemonicParsing="false" onAction="#runLayout" text="Run Layout" GridPane.rowIndex="12" />
                                           <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="9">
                                              <children>
-                                                <Label text="Rank By">
+                                                <Label text="Rank Size By">
                                                    <HBox.margin>
                                                       <Insets right="36.0" />
                                                    </HBox.margin>
                                                 </Label>
                                                 <ChoiceBox fx:id="rankOptionsBox" prefWidth="150.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="10">
+                                             <children>
+                                                <Label text="Rank Colour By">
+                                                   <HBox.margin>
+                                                      <Insets right="36.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ChoiceBox fx:id="rankOptionsColourBox" prefWidth="150.0" />
                                              </children>
                                           </HBox>
                                        </children>

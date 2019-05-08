@@ -2,7 +2,9 @@ package main.java.ui.controllers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -50,8 +52,6 @@ public class MainController implements MessageListener {
 	final FileChooser fileChooser = new FileChooser();
 	final DirectoryChooser dirChooser = new DirectoryChooser();
 	final GraphLoader graphLoader = new GraphLoader();
-	
-	
 
 	private Project currentProject;
 
@@ -93,10 +93,10 @@ public class MainController implements MessageListener {
 	@FXML
 	private ColorPicker labelColourPicker;
 	@FXML
-	private ChoiceBox<String>  rankOptionsBox;
-	
-	
-	
+	private ChoiceBox<String> rankOptionsBox;
+	@FXML
+	private ChoiceBox<String> rankOptionsColourBox;
+
 	@FXML
 	private TextArea graphStatsTextArea;
 	@FXML
@@ -107,6 +107,9 @@ public class MainController implements MessageListener {
 	private TreeItem<String> sourceRootNode;
 	private TreeItem<String> graphRootNode;
 
+	/**
+	 * Import Source File via menu item
+	 */
 	@FXML
 	private void importSourceFile() {
 
@@ -115,11 +118,14 @@ public class MainController implements MessageListener {
 		if (file != null) {
 			String sourceFile = file.getName();
 			currentProject.addSourceFile(file);
-			sourceRootNode.getChildren().add(new TreeItem<String>(sourceFile));
+			addSourceNavigation(sourceFile);
 
 		}
 	}
 
+	/**
+	 * Import Graph File via menu item
+	 */
 	@FXML
 	private void importGraphFile() {
 		File file = fileChooser.showOpenDialog(null);
@@ -128,30 +134,30 @@ public class MainController implements MessageListener {
 			String outputFile = file.getName();
 			currentProject.addOutputFile(file);
 			graphRootNode.getChildren().add(new TreeItem<String>(outputFile));
-			createGraphPreviewContent(outputFile, GraphLoader.UNRANKED);
+			createGraphPreviewContent(currentProject.getOutputFile(outputFile));
 
 		}
 	}
 
+	/**
+	 * Parse currently selected file in tree view
+	 */
 	@FXML
 	private void parseSourceFile() {
+
 		String fileName = getSelectedFile();
 		File file = currentProject.getSourceFile(fileName);
 		currentProject.parse(file);
 		String outputFileName = file.getName().replaceFirst("[.][^.]+$", ".gexf");
-		GraphDataModel m = currentProject.getModel(outputFileName);
-		Graph g = m.getGraph();
-		TreeItem<String> graphNode = new TreeItem<String>(outputFileName);
-		for (int i = 0; i < g.getNumberOfVertices(); i++) {
-			Vertex[] vert = g.getVertices();
-			graphNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
+		initGraphNavigation(outputFileName);
 
-		}
-		graphRootNode.getChildren().add(graphNode);
-		createGraphPreviewContent(outputFileName, GraphLoader.RANKED);
-		
 	}
 
+	/**
+	 * Open Dialog window to create new project
+	 * 
+	 * @throws IOException
+	 */
 	@FXML
 	private void createProject() throws IOException {
 
@@ -172,7 +178,9 @@ public class MainController implements MessageListener {
 
 		selectButton.setOnAction(e -> {
 			File projectDir = dirChooser.showDialog(null);
-			directoryNameField.setText(projectDir.getAbsolutePath());
+			if (projectDir != null) {
+				directoryNameField.setText(projectDir.getAbsolutePath());
+			}
 		});
 
 		dialog.setResultConverter(btn -> {
@@ -189,16 +197,49 @@ public class MainController implements MessageListener {
 			enableImportMenuItems();
 			currentProject.addListener(this);
 			graphLoader.addListener(this);
+			createTabPaneListeners();
 		});
-
-		createTabPaneListeners();
 
 	}
 
 	@FXML
-	private void updateGraph() {
+	private void openProject() {
+		File projectDir = dirChooser.showDialog(null);
 
-		graphLoader.setRankingOptions(rankOptionsBox.getValue().toString());
+		File[] projectFile = projectDir.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+
+				return name.startsWith("project") && name.endsWith("xml");
+			}
+
+		});
+
+		if (projectFile.length > 0) {
+
+			currentProject = new Project(projectFile[0]);
+			initProjectNavigation(currentProject.getProjectName());
+			loadSourceFiles();
+			loadGraphFiles();
+			enableImportMenuItems();
+			currentProject.addListener(this);
+			graphLoader.addListener(this);
+			createTabPaneListeners();
+		}
+	}
+
+	/**
+	 * Handle update graph button in preview options tab
+	 */
+	@FXML
+	private void updateGraph() {
+		if (rankOptionsBox.getValue() != null)
+			graphLoader.setRankingOptions(rankOptionsBox.getValue().toString());
+		
+		if(rankOptionsColourBox.getValue() != null)
+			graphLoader.setRankingOptionsColour(rankOptionsColourBox.getValue().toString());
+
 		graphLoader.setEdgeOpacity(edgeOpacitySlider.getValue());
 		graphLoader.setShowLabels(showLabelsChkBox.selectedProperty().get());
 		graphLoader.setEdgeThickness(Double.parseDouble(edgeThicknessField.getText()));
@@ -213,41 +254,81 @@ public class MainController implements MessageListener {
 		graphLoader.reload();
 	}
 
+	/**
+	 * Runs currently selected layout
+	 */
 	@FXML
 	private void runLayout() {
 		graphLoader.runLayout();
 	}
 
+	/**
+	 * Get current selected file from navigator tree
+	 * 
+	 * @return
+	 */
 	private String getSelectedFile() {
 		return projectNavigator.getSelectionModel().getSelectedItem().getValue();
 	}
 
-	private void createGraphPreviewContent(String fileName, int ranked) {
+	/**
+	 * Initialise a Gephi project and create preview content
+	 * 
+	 * @param file
+	 *            to load
+	 */
+	private void createGraphPreviewContent(File file) {
 
-		JPanel frame = graphLoader.initProject(currentProject.getOutputFile(fileName), ranked);
+		JPanel frame = graphLoader.initProject(file);
 		SwingNode swing = new SwingNode();
 		createSwingContent(swing, frame);
-		addGraphPreviewTab(swing, fileName);
-		
-		if(previewOptionsTab.isDisabled()) {
+		addGraphPreviewTab(swing, file.getName());
+
+		if (previewOptionsTab.isDisabled()) {
 			previewOptionsTab.setDisable(false);
 			addRankChoiceOptions();
 		}
-		
+
 		updateGraphPreviewOptionsTab();
 	}
-	
 
-	
+	private void loadSourceFiles() {
+		Map<String, File> sourceFiles = currentProject.getSourceFiles();
 
+		for (String s : sourceFiles.keySet()) {
+			addSourceNavigation(s);
+		}
+
+	}
+
+	private void loadGraphFiles() {
+		Map<String, File> outputFiles = currentProject.getOutputFiles();
+
+		for (String s : outputFiles.keySet()) {
+			currentProject.parse(currentProject.getOutputFile(s));
+			initGraphNavigation(s);
+		}
+	}
+
+	/**
+	 * Create swing content
+	 * 
+	 * @param swingNode
+	 *            parent node to wrap swing content
+	 * @param frame
+	 *            Frame created via Gephi to be wrapped
+	 */
 	private void createSwingContent(final SwingNode swingNode, JPanel frame) {
 		SwingUtilities.invokeLater(() -> {
 
 			swingNode.setContent(frame);
-			// preview.resetZoom();
+
 		});
 	}
 
+	/**
+	 * Initialise ranking options
+	 */
 	private void addRankChoiceOptions() {
 		rankOptionsBox.getItems().add("LOC");
 		rankOptionsBox.getItems().add("IN DEGREE");
@@ -255,10 +336,19 @@ public class MainController implements MessageListener {
 		rankOptionsBox.getItems().add("COMPLEXITY");
 		rankOptionsBox.getItems().add("CENTRALITY");
 		
+		rankOptionsColourBox.getItems().add("LOC");
+		rankOptionsColourBox.getItems().add("IN DEGREE");
+		rankOptionsColourBox.getItems().add("OUT DEGREE");
+		rankOptionsColourBox.getItems().add("COMPLEXITY");
+		rankOptionsColourBox.getItems().add("CENTRALITY");
+
 	}
-	
+
+	/**
+	 * Set current graphloaders preview options based on preview options tab
+	 */
 	private void updateGraphPreviewOptionsTab() {
-		
+
 		edgeThicknessField.setText(Double.toString(graphLoader.getEdgeThickness()));
 		edgeRadiusField.setText(Double.toString(graphLoader.getEdgeRadius()));
 		edgeOpacitySlider.adjustValue(graphLoader.getEdgeOpacity());
@@ -268,20 +358,33 @@ public class MainController implements MessageListener {
 		edgeColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
 		rgb = graphLoader.getLabelColour();
 		labelColourPicker.setValue(Color.rgb(rgb[0], rgb[1], rgb[2]));
-		
+
 	}
 
+	/**
+	 * Add a preview tab
+	 * 
+	 * @param node
+	 *            Gephi content to be added
+	 * @param fileName
+	 *            file name of GEXF file
+	 */
 	private void addGraphPreviewTab(SwingNode node, String fileName) {
 
 		AnchorPane anchor = new AnchorPane();
 		anchor.getChildren().clear();
 		anchor.getChildren().add(node);
 		Tab tab = new Tab();
+
 		tab.setText(fileName);
 		tab.setId(fileName);
 
+		tab.setOnCloseRequest(e -> {
+			graphLoader.removeWorkspace(fileName);
+		});
+
 		tab.setContent(anchor);
-		tab.setClosable(false);
+		tab.setClosable(true);
 		previewTabs.getTabs().add(tab);
 		previewTabs.getSelectionModel().select(tab);
 		AnchorPane.setBottomAnchor(node, 0.0d);
@@ -291,6 +394,11 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Opens and previews a source file
+	 * 
+	 * @param fileName
+	 */
 	private void addSourcePreviewTab(String fileName) {
 		Tab tab = new Tab(fileName);
 		tab.setId(fileName);
@@ -305,11 +413,22 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Enables import after project created
+	 */
 	private void enableImportMenuItems() {
 		importSourceMenuItem.setDisable(false);
 		importGraphMenuItem.setDisable(false);
 	}
 
+	/**
+	 * Loads source file to text area
+	 * 
+	 * @param area
+	 *            to be loaded into
+	 * @param file
+	 *            to be loaded
+	 */
 	private void loadFileToTextArea(TextArea area, File file) {
 		try {
 			Scanner scanner = new Scanner(file);
@@ -327,6 +446,11 @@ public class MainController implements MessageListener {
 		}
 	}
 
+	/**
+	 * Initialise the project nav tree
+	 * 
+	 * @param projectName
+	 */
 	private void initProjectNavigation(String projectName) {
 
 		projectRootNode = new TreeItem<String>(projectName);
@@ -351,14 +475,47 @@ public class MainController implements MessageListener {
 
 	}
 
+	private void addSourceNavigation(String fileName) {
+
+		sourceRootNode.getChildren().add(new TreeItem<String>(fileName));
+
+	}
+
+	/**
+	 * Initialise the graph tree when loading GEXF files
+	 * 
+	 * @param graphName
+	 *            name of GEXF file
+	 */
+	private void initGraphNavigation(String graphName) {
+
+		GraphDataModel dataModel = currentProject.getModel(graphName);
+		Graph graph = dataModel.getGraph();
+		TreeItem<String> graphNode = new TreeItem<String>(graphName);
+		for (int i = 0; i < graph.getNumberOfVertices(); i++) {
+			Vertex[] vert = graph.getVertices();
+			graphNode.getChildren().add(new TreeItem<String>((vert[i].getText())));
+
+		}
+		graphRootNode.getChildren().add(graphNode);
+		createGraphPreviewContent(currentProject.getOutputFile(graphName));
+
+	}
+
+	/**
+	 * Handle clicks in navigation view
+	 */
 	private void handleNavigationDoubleClick() {
 
 		TreeItem<String> item = projectNavigator.getSelectionModel().getSelectedItem();
 		if (item != null) {
 			if (item.getParent() == graphRootNode) {
 				Tab activeTab = getActiveTab(item.getValue());
+
 				if (activeTab != null) {
 					previewTabs.getSelectionModel().select(activeTab);
+				} else {
+					createGraphPreviewContent(currentProject.getOutputFile(item.getValue()));
 				}
 				graphLoader.switchWorkSpace(item.getValue());
 				graphLoader.reload();
@@ -366,18 +523,26 @@ public class MainController implements MessageListener {
 
 			} else if (item.getParent() == sourceRootNode) {
 				addSourcePreviewTab(item.getValue());
+			} else if (item.getParent().getParent() == graphRootNode) {
+				createGraphPreviewContent(currentProject.getOutputFile(item.getValue() + ".gexf"));
 			}
 		}
 
 	}
 
+	/**
+	 * Update stats view for node
+	 * 
+	 * @param graphLabel
+	 *            current graph selected
+	 */
 	private void updateNodeStatsView(String graphLabel) {
 
 		String activeGraph = previewTabs.getSelectionModel().getSelectedItem().getId();
 		GraphDataModel model = currentProject.getModel(activeGraph);
 
 		nodeStatsTextArea.clear();
-		nodeStatsTextArea.appendText("Node: " + graphLabel +"\n" );
+		nodeStatsTextArea.appendText("Node: " + graphLabel + "\n");
 		nodeStatsTextArea.appendText("Lines of Code: " + model.getLinesOfCode(graphLabel) + "\n");
 		nodeStatsTextArea.appendText("Cyclomatic Complexity: " + model.getCyclomaticComplexity(graphLabel) + "\n");
 		nodeStatsTextArea.appendText("In Degree: " + model.getInDegree(graphLabel) + "\n");
@@ -385,25 +550,33 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Update graph view
+	 */
 	private void updateGraphStatsView() {
 
-		String activeGraph = previewTabs.getSelectionModel().getSelectedItem().getId();
+		Tab selectedItem = previewTabs.getSelectionModel().getSelectedItem();
+		String activeGraph = selectedItem.getId();
 		GraphDataModel model = currentProject.getModel(activeGraph);
 
 		graphStatsTextArea.clear();
-		graphStatsTextArea.appendText("Number Of Nodes " + model.getGraph().getNumberOfVertices() + "\n");
-		graphStatsTextArea.appendText("Number Of Eges " +  model.getGraph().getNumberOfEdges() + "\n");
-		graphStatsTextArea.appendText("Total Lines Of Code " + model.getTotalLinesOfCode() + "\n");
-		
+		if (model != null) {
+			graphStatsTextArea.appendText("Number Of Nodes " + model.getGraph().getNumberOfVertices() + "\n");
+			graphStatsTextArea.appendText("Number Of Eges " + model.getGraph().getNumberOfEdges() + "\n");
+			graphStatsTextArea.appendText("Total Lines Of Code " + model.getTotalLinesOfCode() + "\n");
+		}
 
 	}
 
+	/**
+	 * Create listeners for Tab PAne
+	 */
 	private void createTabPaneListeners() {
 		previewTabs.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-				if (newValue.getId().contains(".gexf")) {
+				if (newValue != null && newValue.getId().contains(".gexf")) {
 					graphLoader.switchWorkSpace(newValue.getId());
 					graphLoader.reload();
 					updateGraphStatsView();
@@ -411,6 +584,7 @@ public class MainController implements MessageListener {
 			}
 
 		});
+
 	}
 
 	private Tab getActiveTab(String id) {

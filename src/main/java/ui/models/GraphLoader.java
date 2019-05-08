@@ -45,8 +45,7 @@ import main.java.messages.MessageEmitter;
 import main.java.messages.MessageListener;
 
 public class GraphLoader implements MessageListener, MessageEmitter {
-	public final static int RANKED = 0;
-	public final static int UNRANKED = 1;
+
 	private double edgeOpacity;
 	private double edgeThickness;
 	private boolean showLabels;
@@ -80,15 +79,13 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 		importController = Lookup.getDefault().lookup(ImportController.class);
 	}
 
-	public JPanel initProject(File file, int ranked) {
+	public JPanel initProject(File file) {
 
 		projectController.newProject();
 		Workspace workspace = projectController.getCurrentWorkspace();
 		Workspace activeWorkspace = projectController.duplicateWorkspace(workspace);
 
-		AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
-		AppearanceModel appearanceModel = appearanceController.getModel();
-
+	
 		// Import file
 		Container container;
 
@@ -132,6 +129,8 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 			col = "out";
 		} else if (option.equals("COMPLEXITY")) {
 			col = "complex";
+		} else if(option.equals("CENTRALITY")) {
+			col = "cen";
 		}
 
 		AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
@@ -140,16 +139,8 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
 		DirectedGraph graph = graphModel.getDirectedGraph();
 
-		if (!col.equals("")) {
-
-			Column selectedCol = graphModel.getNodeTable().getColumn(col);
-
-			Function ranking = appearanceModel.getNodeFunction(graph, selectedCol, RankingNodeSizeTransformer.class);
-			RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) ranking.getTransformer();
-			centralityTransformer.setMinSize(20);
-			centralityTransformer.setMaxSize(200);
-			appearanceController.transform(ranking);
-		} else {
+		if (col.equals("cen")) {			
+			
 			// Get Centrality
 			GraphDistance distance = new GraphDistance();
 			distance.setDirected(true);
@@ -164,14 +155,87 @@ public class GraphLoader implements MessageListener, MessageEmitter {
 			centralityTransformer.setMinSize(20);
 			centralityTransformer.setMaxSize(200);
 			appearanceController.transform(centralityRanking);
+			
+		} else {
+		
+			Column selectedCol = graphModel.getNodeTable().getColumn(col);
+
+			Function ranking = appearanceModel.getNodeFunction(graph, selectedCol, RankingNodeSizeTransformer.class);
+			RankingNodeSizeTransformer centralityTransformer = (RankingNodeSizeTransformer) ranking.getTransformer();
+			centralityTransformer.setMinSize(20);
+			centralityTransformer.setMaxSize(200);
+			appearanceController.transform(ranking);
+			
 		}
 
 	}
+	
+	
+	public void setRankingOptionsColour(String option) {
+
+		String col = "";
+		if (option.equals("LOC")) {
+			col = "loc";
+		} else if (option.equals("IN DEGREE")) {
+			col = "in";
+		} else if (option.equals("OUT DEGREE")) {
+			col = "out";
+		} else if (option.equals("COMPLEXITY")) {
+			col = "complex";
+		} else if(option.equals("CENTRALITY")) {
+			col = "cen";
+		}
+
+		AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+		AppearanceModel appearanceModel = appearanceController.getModel();
+
+		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
+		DirectedGraph graph = graphModel.getDirectedGraph();
+
+		if (col.equals("cen")) {			
+			
+			// Get Centrality
+			GraphDistance distance = new GraphDistance();
+			distance.setDirected(true);
+			distance.execute(graphModel);
+
+			// Rank size by centrality
+			Column centralityColumn = graphModel.getNodeTable().getColumn(GraphDistance.BETWEENNESS);
+			Function centralityRanking = appearanceModel.getNodeFunction(graph, centralityColumn,
+					RankingElementColorTransformer.class);
+			RankingElementColorTransformer centralityTransformer = (RankingElementColorTransformer) centralityRanking
+					.getTransformer();
+			centralityTransformer.setColors(new Color[]{new Color(0x66CD00), new Color(0xB30000)});
+			centralityTransformer.setColorPositions(new float[]{0f, 1f});
+			appearanceController.transform(centralityRanking);
+			
+		} else {
+		
+			Column selectedCol = graphModel.getNodeTable().getColumn(col);
+
+			Function ranking = appearanceModel.getNodeFunction(graph, selectedCol, RankingElementColorTransformer.class);
+			RankingElementColorTransformer centralityTransformer = (RankingElementColorTransformer) ranking.getTransformer();
+			centralityTransformer.setColors(new Color[]{new Color(0x66CD00), new Color(0xB30000)});
+			centralityTransformer.setColorPositions(new float[]{0f, 1f});
+			appearanceController.transform(ranking);
+			
+		}
+
+	}
+	
 
 	public void switchWorkSpace(String key) {
 		Workspace ws = renderedGraphs.get(key);
 		projectController.openWorkspace(ws);
 
+	}
+	
+	public void removeWorkspace(String key) {
+		Workspace ws = renderedGraphs.get(key);
+		if(ws != null) {
+			projectController.openWorkspace(ws);
+			projectController.closeCurrentWorkspace();
+		}
 	}
 
 	public void reload() {
