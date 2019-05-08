@@ -11,6 +11,12 @@ import main.java.trees.cobol.SentenceNode;
 import main.java.trees.cobol.StatementNode;
 import main.java.trees.visitors.TreeVisitor;
 
+/**
+ * Call graph visitor
+ * Descends through paragraphs and constructurs references between procedures.
+ * @author Ben
+ *
+ */
 public class CallGraphVisitor implements TreeVisitor {
 
 	private Graph g;
@@ -37,6 +43,11 @@ public class CallGraphVisitor implements TreeVisitor {
 
 	}
 
+	/**
+	 * Visit statement nodes
+	 * Handle specific cases
+	 * @param statement
+	 */
 	public void visit(StatementNode statement) {
 		lineEnd = statement.getLineNumber();
 
@@ -64,6 +75,10 @@ public class CallGraphVisitor implements TreeVisitor {
 		
 	}
 
+	/**
+	 * Visit paragraph - represents a procedure in COBOL
+	 * @param paragraph
+	 */
 	public void visit(ParagraphNode paragraph) {
 
 		ControlGraphVisitor controlVisitor = new ControlGraphVisitor();
@@ -105,6 +120,10 @@ public class CallGraphVisitor implements TreeVisitor {
 
 	}
 
+	/**
+	 * Visito children of Node
+	 * @param paragraph
+	 */
 	private void visitChildren(ParagraphNode paragraph) {
 		for (ParseTreeNode n : paragraph.getChildren()) {
 			if (n instanceof SentenceNode)
@@ -112,6 +131,10 @@ public class CallGraphVisitor implements TreeVisitor {
 		}
 	}
 
+	/**
+	 * Visit Sentence Node
+	 * @param sentence
+	 */
 	public void visit(SentenceNode sentence) {
 		for (ParseTreeNode n : sentence.getChildren()) {
 			if (n instanceof StatementNode)
@@ -119,10 +142,19 @@ public class CallGraphVisitor implements TreeVisitor {
 		}
 	}
 
+	/**
+	 * Return graph constructed by this visitor
+	 * 
+	 */
 	public Graph getGraph() {
 		return g;
 	}
 
+	/**
+	 * Process reference statements
+	 * I.e PERFORM proc-1 THRU proc-2
+	 * @param statement
+	 */
 	private void processReferenceStatement(StatementNode statement) {
 
 		int indexList[] = new int[COBOLParser.REFERENCES.size()];
@@ -144,6 +176,11 @@ public class CallGraphVisitor implements TreeVisitor {
 
 	}
 
+	/**
+	 * Add referenced nodes to graph ready to be connected
+	 * @param begin
+	 * @param end
+	 */
 	private void addReferencedVertex(int begin, int end) {
 
 		for (int i = begin; i <= end; i++) {
@@ -161,6 +198,10 @@ public class CallGraphVisitor implements TreeVisitor {
 
 	}
 
+	/**
+	 * process conditional statements - expected to have nested compound statements
+	 * @param statement
+	 */
 	private void processConditionalStatement(StatementNode statement) {
 
 		for (ParseTreeNode n : statement.getChildren()) {
@@ -173,7 +214,13 @@ public class CallGraphVisitor implements TreeVisitor {
 		}
 
 	}
+	
 
+	/**
+	 * Get index of reference
+	 * @param ref
+	 * @return
+	 */
 	private int getReferenceIndex(String ref) {
 		
 		if(COBOLParser.SECTION_REFERENCES.containsKey(ref)){

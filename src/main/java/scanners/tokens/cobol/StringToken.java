@@ -5,6 +5,12 @@ import java.io.IOException;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
 
+/**
+ * String Token
+ * Matches either \" or \' quoted Strings
+ * @author Ben
+ *
+ */
 public class StringToken extends Token {
 
 	public StringToken(SourceFile source) {

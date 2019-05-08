@@ -47,6 +47,11 @@ import main.java.ui.models.GraphDataModel;
 import main.java.ui.models.GraphLoader;
 import main.java.ui.models.Project;
 
+/**
+ * Main Controller for UI
+ * @author Ben
+ *
+ */
 public class MainController implements MessageListener {
 
 	final FileChooser fileChooser = new FileChooser();
@@ -202,6 +207,9 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Open Existing project
+	 */
 	@FXML
 	private void openProject() {
 		File projectDir = dirChooser.showDialog(null);
@@ -292,6 +300,9 @@ public class MainController implements MessageListener {
 		updateGraphPreviewOptionsTab();
 	}
 
+	/**
+	 * Load existing source files
+	 */
 	private void loadSourceFiles() {
 		Map<String, File> sourceFiles = currentProject.getSourceFiles();
 
@@ -301,6 +312,9 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Load existing graph files
+	 */
 	private void loadGraphFiles() {
 		Map<String, File> outputFiles = currentProject.getOutputFiles();
 
@@ -475,6 +489,10 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Add source file to navigation tree
+	 * @param fileName
+	 */
 	private void addSourceNavigation(String fileName) {
 
 		sourceRootNode.getChildren().add(new TreeItem<String>(fileName));
@@ -587,6 +605,11 @@ public class MainController implements MessageListener {
 
 	}
 
+	/**
+	 * Get currently active tab
+	 * @param id of Tab 
+	 * @return
+	 */
 	private Tab getActiveTab(String id) {
 		Tab activeTab = null;
 		for (Tab t : previewTabs.getTabs()) {

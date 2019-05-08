@@ -5,6 +5,12 @@ import java.io.IOException;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
 
+/**
+ * Symbol Token
+ * Matches operators + - / * ( ) and punctuation , .
+ * @author Ben
+ *
+ */
 public class SymbolToken extends Token {
 
 	public SymbolToken(SourceFile source) {

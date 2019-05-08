@@ -14,6 +14,11 @@ import main.java.trees.cobol.SentenceNode;
 import main.java.trees.cobol.StatementNode;
 import main.java.trees.visitors.TreeVisitor;
 
+/**
+ * 
+ * @author Ben
+ *
+ */
 public class ControlGraphVisitor implements TreeVisitor {
 
 	Graph graph;

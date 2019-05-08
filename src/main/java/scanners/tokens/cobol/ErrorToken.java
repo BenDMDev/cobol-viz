@@ -5,6 +5,11 @@ import java.io.IOException;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
 
+/**
+ * Error Token
+ * @author Ben
+ *
+ */
 public class ErrorToken extends Token {
 
 	public ErrorToken(SourceFile source) {

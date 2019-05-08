@@ -7,6 +7,14 @@ import java.util.ArrayList;
 
 import main.java.graphs.cobol.CallGraphVertex;
 
+/**
+ * Converts Graph to GEXF format
+ * Handles both Call and Control graphs
+ * Takes graph input, produces an output string which
+ * can be fed in to be saved. 
+ * @author Ben
+ *
+ */
 public class GraphWriter {
 
 	public static final int CONTROL_GRAPH = 0;
@@ -22,6 +30,12 @@ public class GraphWriter {
 
 	}
 
+	/**
+	 * Generate output String
+	 * @param type graph Type i.e control or call
+	 * @param graph Graph to work on
+	 * @return output String
+	 */
 	public String generate(int type, Graph graph) {
 		if (type == CALL_GRAPH)
 			generateCallGraph(graph);
@@ -32,6 +46,10 @@ public class GraphWriter {
 
 	}
 
+	/**
+	 * Generate Control graph
+	 * @param controlGraph Graph to work on
+	 */
 	public void generateControlGraph(Graph controlGraph) {
 		outputString = "<graph defaultedgetype=\"directed\" type=\"static\">\n" + "<nodes>\n";
 
@@ -44,7 +62,10 @@ public class GraphWriter {
 			label = label.replace("<", " less than "); // < doesn't work well with XML format!
 			label = label.replace("&"," and "); // Same goes for ampersands
 
-			outputString += "<node id=\"" + i + "\" label=\"" + label + "\"/> \n";
+			outputString += "<node id=\"" + i + "\" label=\"" + label + "\"> \n";
+			outputString += "<viz:size value=\"20.0\" />\n";
+			outputString += "<viz:shape value=\"disc\" />\n";
+			outputString += "</node>";
 		}
 
 		outputString += "</nodes>\n" + "<edges>\n";
@@ -63,6 +84,11 @@ public class GraphWriter {
 
 	}
 
+	
+	/**
+	 * Generate call graph
+	 * @param graph Graph to work on
+	 */
 	public void generateCallGraph(Graph graph) {
 
 		outputString = "<graph defaultedgetype=\"directed\" type=\"static\">\n" + "<attributes class=\"node\">\n"
@@ -99,6 +125,11 @@ public class GraphWriter {
 		outputString += "</edges>\n" + "</graph>\n" + "</gexf>";
 	}
 
+	/**
+	 * Write output string to file
+	 * @param fileName file name of output file
+	 * @throws IOException
+	 */
 	public void write(String fileName) throws IOException {
 		File file = new File(fileName);
 		write(file);
@@ -117,6 +148,12 @@ public class GraphWriter {
 
 	}
 
+	/**
+	 * Write output string to file
+	 * @param file File to be saved
+	 * @param output String to be used as file content
+	 * @throws IOException
+	 */
 	public void write(File file, String output) throws IOException {
 		file.createNewFile();
 

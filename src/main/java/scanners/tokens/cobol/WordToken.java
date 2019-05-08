@@ -8,6 +8,12 @@ import org.apache.bcel.Constants;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
 
+/**
+ * Word Token
+ * Matches either reserved words or user input identifiers
+ * @author Ben
+ *
+ */
 public class WordToken extends Token {
 
 	static final HashSet<String> CONSTANTS = new HashSet<String>();

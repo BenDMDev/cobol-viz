@@ -34,6 +34,12 @@ import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
 
+/**
+ * Represents current project
+ * Holds references to data model, source files out output files
+ * @author Ben
+ *
+ */
 public class Project {
 
 	private Map<String, GraphDataModel> dataModels;
@@ -72,52 +78,97 @@ public class Project {
 		loadProjectFile(projectFile);
 	}
 
+	/**
+	 * Add graph model
+	 * @param key
+	 * @param model
+	 */
 	public void addDataModel(String key, GraphDataModel model) {
 		dataModels.put(key, model);
 	}
 
+	/**
+	 * Get specific graph model
+	 * @param key
+	 * @return
+	 */
 	public GraphDataModel getModel(String key) {
 		return dataModels.get(key);
 	}
 
+	/**
+	 * Get specific output file
+	 * @param key
+	 * @return
+	 */
 	public File getOutputFile(String key) {
 		return outputFiles.get(key);
 	}
 
+	/**
+	 * Get specific source file
+	 * @param key
+	 * @return
+	 */
 	public File getSourceFile(String key) {
 		return sourceFiles.get(key);
 	}
 
-
-	
+	/**
+	 * Add source file and save to current directory
+	 * @param file
+	 */
 	public void addSourceFile(File file) {
 		sourceFiles.put(file.getName(), file);
 		saveSourceFile(file);
 		addSourceToProjectFile(file.getName());
 	}
 
+	/**
+	 * Add output file
+	 * @param file
+	 */
 	public void addOutputFile(File file) {
 		outputFiles.put(file.getName(), file);
 	}
 	
+	/**
+	 * Return all source files
+	 * @return Map of source files
+	 */
 	public Map<String, File> getSourceFiles() {
 		return sourceFiles;
 	}
 	
+	/**
+	 * Return all outputfiles
+	 * @return map of output files
+	 */
 	public Map<String, File> getOutputFiles() {
 		return outputFiles;
 	}
  	
 
-
+	/**
+	 * Get Current projects directory
+	 * @return
+	 */
 	public String getDirectoryPath() {
 		return dirPath;
 	}
 
+	/**
+	 * Get current project name
+	 * @return
+	 */
 	public String getProjectName() {
 		return projectName;
 	}
 
+	/**
+	 * Parse file
+	 * @param file
+	 */
 	public void parse(File file) {
 		try {
 			initSource(file);
@@ -135,6 +186,10 @@ public class Project {
 		}
 	}
 	
+	/**
+	 * Copy source from source directory to project directory
+	 * @param file
+	 */
 	private void saveSourceFile(File file) {
 		
 		try {
@@ -149,6 +204,11 @@ public class Project {
 		
 	}
 
+	/**
+	 * Generate graph model
+	 * @param tree
+	 * @param sourceFile
+	 */
 	private void generateModel(ParseTree tree, File sourceFile) {
 		
 		GraphGenerator graphGen = new GraphGenerator(tree);
@@ -162,6 +222,12 @@ public class Project {
 
 	}
 
+	
+	/**
+	 * Generate call graph
+	 * @param graph
+	 * @param fileName
+	 */
 	private void generateCallGraphOutput(Graph graph, String fileName) {
 		
 		GraphWriter writer = new GraphWriter();
@@ -172,6 +238,10 @@ public class Project {
 
 	}
 	
+	/**
+	 * Generate control graphs
+	 * @param graph
+	 */
 	private void generateControlGraphOutput(Graph graph) {
 		GraphWriter writer = new GraphWriter();
 		String output = "";
@@ -184,6 +254,13 @@ public class Project {
 		
 	}
 
+	/**
+	 * Helper method to save string output to file
+	 * @param writer
+	 * @param dirPath
+	 * @param fileName
+	 * @param output
+	 */
 	private void saveToFile(GraphWriter writer, String dirPath, String fileName, String output) {
 		try {
 			File file = new File(dirPath + "\\" + fileName);
@@ -198,16 +275,26 @@ public class Project {
 		}
 	}
 
+	/**
+	 * Initialise Parser
+	 */
 	private void initParser() {
 		if (scanner != null)
 			parser = new COBOLParser(scanner);
 	}
 
+	/**
+	 * Initialise Scanner
+	 */
 	private void initScanner() {
 		if (source != null)
 			scanner = new Scanner(source);
 	}
 
+	/**
+	 * Initialise source file
+	 * @param currentFile
+	 */
 	private void initSource(File currentFile) {
 
 		try {
@@ -222,11 +309,17 @@ public class Project {
 
 	}
 
+	/**
+	 * 
+	 * @param listener
+	 */
 	public void addListener(MessageListener listener) {
 		this.listener = listener;
 	}
 	
-	
+	/**
+	 * Generate new project XML file
+	 */
 	private void generateProjectFile() {
 		
 		
@@ -272,6 +365,10 @@ public class Project {
 	}
 	
 
+	/** 
+	 * Append source to project file
+	 * @param sourceName
+	 */
 	private void addSourceToProjectFile(String sourceName) {
 		
 		Node sourceRoot = projectFile.getElementsByTagName("sourcefiles").item(0);
@@ -304,6 +401,10 @@ public class Project {
 		
 	}
 	
+	/**
+	 * Load source file 
+	 * @param fileName
+	 */
 	private void loadSourceFile(String fileName) {
 		File file = new File(sourceFileDirPath + "\\" + fileName);
 		sourceFiles.put(file.getName(), file);
@@ -311,6 +412,10 @@ public class Project {
 		
 	}
 	
+	/**
+	 * Load project XMl file
+	 * @param file
+	 */
 	private void loadProjectFile(File file) {
 		
 		try {
@@ -344,6 +449,10 @@ public class Project {
 		
 	}
 
+	/**
+	 * Generate sub directories (if they don't exit
+	 * @param dirPath
+	 */
 	private void generateSubDirectories(String dirPath) {
 		
 		new File(dirPath + "\\call_graphs").mkdir();

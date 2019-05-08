@@ -4,7 +4,11 @@ import java.io.IOException;
 
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
-
+/**
+ * EOF Token Class
+ * @author Ben
+ *
+ */
 public class EOFToken extends Token {
 
 	public EOFToken(SourceFile source) {

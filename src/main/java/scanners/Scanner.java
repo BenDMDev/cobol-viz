@@ -11,6 +11,12 @@ import main.java.scanners.tokens.cobol.StringToken;
 import main.java.scanners.tokens.cobol.SymbolToken;
 import main.java.scanners.tokens.cobol.WordToken;
 
+/**
+ * COBOL Scanner class
+ * Decides which token class to hand over extracting token to
+ * @author Ben
+ *
+ */
 public class Scanner {
 
 	private SourceFile source;
@@ -53,6 +59,11 @@ public class Scanner {
 		
 	}
 	
+	/**
+	 * Get next token
+	 * @return next Token
+	 * @throws IOException
+	 */
 	private Token nextToken() throws IOException {
 		
 		
@@ -113,6 +124,10 @@ public class Scanner {
 
 	}
 	
+	/**
+	 * Skips comment lines
+	 * @throws IOException
+	 */
 	private void checkAndSkipCommentLine() throws IOException {
 		
 		char input = source.getCurrentChar();

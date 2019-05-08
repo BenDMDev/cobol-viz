@@ -6,6 +6,12 @@ import java.io.IOException;
 import main.java.messages.MessageListener;
 import main.java.messages.MessageEmitter;
 
+/**
+ * SourceFile to wrap COBOL input file
+ * Handles reading line and moving through input characters.
+ * @author Ben
+ *
+ */
 public class SourceFile implements MessageEmitter {
 
 	private BufferedReader input;
@@ -19,7 +25,7 @@ public class SourceFile implements MessageEmitter {
 	static char EOF = 0; 
 
 	/**
-	 * 
+	 * Input to be wrapped
 	 * @param in
 	 */
 	public SourceFile(BufferedReader in) {
@@ -30,7 +36,7 @@ public class SourceFile implements MessageEmitter {
 	}
     
 	/**
-	 * 
+	 * Returns current char in buffer
 	 * @return
 	 * @throws IOException 
 	 */
@@ -65,15 +71,18 @@ public class SourceFile implements MessageEmitter {
 		
 	}
 	
-	
+	/**
+	 * Returns number of lines fed in so far
+	 * @return in Number of Lines
+	 */
 	public int getNumberOfLines() {
 		return numLines;
 	}
 	
 	
 	/**
-	 * 
-	 * @return
+	 *  Gets next char in buffer
+	 * @return next Char
 	 * @throws IOException
 	 */
 	public char nextChar() throws IOException {		
@@ -82,6 +91,10 @@ public class SourceFile implements MessageEmitter {
 		
 	}
 	
+	/**
+	 * Unused
+	 * @throws IOException
+	 */
 	public void skipWhiteSpace() throws IOException {
 		
 	}
@@ -100,6 +113,11 @@ public class SourceFile implements MessageEmitter {
 		charPos = markerPos;
 	}
 	
+	/**
+	 * Peak next char without consuming
+	 * @return peek char
+	 * @throws IOException
+	 */
 	public char peek() throws IOException {	
 		
 		if(inputBuffer == null) 
@@ -110,6 +128,9 @@ public class SourceFile implements MessageEmitter {
 			return EOL;
 	}
 	
+	/**
+	 * Close input
+	 */
 	public void close() {
 		try {
 			input.close();
@@ -119,10 +140,18 @@ public class SourceFile implements MessageEmitter {
 		}
 	}
 	
+	/**
+	 * Get current char position
+	 * @return
+	 */
 	public int getCharPos() {
 		return charPos;
 	}
 	
+	/**
+	 * Toggle comment line to ignore
+	 * @param isComment
+	 */
 	public void setIsCommentLine(boolean isComment) {
 		isCommentLine = isComment;
 	}

@@ -5,6 +5,12 @@ import java.io.IOException;
 import main.java.scanners.SourceFile;
 import main.java.scanners.tokens.Token;
 
+/**
+ * Number token
+ * Match integer or real
+ * @author Ben
+ *
+ */
 public class NumberToken extends Token {
 
 	public NumberToken(SourceFile source) {
