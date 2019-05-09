@@ -1,6 +1,8 @@
-package main.java.parsers.cobol;
+package main.java.parsers.cobol.statements;
 
 import java.io.IOException;
+
+import main.java.parsers.cobol.StatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.TokenType;
@@ -9,13 +11,23 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Conditional Parser, handles parsing conditional statements I.E IF
+ * @author Ben
+ *
+ */
 public class ConditionalParser extends StatementParser {
 
+	/**
+	 * 
+	 * @param scanner
+	 */
 	public ConditionalParser(Scanner scanner) {
 		super(scanner);
 	}
 
 	public ParseTreeNode parse(Token inputToken) throws IOException {
+		
 		parseTree = new StatementNode("CONDITIONAL STATEMENT");
 		parseTree.setTreeType(TreeNodeType.CONDITIONAL_STATEMENT);
 

@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Release Statement
+ * @author Ben
+ *
+ */
 public class ReleaseStatementParser extends StatementParser {
 
 	public ReleaseStatementParser(Scanner scanner) {

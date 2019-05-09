@@ -20,7 +20,7 @@ public class DisplayStatementTest {
 
 	@Test
 	public void testParse() {
-		String input = "display 'database open' end-display";
+		String input = "display 'database open' \"my value\" end-display";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -35,8 +35,8 @@ public class DisplayStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(3, children.size());
-			assertEquals("end-display", children.get(2).getAttribute());
+			assertEquals(4, children.size());
+			assertEquals("end-display", children.get(3).getAttribute());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -37,7 +37,7 @@ public class WriteStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children = (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(9, children.size());
+			assertEquals(8, children.size());
 			assertEquals("WRITE", children.get(0).getAttribute());
 			assertEquals(TreeNodeType.KEYWORD, children.get(0).getTreeNodeType());
 			assertEquals("my-id", children.get(3).getAttribute());

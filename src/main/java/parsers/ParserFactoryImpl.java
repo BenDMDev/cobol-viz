@@ -1,17 +1,17 @@
 package main.java.parsers;
 
-import main.java.parsers.cobol.ConditionalParser;
-import main.java.parsers.cobol.ExpressionParser;
 import main.java.parsers.cobol.statements.AcceptStatementParser;
 import main.java.parsers.cobol.statements.AlterStatementParser;
 import main.java.parsers.cobol.statements.CallStatementParser;
 import main.java.parsers.cobol.statements.CancelStatementParser;
 import main.java.parsers.cobol.statements.CloseStatementParser;
+import main.java.parsers.cobol.statements.ConditionalParser;
 import main.java.parsers.cobol.statements.ContinueStatementParser;
 import main.java.parsers.cobol.statements.CopyStatementParser;
 import main.java.parsers.cobol.statements.DeleteStatementParser;
 import main.java.parsers.cobol.statements.DisplayStatementParser;
 import main.java.parsers.cobol.statements.ExitStatementParser;
+import main.java.parsers.cobol.statements.ExpressionParser;
 import main.java.parsers.cobol.statements.GoToStatementParser;
 import main.java.parsers.cobol.statements.InitializeStatementParser;
 import main.java.parsers.cobol.statements.InspectStatementParser;

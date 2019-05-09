@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Move statement
+ * @author Ben
+ *
+ */
 public class MoveStatementParser extends StatementParser {
 
 	public MoveStatementParser(Scanner scanner) {
@@ -21,21 +26,24 @@ public class MoveStatementParser extends StatementParser {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
+		// Match and consume MOve
 		match(inputToken, COBOLTokenType.MOVE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume CORR | CORRESPONDING
 		matchAlternation(inputToken, parseTree, COBOLTokenType.CORRESPONDING, COBOLTokenType.CORR);
 		inputToken = scanner.getCurrentToken();
 
 		
+		// Match and consume Type
 		matchRepeatingAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL, COBOLTokenType.FIGURATIVE_CONSTANT);
 		inputToken = scanner.getCurrentToken();
 	
-
+		// Match and consume TO
 		match(inputToken, COBOLTokenType.TO, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		
+	    // Match and consume type
 		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 
 

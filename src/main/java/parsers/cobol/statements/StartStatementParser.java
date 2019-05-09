@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Start Statement
+ * @author Ben
+ *
+ */
 public class StartStatementParser extends StatementParser {
 
 	public StartStatementParser(Scanner scanner) {
@@ -20,28 +25,35 @@ public class StartStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
+		// Match and consume Start
 		match(inputToken, COBOLTokenType.START, parseTree);
 		inputToken = scanner.getCurrentToken();
+		
+		// Match and consume Identifier
 		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
+		// check for Key clause
 		if(inputToken.getType() == COBOLTokenType.KEY) {
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);		
 			
 			matchCondition();
 			inputToken = scanner.getCurrentToken();
 			
+			// Check for invalid clause
 			if(inputToken.getType() == COBOLTokenType.INVALID) {
 				parseKeyError(inputToken);
 				inputToken = scanner.getCurrentToken();
 			}
 			
+			//Check for Not invalid clause
 			if(inputToken.getType() == COBOLTokenType.NOT) {
 				parseKeyError(inputToken);
 				inputToken = scanner.getCurrentToken();
 			}
 		}
 		
+		// Match and consume closing tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_START, parseTree);
 		
@@ -68,14 +80,18 @@ public class StartStatementParser extends StatementParser {
 	}
 	
 	private void parseKeyError(Token inputToken) throws IOException {
+		
+		// Treat error as conditional statement
 		StatementNode node = new StatementNode(TreeNodeType.CONDITIONAL_STATEMENT, "CONDITIONAL STATEMENT");
 
 		ParseTreeNode conditionNode = new ParseTreeNode(TreeNodeType.CONDITION, "CONDITION");
 
 		node.addChild(conditionNode);
+		// Match condition
 		matchSequence(inputToken, conditionNode, COBOLTokenType.NOT, COBOLTokenType.INVALID, COBOLTokenType.KEY);
 		inputToken = scanner.getCurrentToken();
 
+		// Handle error statements
 		ParseTreeNode onErrorBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		node.addChild(onErrorBody);
 		// CONSUME STATEMENT

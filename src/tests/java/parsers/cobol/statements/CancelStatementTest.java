@@ -17,6 +17,11 @@ import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;
 import main.java.trees.ParseTreeNode;
 
+/**
+ * 
+ * @author Ben
+ *
+ */
 public class CancelStatementTest {
 
 	@Test

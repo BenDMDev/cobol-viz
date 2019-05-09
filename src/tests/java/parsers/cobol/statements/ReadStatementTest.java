@@ -37,13 +37,12 @@ public class ReadStatementTest {
 			tree.setRoot(pt);
 			ArrayList<ParseTreeNode> children =  (ArrayList<ParseTreeNode>) pt.getChildren();
 			tree.printParseTree();
-			assertEquals(8, children.size());
+			assertEquals(6, children.size());
 			assertEquals("READ", children.get(0).getAttribute());
 			assertEquals(TreeNodeType.KEYWORD, children.get(0).getTreeNodeType());
-			assertEquals("my-file", children.get(1).getAttribute());
+			assertEquals("PRODUCT-FILE", children.get(1).getAttribute());
 			assertEquals(TreeNodeType.IDENTIFIER, children.get(1).getTreeNodeType());
-			assertEquals("my-var", children.get(5).getAttribute());
-			assertEquals(TreeNodeType.CONDITIONAL_STATEMENT, children.get(6).getTreeNodeType());
+			assertEquals(TreeNodeType.CONDITIONAL_STATEMENT, children.get(5).getTreeNodeType());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

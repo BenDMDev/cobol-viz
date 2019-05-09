@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parse for Close statement
+ * @author Ben
+ *
+ */
 public class CloseStatementParser extends StatementParser {
 
 	public CloseStatementParser(Scanner scanner) {
@@ -20,9 +25,11 @@ public class CloseStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
-		
+		// Match and consume CLOSE
 		match(inputToken, COBOLTokenType.CLOSE, parseTree);
 		inputToken = scanner.getCurrentToken();
+		
+		// Match repeating Identifiers
 		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 		
 		return parseTree;

@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import main.java.parsers.cobol.ExpressionParser;
 import main.java.parsers.cobol.StatementParser;
 import main.java.parsers.cobol.statements.AcceptStatementParser;
+import main.java.parsers.cobol.statements.ExpressionParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.SourceFile;
 import main.java.trees.ParseTree;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import main.java.parsers.cobol.StatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
+import main.java.scanners.tokens.TokenType;
 import main.java.scanners.tokens.cobol.COBOLTokenType;
 import main.java.scanners.tokens.cobol.NumberToken;
 import main.java.scanners.tokens.cobol.StringToken;
@@ -26,34 +27,34 @@ public class DisplayStatementParser extends StatementParser {
 		match(inputToken, COBOLTokenType.DISPLAY, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		while (inputToken.getType() == COBOLTokenType.IDENTIFIER || inputToken.getType() == COBOLTokenType.FIGURATIVE_CONSTANT ||inputToken instanceof NumberToken
-				|| inputToken instanceof StringToken) {
+		// List of Token types that are valid, used to clean up while loop condition
+		TokenType[] tokenList = { COBOLTokenType.IDENTIFIER, 
+				COBOLTokenType.FIGURATIVE_CONSTANT,				
+				COBOLTokenType.STRING_LITERAL,
+				COBOLTokenType.INTEGER,
+				COBOLTokenType.REAL };
+		
+		while (containsToken(inputToken, tokenList)) {
+			// Match and consume Alternating input
+			matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER,
+					COBOLTokenType.REAL, COBOLTokenType.STRING_LITERAL, COBOLTokenType.FIGURATIVE_CONSTANT);
 
-			switch ((COBOLTokenType) inputToken.getType()) {
-			case IDENTIFIER:
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
-				break;
-			case INTEGER:
-			case REAL:
-			case STRING_LITERAL:
-			case FIGURATIVE_CONSTANT:
-				matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.REAL,
-						COBOLTokenType.STRING_LITERAL, COBOLTokenType.FIGURATIVE_CONSTANT);
-				break;
-			default:
-				break;
-			}
 			inputToken = scanner.getCurrentToken();
 
 		}
+		
+		// Match and consume UPON
 		matchSequence(inputToken, parseTree, COBOLTokenType.UPON, COBOLTokenType.CONSOLE);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume Identifier
 		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume Sequence WITH NO ADVANCING
 		matchSequence(inputToken, parseTree, COBOLTokenType.WITH, COBOLTokenType.NO, COBOLTokenType.ADVANCING);
-		
+
+		// Match and consume closing Tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_DISPLAY, parseTree);
 

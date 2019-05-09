@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Set Statement
+ * @author Ben
+ *
+ */
 public class SetStatementParser extends StatementParser {
 
 	public SetStatementParser(Scanner scanner) {
@@ -21,12 +26,15 @@ public class SetStatementParser extends StatementParser {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 		
+		// Match and consume SET
 		match(inputToken, COBOLTokenType.SET, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
+		// Match and consume (Identifier)+
 		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 		inputToken = scanner.getCurrentToken();
 		
+		// Handle TO | (UP BY) | (DOWN BY)
 		if(inputToken.getType() == COBOLTokenType.TO){
 			match(inputToken, COBOLTokenType.TO, parseTree);
 			inputToken = scanner.getCurrentToken();
@@ -39,6 +47,7 @@ public class SetStatementParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 		}
 		
+		// Match (IDENTIFIER | INTEGER)*
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER);
 		
 		return parseTree;

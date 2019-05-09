@@ -14,55 +14,48 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Copy Statement
+ * 
+ * @author Ben
+ *
+ */
 public class CopyStatementParser extends StatementParser {
 
 	public CopyStatementParser(Scanner scanner) {
 		super(scanner);
-		
+
 	}
-	
+
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
-		
+
+		// Match and consume COPY
 		match(inputToken, COBOLTokenType.COPY, parseTree);
 		inputToken = scanner.getCurrentToken();
-		
+
+		// Match and consume Identifier
 		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
-		
+
+		// Match Alternation OF | IN
 		matchAlternation(inputToken, parseTree, COBOLTokenType.OF, COBOLTokenType.IN);
 		inputToken = scanner.getCurrentToken();
-		
+
+		// Match and consume Identifier
 		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
-		
+
+		// Match and consume Replacing
 		match(inputToken, COBOLTokenType.REPLACING, parseTree);
 		inputToken = scanner.getCurrentToken();
-		
-		TokenType type = inputToken.getType();
-		while(type == COBOLTokenType.IDENTIFIER || inputToken instanceof NumberToken || inputToken instanceof StringToken) {
-			switch((COBOLTokenType) inputToken.getType()) {
-			case IDENTIFIER:
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
-				break;
-			case STRING_LITERAL: case INTEGER: case REAL:
-				matchAlternation(inputToken, parseTree, COBOLTokenType.STRING_LITERAL, COBOLTokenType.INTEGER, COBOLTokenType.REAL);
-				break;
-			default:
-				break;
-			}
-			
-			inputToken = scanner.getCurrentToken();
-			match(inputToken, COBOLTokenType.BY, parseTree);
-			inputToken = scanner.getCurrentToken();
-			type = inputToken.getType();
-		}
-		
-		
+
+		// Match repeated Sequence of user put followed by "BY"
+		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.STRING_LITERAL,
+				COBOLTokenType.INTEGER, COBOLTokenType.REAL, COBOLTokenType.BY);
+
+
 		return parseTree;
 	}
 
-	
-	
-	
 }

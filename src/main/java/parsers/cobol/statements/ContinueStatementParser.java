@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Continue Statement
+ * @author Ben
+ *
+ */
 public class ContinueStatementParser extends StatementParser {
 
 	public ContinueStatementParser(Scanner scanner) {
@@ -20,6 +25,7 @@ public class ContinueStatementParser extends StatementParser {
 	public ParseTreeNode parse(Token inputToken) throws IOException {
 		
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
+		
 		match(inputToken, COBOLTokenType.CONTINUE, parseTree);
 		
 		return parseTree;

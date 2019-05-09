@@ -10,39 +10,31 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parse Cancel statement
+ * 
+ * @author Ben
+ *
+ */
 public class CancelStatementParser extends StatementParser {
 
 	public CancelStatementParser(Scanner scanner) {
 		super(scanner);
-		
+
 	}
-	
-	
+
 	public ParseTreeNode parse(Token inputToken) throws IOException {
-		
+
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
-		
+
+		// Match and consume Cancel
 		match(inputToken, COBOLTokenType.CANCEL, parseTree);
 		inputToken = scanner.getCurrentToken();
-		
-		boolean validToken = true; 
-		while(validToken) {
-			switch((COBOLTokenType) inputToken.getType()) {
-			case IDENTIFIER:
-				match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
-				inputToken = scanner.getCurrentToken();
-				break;
-			case STRING_LITERAL: case INTEGER: case REAL:
-				matchAlternation(inputToken, parseTree, COBOLTokenType.INTEGER, COBOLTokenType.STRING_LITERAL, COBOLTokenType.REAL);
-				inputToken = scanner.getCurrentToken();
-				break;
-			default:
-				validToken = false;
-				break;
-			}
-				
-		}
-		
+
+		// Match repeating alternation between expected Tokens
+		matchRepeatingAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.INTEGER,
+				COBOLTokenType.STRING_LITERAL, COBOLTokenType.REAL);
+
 		return parseTree;
 	}
 

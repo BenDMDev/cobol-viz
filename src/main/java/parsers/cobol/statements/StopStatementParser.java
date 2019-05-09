@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Stop statement
+ * @author Ben
+ *
+ */
 public class StopStatementParser extends StatementParser {
 
 	public StopStatementParser(Scanner scanner) {

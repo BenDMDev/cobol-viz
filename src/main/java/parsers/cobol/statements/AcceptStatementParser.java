@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for an Accept Statement
+ * @author Ben
+ *
+ */
 public class AcceptStatementParser extends StatementParser {
 
 	public AcceptStatementParser(Scanner scanner) {
@@ -44,6 +49,7 @@ public class AcceptStatementParser extends StatementParser {
 						COBOLTokenType.TIME);
 			}
 		}
+		// Match and consume closing tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_ACCEPT, parseTree);
 		return parseTree;

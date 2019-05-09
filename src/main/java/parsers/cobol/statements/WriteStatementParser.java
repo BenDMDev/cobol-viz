@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Write Statement
+ * @author Ben
+ *
+ */
 public class WriteStatementParser extends StatementParser {
 
 	public WriteStatementParser(Scanner scanner) {

@@ -1,7 +1,8 @@
-package main.java.parsers.cobol;
+package main.java.parsers.cobol.statements;
 
 import java.io.IOException;
 
+import main.java.parsers.cobol.StatementParser;
 import main.java.scanners.Scanner;
 import main.java.scanners.tokens.Token;
 import main.java.scanners.tokens.TokenType;
@@ -10,6 +11,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Expression parser, handles ADD SUBCRACT, DIVIDE, MULTIPLY and COMPUTE Statements
+ * @author Ben
+ *
+ */
 public class ExpressionParser extends StatementParser {
 
 	public ExpressionParser(Scanner scanner) {
@@ -41,6 +47,11 @@ public class ExpressionParser extends StatementParser {
 		return parseTree;
 	}
 
+	/**
+	 * Parse an ADD statement
+	 * @param inputToken first token in Scanner buffer
+	 * @throws IOException
+	 */
 	private void parseAddStatement(Token inputToken) throws IOException {
 
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
@@ -53,6 +64,7 @@ public class ExpressionParser extends StatementParser {
 		matchAlternation(inputToken, parseTree, COBOLTokenType.CORR, COBOLTokenType.CORRESPONDING);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume LHS of expression
 		TokenType type = inputToken.getType();
 		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
 
@@ -66,6 +78,7 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.TO, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume RHS of expression 
 		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
 		inputToken = scanner.getCurrentToken();
@@ -74,6 +87,7 @@ public class ExpressionParser extends StatementParser {
 			parseGivingClause(inputToken);
 		}
 
+		// Check for On Size error 
 		inputToken = scanner.getCurrentToken();
 		if (inputToken.getType() == COBOLTokenType.ON || inputToken.getType() == COBOLTokenType.SIZE) {
 			parseOnSizeError(inputToken);
@@ -82,16 +96,23 @@ public class ExpressionParser extends StatementParser {
 
 		inputToken = scanner.getCurrentToken();
 
+		// If NOT then must be NOT on Size error
 		if (inputToken.getType() == COBOLTokenType.NOT) {
 			parseOnSizeError(inputToken);
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
 
+		// Match closing tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_ADD, parseTree);
 
 	}
 
+	/**
+	 * Parse Subract Statement
+	 * @param inputToken first token in scanner buffer
+	 * @throws IOException
+	 */
 	private void parseSubtractStatement(Token inputToken) throws IOException {
 
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, "SUBTRACT STATEMENT");
@@ -100,6 +121,7 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.SUBTRACT, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume LHS of expression
 		TokenType type = inputToken.getType();
 		while (type == COBOLTokenType.IDENTIFIER || type == COBOLTokenType.REAL || type == COBOLTokenType.INTEGER) {
 
@@ -113,6 +135,7 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.FROM, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume RHS of expression
 		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
 		inputToken = scanner.getCurrentToken();
@@ -124,7 +147,7 @@ public class ExpressionParser extends StatementParser {
 
 		inputToken = scanner.getCurrentToken();
 
-		// HANDLE ON SIZE ERROR
+		// Handle On size error
 		if (inputToken.getType() == COBOLTokenType.ON || inputToken.getType() == COBOLTokenType.SIZE) {
 			parseOnSizeError(inputToken);
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
@@ -132,17 +155,23 @@ public class ExpressionParser extends StatementParser {
 
 		inputToken = scanner.getCurrentToken();
 
-		// HANDLE NOT ON SIZE ERROR
+		// Handle Not On size error
 		if (inputToken.getType() == COBOLTokenType.NOT) {
 			parseOnSizeError(inputToken);
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
 
+		// Match and consume closing tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_SUBTRACT, parseTree);
 
 	}
 
+	/**
+	 * Parse Divide statement
+	 * @param inputToken first token in scanner buffer
+	 * @throws IOException
+	 */
 	private void parseDivideStatement(Token inputToken) throws IOException {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
@@ -150,6 +179,7 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.DIVIDE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume LHS of Expression
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL, COBOLTokenType.INTEGER);
 		inputToken = scanner.getCurrentToken();
 
@@ -157,6 +187,7 @@ public class ExpressionParser extends StatementParser {
 		matchAlternation(inputToken, parseTree, COBOLTokenType.INTO, COBOLTokenType.BY);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume RHS of expression
 		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
 		inputToken = scanner.getCurrentToken();
@@ -168,11 +199,11 @@ public class ExpressionParser extends StatementParser {
 
 		inputToken = scanner.getCurrentToken();
 
-		// Match and consume REMAINDER
+		// Match and consume REMAINDER if present
 		match(inputToken, COBOLTokenType.REMAINDER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
-		// MATCH identifier
+		// MATCH identifier if present
 		match(inputToken, COBOLTokenType.IDENTIFIER, parseTree);
 		inputToken = scanner.getCurrentToken();
 
@@ -190,11 +221,17 @@ public class ExpressionParser extends StatementParser {
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
 
+		// Match and consume closing tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_DIVIDE, parseTree);
 
 	}
 
+	/**
+	 * Parse Multiple Statement
+	 * @param inputToken first token in scanner buffer
+	 * @throws IOException
+	 */
 	private void parseMultiplyStatement(Token inputToken) throws IOException {
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, "MULTIPLY STATEMENT");
 
@@ -202,6 +239,7 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.MULTIPLY, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match LHS of expression
 		matchAlternation(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL, COBOLTokenType.INTEGER);
 		inputToken = scanner.getCurrentToken();
 
@@ -209,6 +247,7 @@ public class ExpressionParser extends StatementParser {
 		match(inputToken, COBOLTokenType.BY, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match RHS of expression
 		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
 		inputToken = scanner.getCurrentToken();
@@ -234,24 +273,35 @@ public class ExpressionParser extends StatementParser {
 			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
 		}
 
+		// Consume closing tag
 		inputToken = scanner.getCurrentToken();
 		match(inputToken, COBOLTokenType.END_MULTIPLY, parseTree);
 
 	}
 
+	/**
+	 * Parse Compute statement
+	 * @param inputToken first token in scanner buffer
+	 * @throws IOException
+	 */
 	private void parseComputeStatement(Token inputToken) throws IOException {
 
 		parseTree = new StatementNode(TreeNodeType.STATEMENT, inputToken.getTokenValue());
 
+		// Match and consume Computer
 		match(inputToken, COBOLTokenType.COMPUTE, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume LHS of expression
 		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.ROUNDED);
 		inputToken = scanner.getCurrentToken();
 
+		// Matcha and consume Equals symbol
 		match(inputToken, COBOLTokenType.EQUALS_SYMBOL, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// While the input token is either an operand (i.e number, identifier, literal) Or an operator
+		// i.e + - ( ) etc repeated parse the input token
 		while (isOperand(inputToken) || isOperator(inputToken)) {
 			parseArithmeticExpression(parseTree, inputToken);
 			inputToken = scanner.getCurrentToken();
@@ -259,16 +309,18 @@ public class ExpressionParser extends StatementParser {
 
 		inputToken = scanner.getCurrentToken();
 
+		// Handle on size error
 		if (inputToken.getType() == COBOLTokenType.ON || inputToken.getType() == COBOLTokenType.SIZE) {
 			parseOnSizeError(inputToken);
-			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT); // Treat size error as its own statement so switch to compound statement
 		}
 
 		inputToken = scanner.getCurrentToken();
 
+		// handle not on size error
 		if (inputToken.getType() == COBOLTokenType.NOT) {
 			parseOnSizeError(inputToken);
-			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT);
+			parseTree.setTreeType(TreeNodeType.COMPOUND_STATEMENT); // Same as on size error - treat as compound statement
 		}
 		
 		inputToken = scanner.getCurrentToken();
@@ -276,17 +328,26 @@ public class ExpressionParser extends StatementParser {
 
 	}
 
+	/**
+	 * Parse on Size error 
+	 * @param inputToken first token in scanner buffer
+	 * @throws IOException
+	 */
 	private void parseOnSizeError(Token inputToken) throws IOException {
 
+		// On Error is effectively a conditional, so create new child statement to contain it
 		StatementNode node = new StatementNode(TreeNodeType.CONDITIONAL_STATEMENT, "CONDITIONAL STATEMENT");
 
+		// sub tree to hold the condition 
 		ParseTreeNode conditionNode = new ParseTreeNode(TreeNodeType.CONDITION, "CONDITION");
-
 		node.addChild(conditionNode);
+		
+		// Match and consume condition. Any in sequence not present are ignored
 		matchSequence(inputToken, conditionNode, COBOLTokenType.NOT, COBOLTokenType.ROUNDED, COBOLTokenType.ON,
 				COBOLTokenType.SIZE, COBOLTokenType.ERROR);
 		inputToken = scanner.getCurrentToken();
 
+		// sub tree to hold condition body - should be another statement
 		ParseTreeNode onErrorBody = new ParseTreeNode(TreeNodeType.CONDITION_BODY, "CONDITION BODY");
 		node.addChild(onErrorBody);
 		// CONSUME STATEMENT
@@ -297,15 +358,22 @@ public class ExpressionParser extends StatementParser {
 			inputToken = scanner.getCurrentToken();
 		}
 
+		// Add entire tree to the parent
 		parseTree.addChild(node);
 	}
 
+	/**
+	 * Handle Giving clause 
+	 * @param inputToken
+	 * @throws IOException
+	 */
 	private void parseGivingClause(Token inputToken) throws IOException {
 
 		// CONSUME GIVING
 		match(inputToken, COBOLTokenType.GIVING, parseTree);
 		inputToken = scanner.getCurrentToken();
 		
+		// Match RHS of Giving - could be any time of identifier or literal..
 		matchRepeatingSequence(inputToken, parseTree, COBOLTokenType.IDENTIFIER, COBOLTokenType.REAL,
 				COBOLTokenType.INTEGER, COBOLTokenType.ROUNDED);
 

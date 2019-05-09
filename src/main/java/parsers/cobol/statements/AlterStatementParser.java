@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parse for an Alter Statement
+ * @author Ben
+ *
+ */
 public class AlterStatementParser extends StatementParser {
 
 	public AlterStatementParser(Scanner scanner) {

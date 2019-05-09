@@ -10,6 +10,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Exit statement
+ * @author Ben
+ *
+ */
 public class ExitStatementParser extends StatementParser {
 
 	public ExitStatementParser(Scanner scanner) {

@@ -11,6 +11,11 @@ import main.java.trees.ParseTreeNode;
 import main.java.trees.TreeNodeType;
 import main.java.trees.cobol.StatementNode;
 
+/**
+ * Parser for Open Statement
+ * @author Ben
+ *
+ */
 public class OpenStatementParser extends StatementParser {
 
 	public OpenStatementParser(Scanner scanner) {
@@ -24,6 +29,7 @@ public class OpenStatementParser extends StatementParser {
 		parseOpenClause(inputToken);
 		inputToken = scanner.getCurrentToken();
 		
+		// Match and consume repeation Open clauses
 		TokenType type = inputToken.getType();
 		while(type == COBOLTokenType.INPUT || type == COBOLTokenType.OUTPUT || type == COBOLTokenType.I_O || type == COBOLTokenType.EXTEND)
 		{
@@ -40,13 +46,16 @@ public class OpenStatementParser extends StatementParser {
 	
 	public void parseOpenClause(Token inputToken) throws IOException {
 		
+		// Match and consume Open
 		match(inputToken, COBOLTokenType.OPEN, parseTree);
 		inputToken = scanner.getCurrentToken();
 
+		// Match and consume Open type
 		matchAlternation(inputToken, parseTree, COBOLTokenType.INPUT, COBOLTokenType.OUTPUT, COBOLTokenType.I_O,
 				COBOLTokenType.EXTEND);
 		inputToken = scanner.getCurrentToken();
 		
+		// Match and consume Identifier
 		matchRepetition(inputToken, parseTree, COBOLTokenType.IDENTIFIER);
 		inputToken = scanner.getCurrentToken();
 	}

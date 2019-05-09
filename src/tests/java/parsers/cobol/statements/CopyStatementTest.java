@@ -21,7 +21,7 @@ public class CopyStatementTest {
 	@Test
 	public void testParse() {
 		String input = "COPY my-var IN my-var-2\n"
-						+"REPLACING my-car BY my-van ";
+						+"REPLACING my-car BY my-van my-van-2 ";
 
 		BufferedReader in = new BufferedReader(new StringReader(input));
 		SourceFile s = new SourceFile(in);
@@ -34,7 +34,7 @@ public class CopyStatementTest {
 			ParseTree tree = new ParseTree();
 			tree.setRoot(pt);
 			tree.printParseTree();
-			assertEquals(8, pt.getChildren().size());
+			assertEquals(9, pt.getChildren().size());
 			assertEquals("my-var-2", pt.getChildren().get(3).getAttribute());
 			assertEquals("my-van", pt.getChildren().get(7).getAttribute());
 
